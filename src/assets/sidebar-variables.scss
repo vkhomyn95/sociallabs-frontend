@@ -1,0 +1,88 @@
+// Colors
+$color-white: #ffffff;
+$color-gray-50: #f9fafb;
+$color-gray-100: #f3f4f6;
+$color-gray-200: #e5e7eb;
+$color-gray-300: #d1d5db;
+$color-gray-400: #9ca3af;
+$color-gray-500: #6b7280;
+$color-gray-700: #374151;
+$color-gray-800: #1f2937;
+$color-gray-900: #111827;
+
+$color-yellow-50: #fef3c7;
+$color-yellow-900: #92400e;
+
+$color-primary: #8b5cf6;
+$color-primary-dark: #6366f1;
+
+// Sidebar
+$sidebar-width: 255px;
+$sidebar-collapsed-width: 64px;
+$sidebar-bg: $color-white;
+$sidebar-border: $color-gray-200;
+
+// Spacing
+$spacing-xs: 2px;
+$spacing-sm: 4px;
+$spacing-md: 8px;
+$spacing-lg: 10px;
+$spacing-xl: 12px;
+
+// Border Radius
+$border-radius-sm: 4px;
+$border-radius-md: 6px;
+$border-radius-circle: 50%;
+
+// Typography
+$font-size-xs: 10px;
+$font-size-sm: 11px;
+$font-size-base: 12px;
+$font-size-md: 13px;
+$font-size-lg: 14px;
+$font-size-xl: 18px;
+
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Transitions
+$transition-duration: 0.3s;
+$transition-fast: 0.2s;
+$transition-very-fast: 0.15s;
+$transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Z-index
+$z-index-sidebar: 1000;
+$z-index-tooltip: 1100;
+
+// Scrollbar
+$scrollbar-width: 6px;
+$scrollbar-thumb: $color-gray-300;
+$scrollbar-border-radius: 3px;
+
+// Header
+$header-height: 48px;
+$header-title-size: $font-size-xl;
+
+// Menu Item
+$menu-item-padding: 10px 12px;
+$menu-item-gap: 12px;
+$menu-icon-size: 20px;
+
+// Badge
+$badge-bg: $color-yellow-50;
+$badge-color: $color-yellow-900;
+$badge-padding: 2px 6px;
+
+// Footer
+$footer-min-height: 52px;
+$avatar-size: 32px;
+
+// Tooltip
+$tooltip-bg: $color-gray-800;
+$tooltip-color: $color-white;
+$tooltip-padding: 6px 12px;
+$tooltip-border-radius: $border-radius-md;
+$tooltip-font-size: $font-size-md;
+$tooltip-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);

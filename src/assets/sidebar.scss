@@ -1,0 +1,312 @@
+@import './sidebar-variables.scss';
+
+/* Block: Sidebar */
+.sidebar {
+  height: 100vh;
+  width: $sidebar-width;
+  background: $sidebar-bg;
+  border-right: 1px solid $sidebar-border;
+  transition: width $transition-duration $transition-easing;
+  z-index: $z-index-sidebar;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  will-change: width;
+
+  /* Modifier: Collapsed */
+  &--collapsed {
+    width: $sidebar-collapsed-width;
+
+    .sidebar__header-title {
+      opacity: 0;
+      width: 0;
+    }
+
+    .sidebar__section-text {
+      visibility: hidden;
+    }
+
+    .sidebar__item {
+      grid-template-columns: $menu-icon-size;
+      gap: 0;
+    }
+
+    .sidebar__item-text,
+    .sidebar__item-dropdown {
+      width: 0;
+      opacity: 0;
+    }
+
+    .sidebar__footer {
+      justify-content: center;
+      gap: 0;
+    }
+
+    .sidebar__user-info,
+    .sidebar__dropdown-toggle {
+      display: none;
+    }
+
+    .sidebar__collapse-btn {
+      margin: 0 auto;
+    }
+  }
+}
+
+/* Element: Sidebar Header */
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  padding: $spacing-xl $spacing-xl 0 $spacing-xl;
+  min-height: $header-height;
+  width: 100%;
+}
+
+.sidebar__header-title {
+  font-size: $header-title-size;
+  font-weight: $font-weight-bold;
+  color: $color-gray-900;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: auto;
+  transition: opacity $transition-fast ease-in-out;
+}
+
+/* Element: Collapse Button */
+.sidebar__collapse-btn {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-sm;
+  transition: background-color $transition-fast ease-in-out, margin $transition-fast ease-in-out;
+
+  &:hover {
+    background-color: $color-gray-100;
+  }
+}
+
+/* Element: Content */
+.sidebar__content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: $spacing-xl $spacing-md;
+  gap: $spacing-xs;
+
+  &::-webkit-scrollbar {
+    width: $scrollbar-width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $scrollbar-thumb;
+    border-radius: $scrollbar-border-radius;
+  }
+}
+
+/* Element: Section */
+.sidebar__section {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-gray-400;
+  text-transform: uppercase;
+  padding: $spacing-xl $spacing-xl $spacing-sm $spacing-xl;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  min-height: 27px;
+}
+
+.sidebar__section-text {
+  transition: visibility $transition-fast;
+}
+
+/* Element: Item */
+.sidebar__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: $menu-icon-size 1fr auto;
+  align-items: center;
+  padding: $menu-item-padding;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  gap: $menu-item-gap;
+  color: $color-gray-700;
+  font-size: $font-size-lg;
+  white-space: nowrap;
+  overflow: hidden;
+  background-color: $sidebar-bg;
+
+  &:hover {
+    background-color: $color-gray-100;
+  }
+
+  /* Modifier: Active */
+  &--active {
+    background-color: $color-gray-100;
+    font-weight: $font-weight-medium;
+  }
+
+  /* Modifier: Platform Selector */
+  &--platform {
+    border: 1px solid $sidebar-border;
+    background-color: $sidebar-bg;
+    margin-bottom: $spacing-sm;
+
+    &:hover {
+      background-color: $color-gray-50;
+    }
+  }
+}
+
+.sidebar__item-icon {
+  flex-shrink: 0;
+  width: $menu-icon-size;
+  height: $menu-icon-size;
+  min-width: $menu-icon-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+
+  svg {
+    width: $menu-icon-size;
+    height: $menu-icon-size;
+    fill: currentColor;
+    display: block;
+  }
+}
+
+.sidebar__item-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity $transition-very-fast ease-in-out,
+  width $transition-duration $transition-easing;
+}
+
+.sidebar__item-dropdown {
+  color: $color-gray-400;
+  font-size: $font-size-base;
+  margin-left: auto;
+  transition: opacity $transition-very-fast ease-in-out,
+  width $transition-duration $transition-easing;
+}
+
+/* Element: Badge */
+.sidebar__badge {
+  background-color: $badge-bg;
+  color: $badge-color;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: $badge-padding;
+  border-radius: $border-radius-sm;
+  text-transform: uppercase;
+}
+
+/* Element: Action Button */
+.sidebar__action-btn {
+  background: none;
+  border: 1px solid $sidebar-border;
+  color: $color-gray-500;
+  cursor: pointer;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-lg;
+  transition: all $transition-fast;
+  margin-left: auto;
+
+  &:hover {
+    background-color: $color-gray-50;
+    border-color: $color-gray-300;
+  }
+}
+
+/* Element: Spacer */
+.sidebar__spacer {
+  flex: 1;
+  min-height: 20px;
+}
+
+/* Element: Footer */
+.sidebar__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg $spacing-xl;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  border-top: 1px solid $color-gray-100;
+  margin-top: $spacing-md;
+  padding-top: $spacing-xl;
+  background-color: $sidebar-bg;
+  min-height: $footer-min-height;
+
+  &__profiler {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: $spacing-lg;
+  }
+
+  &:hover {
+    background-color: $color-gray-100;
+  }
+}
+
+.sidebar__user-avatar {
+  width: $avatar-size;
+  height: $avatar-size;
+  border-radius: $border-radius-circle;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  color: $color-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+.sidebar__user-info {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity $transition-fast;
+}
+
+.sidebar__user-name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: $color-gray-900;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sidebar__user-workspace {
+  font-size: $font-size-base;
+  color: $color-gray-500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__dropdown-toggle {
+  background: none;
+  border: none;
+  color: $color-gray-400;
+  cursor: pointer;
+  font-size: $font-size-xs;
+  padding: $spacing-sm;
+  transition: opacity $transition-fast;
+}

@@ -1,0 +1,397 @@
+@import './auth-variables.scss';
+
+// BEM: Block
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-background-page;
+  padding: $spacing-lg;
+  font-family: $font-family-base;
+
+  // BEM: Element
+  &__container {
+    width: 100%;
+    max-width: 420px;
+    background: $color-background;
+    border-radius: $border-radius-xl;
+    box-shadow: $shadow-lg;
+    padding: $spacing-2xl;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-xl;
+      box-shadow: none;
+      border-radius: 0;
+    }
+  }
+
+  &__logo {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+
+    &-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto $spacing-md;
+      background: $color-primary-light;
+      border-radius: $border-radius-lg;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $color-primary;
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+    }
+
+    &-text {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      margin: 0;
+    }
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin: 0 0 $spacing-sm 0;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  &__tabs {
+    display: flex;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+    padding: $spacing-xs;
+    background: $color-background-page;
+    border-radius: $border-radius-md;
+  }
+
+  &__tab {
+    flex: 1;
+    padding: $spacing-sm $spacing-md;
+    background: transparent;
+    border: none;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+    cursor: pointer;
+    transition: $transition-base;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+
+    // BEM: Modifier
+    &--active {
+      background: $color-background;
+      color: $color-primary;
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+  }
+
+  &__input-wrapper {
+    position: relative;
+  }
+
+  &__input {
+    width: 100%;
+    padding: $spacing-md;
+    padding-right: $spacing-2xl + $spacing-md;
+    font-size: $font-size-base;
+    color: $color-text-primary;
+    background: $color-background;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    transition: $transition-base;
+    font-family: $font-family-base;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $color-text-light;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-border-focus;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+    }
+
+    // BEM: Modifier
+    &--error {
+      border-color: $color-error;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba($color-error, 0.1);
+      }
+    }
+
+    &--password {
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px;
+
+      &::placeholder {
+        font-family: $font-family-base;
+        letter-spacing: normal;
+      }
+    }
+  }
+
+  &__input-icon {
+    position: absolute;
+    right: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-text-light;
+    cursor: pointer;
+    transition: $transition-base;
+
+    &:hover {
+      color: $color-text-secondary;
+    }
+  }
+
+  &__error {
+    font-size: $font-size-xs;
+    color: $color-error;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: $color-primary;
+    }
+
+    label {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      cursor: pointer;
+    }
+  }
+
+  &__forgot {
+    font-size: $font-size-sm;
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    transition: $transition-base;
+
+    &:hover {
+      color: $color-primary-hover;
+      text-decoration: underline;
+    }
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-md;
+
+    @media (max-width: $breakpoint-xs) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__button {
+    width: 100%;
+    padding: $spacing-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: white;
+    background: $color-primary;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: $transition-base;
+    font-family: $font-family-base;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-hover;
+      transform: translateY(-1px);
+      box-shadow: $shadow-md;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin: $spacing-lg 0;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: $color-border;
+    }
+
+    span {
+      font-size: $font-size-sm;
+      color: $color-text-light;
+      white-space: nowrap;
+    }
+  }
+
+  &__social {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: $spacing-md;
+
+    @media (max-width: $breakpoint-xs) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__social-button {
+    padding: $spacing-md;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    background: $color-background;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: $transition-base;
+    font-family: $font-family-base;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+
+    &:hover {
+      background: $color-background-page;
+      border-color: $color-text-light;
+    }
+  }
+
+  &__footer {
+    text-align: center;
+    margin-top: $spacing-lg;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &__link {
+    color: $color-primary;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    transition: $transition-base;
+
+    &:hover {
+      color: $color-primary-hover;
+      text-decoration: underline;
+    }
+  }
+
+  &__alert {
+    padding: $spacing-md;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+
+    // BEM: Modifier
+    &--error {
+      background: $color-error-light;
+      color: $color-error;
+      border: 1px solid $color-error;
+    }
+
+    &-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    &-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: currentColor;
+      cursor: pointer;
+      padding: 0;
+      font-size: $font-size-lg;
+      line-height: 1;
+      opacity: 0.7;
+      transition: $transition-fast;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Spinner animation
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login__spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
