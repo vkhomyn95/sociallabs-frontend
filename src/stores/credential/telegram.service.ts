@@ -10,7 +10,7 @@ export const TelegramCredentialService = {
     authMethod: 'qrcode' | 'phone';
   }): Promise<{ sessionId: string }> {
     try {
-      const response = await api.post('/telegram/auth/start', data);
+      const response = await api.post('/telegram-client-credentials/start', data);
       return response.data;
     } catch (error: any) {
       console.error('Failed to start Telegram auth:', error);
@@ -20,7 +20,7 @@ export const TelegramCredentialService = {
 
   async submitCode(sessionId: string, code: string): Promise<void> {
     try {
-      await api.post('/telegram/auth/submit-code', { sessionId, code });
+      await api.post('/telegram-client-credentials/submit-code', { sessionId, code });
     } catch (error: any) {
       console.error('Failed to submit code:', error);
       throw error;
@@ -29,7 +29,7 @@ export const TelegramCredentialService = {
 
   async submitPassword(sessionId: string, password: string): Promise<void> {
     try {
-      await api.post('/telegram/auth/submit-password', { sessionId, password });
+      await api.post('/telegram-client-credentials/submit-password', { sessionId, password });
     } catch (error: any) {
       console.error('Failed to submit password:', error);
       throw error;
@@ -38,7 +38,7 @@ export const TelegramCredentialService = {
 
   async cancelAuth(sessionId: string): Promise<void> {
     try {
-      await api.delete(`/telegram/auth/cancel/${sessionId}`);
+      await api.delete(`/telegram-client-credentials/cancel/${sessionId}`);
     } catch (error: any) {
       console.error('Failed to cancel auth:', error);
       throw error;
@@ -47,7 +47,7 @@ export const TelegramCredentialService = {
 
   async getStatus(sessionId: string): Promise<any> {
     try {
-      const response = await api.get(`/telegram/auth/status/${sessionId}`);
+      const response = await api.get(`/telegram-client-credentials/status/${sessionId}`);
       return response.data;
     } catch (error: any) {
       console.error('Failed to get auth status:', error);
@@ -64,7 +64,7 @@ export const TelegramCredentialService = {
     const token = localStorage.getItem('auth_token');
 
     // Будуємо URL з токеном в query params (якщо SSE endpoint це підтримує)
-    let url = `${baseUrl}/telegram/auth/updates/${sessionId}`;
+    let url = `${baseUrl}/telegram-client-credentials/updates/${sessionId}`;
 
     return new EventSourcePolyfill(url, {
       headers: {

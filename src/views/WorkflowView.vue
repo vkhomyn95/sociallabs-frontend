@@ -333,7 +333,7 @@ function onDrop(event: DragEvent) {
 
   const newNode: NodeInstance = {
     ...node,
-    id: `node_${Date.now()}`,
+    nodeId: `node_${Date.now()}`,
     position: { x, y },
     parameters: {},
     disabled: false

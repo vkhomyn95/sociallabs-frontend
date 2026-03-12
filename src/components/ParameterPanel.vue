@@ -349,7 +349,7 @@ function handleCredentialCreated(credentialId: number) {
  * Зберегти зміни
  */
 function handleSave() {
-  emit('update', localNode.value.id, localNode.value);
+  emit('update', localNode.value.nodeId, localNode.value);
   emit('close');
 }
 

@@ -2,6 +2,7 @@ import type { APIResponse } from '@/core/models/Api'
 import type { AvailableNodes, NodeDefinition, NodeState } from './types'
 import { NodeService } from './service'
 import { getNodeDefinition } from '@/stores/node/definitions'
+import { NodeCategory } from './types'
 
 export const actions = {
 

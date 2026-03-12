@@ -182,7 +182,7 @@ export const actions = {
     console.log(updates, nodeId)
     if (!this.workflow) return;
 
-    const index = this.workflow.nodes.findIndex(n => n.id === nodeId);
+    const index = this.workflow.nodes.findIndex(n => n.nodeId === nodeId);
     console.log(index)
     if (index !== -1) {
       this.workflow.nodes[index] = {
@@ -196,7 +196,7 @@ export const actions = {
     if (!this.workflow) return;
 
     // Remove node
-    this.workflow.nodes = this.workflow.nodes.filter(n => n.id !== nodeId);
+    this.workflow.nodes = this.workflow.nodes.filter(n => n.nodeId !== nodeId);
 
     // Remove connections
     this.workflow.connections = this.workflow.connections.filter(

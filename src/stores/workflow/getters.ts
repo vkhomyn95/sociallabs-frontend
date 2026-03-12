@@ -1,9 +1,10 @@
-import type { WorkflowState, NodeInstance } from './types';
+import type { WorkflowState } from './types';
+import type { NodeInstance } from '@/stores/node/types.ts'
 
 export const getters = {
   // Отримати ноду за ID
   getNodeById: (state: WorkflowState) => (nodeId: string): NodeInstance | undefined => {
-    return state.workflow?.nodes.find(n => n.id === nodeId);
+    return state.workflow?.nodes.find(n => n.nodeId === nodeId);
   },
 
   // Отримати всі з'єднання для ноди

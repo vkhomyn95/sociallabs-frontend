@@ -24,11 +24,13 @@ export interface NodeMetadata {
 export enum NodeType {
   TRIGGER = 'TRIGGER',
   ACTION = 'ACTION',
-  TRANSFORM = 'TRANSFORM'
+  TRANSFORM = 'TRANSFORM',
+  LOGIC = 'LOGIC',
 }
 
 export enum NodeCategory {
   COMMUNICATION = 'COMMUNICATION',
+  LOGIC = 'LOGIC',
 }
 
 export enum CredentialType {
@@ -41,7 +43,10 @@ export enum NodeDiscriminator {
   TELEGRAM_BOT_ACTION = 'TELEGRAM_BOT_ACTION',
   TELEGRAM_BOT_TRIGGER = 'TELEGRAM_BOT_TRIGGER',
   TELEGRAM_CLIENT_ACTION = 'TELEGRAM_CLIENT_ACTION',
-  TELEGRAM_CLIENT_TRIGGER = 'TELEGRAM_CLIENT_TRIGGER'
+  TELEGRAM_CLIENT_TRIGGER = 'TELEGRAM_CLIENT_TRIGGER',
+
+  IF_LOGIC = 'IF_LOGIC',
+  SWITCH_LOGIC = 'SWITCH_LOGIC',
 }
 
 // ========== Parameter Types ==========
@@ -53,13 +58,15 @@ export enum ParameterType {
   OPTIONS = 'options',
   JSON = 'json',
   MULTILINE = 'multiline',
-  COLLECTION = 'collection'
+  COLLECTION = 'collection',
+  CONDITIONS = 'conditions',
+  SWITCH_RULES = 'switch-rules',
 }
 
 export interface NodeParameter {
   name: string;
   displayName: string;
-  description: string;
+  description?: string;
   type: ParameterType;
   required: boolean;
   default?: any;

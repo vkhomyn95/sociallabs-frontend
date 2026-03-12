@@ -1,5 +1,18 @@
-import { type NodeDefinition, type NodeMetadata, type EnrichedNodeMetadata, NodeDiscriminator } from '../types';
-import { TelegramBotActionNodeDefinition } from './telegram-bot-action';
+import {
+  type EnrichedNodeMetadata,
+  type NodeDefinition,
+  NodeDiscriminator,
+  type NodeMetadata
+} from '../types'
+import { TelegramBotActionNodeDefinition } from './telegram-bot-action'
+import {
+  TelegramClientActionNodeDefinition
+} from '@/stores/node/definitions/telegram-client-action.ts'
+import {
+  TelegramClientTriggerNodeDefinition
+} from '@/stores/node/definitions/telegram-client-trigger.ts'
+import { IfNodeDefinition } from '@/stores/node/definitions/if-logic.ts'
+import { SwitchNodeDefinition } from '@/stores/node/definitions/switch-logic.ts'
 
 /**
  * Центральний реєстр всіх node definitions
@@ -7,7 +20,10 @@ import { TelegramBotActionNodeDefinition } from './telegram-bot-action';
  */
 export const NodeRegistry: Partial<Record<NodeDiscriminator, NodeDefinition>> = {
   [NodeDiscriminator.TELEGRAM_BOT_ACTION]: TelegramBotActionNodeDefinition,
-  // [NodeDiscriminator.TELEGRAM_BOT_TRIGGER]: TelegramBotTriggerDefinition,
+  [NodeDiscriminator.TELEGRAM_CLIENT_ACTION]: TelegramClientActionNodeDefinition,
+  [NodeDiscriminator.TELEGRAM_CLIENT_TRIGGER]: TelegramClientTriggerNodeDefinition,
+  [NodeDiscriminator.IF_LOGIC]: IfNodeDefinition,
+  [NodeDiscriminator.SWITCH_LOGIC]: SwitchNodeDefinition,
   // Додайте інші ноди тут
 };
 

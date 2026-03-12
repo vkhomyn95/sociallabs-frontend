@@ -2,6 +2,7 @@ import {
   CredentialType,
   NodeCategory,
   type NodeDefinition,
+  NodeDiscriminator,
   NodeType,
   ParameterType
 } from '@/stores/node/types.ts'
@@ -9,7 +10,7 @@ import { NodeColors, NodeIcons } from '@/stores/node/constants.ts'
 
 export const TelegramBotActionNodeDefinition: NodeDefinition = {
   // Metadata
-  executor: Node,
+  executor: NodeDiscriminator.TELEGRAM_BOT_ACTION,
   type: NodeType.ACTION,
   category: NodeCategory.COMMUNICATION,
 
@@ -33,18 +34,18 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       description: 'Type of content to send',
       type: ParameterType.OPTIONS,
       required: true,
-      default: 'message',
+      default: TelegramResource.MESSAGE,
       options: [
-        { value: 'message', name: 'Message' },
-        { value: 'photo', name: 'Photo' },
-        { value: 'VIDEO', name: 'Video' },
-        { value: 'DOCUMENT', name: 'Document' },
-        { value: 'AUDIO', name: 'Audio' },
-        { value: 'VOICE', name: 'Voice' },
-        { value: 'LOCATION', name: 'Location' },
-        { value: 'CONTACT', name: 'Contact' },
-        { value: 'VENUE', name: 'Venue' },
-        { value: 'POLL', name: 'Poll' }
+        { value: TelegramResource.MESSAGE, name: 'Message' },
+        { value: TelegramResource.PHOTO, name: 'Photo' },
+        { value: TelegramResource.VIDEO, name: 'Video' },
+        { value: TelegramResource.DOCUMENT, name: 'Document' },
+        { value: TelegramResource.AUDIO, name: 'Audio' },
+        { value: TelegramResource.VOICE, name: 'Voice' },
+        { value: TelegramResource.LOCATION, name: 'Location' },
+        { value: TelegramResource.CONTACT, name: 'Contact' },
+        { value: TelegramResource.VENUE, name: 'Venue' },
+        { value: TelegramResource.POLL, name: 'Poll' }
       ]
     },
     {
@@ -53,14 +54,14 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       description: 'Action to perform',
       type: ParameterType.OPTIONS,
       required: true,
-      default: 'send',
+      default: TelegramOperation.SEND,
       options: [
-        { value: 'send', name: 'Send' },
-        { value: 'EDIT', name: 'Edit' },
-        { value: 'DELETE', name: 'Delete' },
-        { value: 'FORWARD', name: 'Forward' },
-        { value: 'PIN', name: 'Pin' },
-        { value: 'UNPIN', name: 'Unpin' }
+        { value: TelegramOperation.SEND, name: 'Send' },
+        { value: TelegramOperation.EDIT, name: 'Edit' },
+        { value: TelegramOperation.DELETE, name: 'Delete' },
+        { value: TelegramOperation.FORWARD, name: 'Forward' },
+        { value: TelegramOperation.PIN, name: 'Pin' },
+        { value: TelegramOperation.UNPIN, name: 'Unpin' }
       ]
     },
 
@@ -84,7 +85,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       placeholder: 'Enter your message...',
       displayCondition: {
         field: 'resource',
-        values: ['message']
+        values: [TelegramResource.MESSAGE]
       }
     },
     {
@@ -102,7 +103,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       ],
       displayCondition: {
         field: 'resource',
-        values: ['message']
+        values: [TelegramResource.MESSAGE]
       }
     },
     {
@@ -114,7 +115,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       default: false,
       displayCondition: {
         field: 'resource',
-        values: ['message']
+        values: [TelegramResource.MESSAGE]
       }
     },
 
@@ -133,7 +134,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       ],
       displayCondition: {
         field: 'resource',
-        values: ['photo', 'VIDEO', 'DOCUMENT', 'AUDIO', 'VOICE']
+        values: [TelegramResource.PHOTO, TelegramResource.VIDEO, TelegramResource.DOCUMENT, TelegramResource.AUDIO, TelegramResource.VOICE]
       }
     },
     {
@@ -141,7 +142,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       displayName: 'Photo URL',
       description: 'URL of the photo',
       type: ParameterType.STRING,
-      required: true,
+      required: false,
       placeholder: 'https://example.com/photo.jpg',
       displayCondition: {
         field: 'attachmentType',
@@ -169,7 +170,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       placeholder: 'Add a caption...',
       displayCondition: {
         field: 'resource',
-        values: ['photo', 'VIDEO', 'DOCUMENT', 'AUDIO']
+        values: [TelegramResource.PHOTO, TelegramResource.VIDEO, TelegramResource.DOCUMENT, TelegramResource.AUDIO]
       }
     },
 
@@ -184,7 +185,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       max: 90,
       displayCondition: {
         field: 'resource',
-        values: ['LOCATION', 'VENUE']
+        values: [TelegramResource.LOCATION, TelegramResource.VENUE]
       }
     },
     {
@@ -197,7 +198,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       max: 180,
       displayCondition: {
         field: 'resource',
-        values: ['LOCATION', 'VENUE']
+        values: [TelegramResource.LOCATION, TelegramResource.VENUE]
       }
     },
 
@@ -211,7 +212,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       placeholder: '+1234567890',
       displayCondition: {
         field: 'resource',
-        values: ['CONTACT']
+        values: [TelegramResource.CONTACT]
       }
     },
     {
@@ -223,7 +224,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       placeholder: 'John',
       displayCondition: {
         field: 'resource',
-        values: ['CONTACT']
+        values: [TelegramResource.CONTACT]
       }
     },
     {
@@ -235,7 +236,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       placeholder: 'Doe',
       displayCondition: {
         field: 'resource',
-        values: ['CONTACT']
+        values: [TelegramResource.CONTACT]
       }
     },
 
@@ -249,7 +250,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       placeholder: 'What is your favorite color?',
       displayCondition: {
         field: 'resource',
-        values: ['POLL']
+        values: [TelegramResource.POLL]
       }
     },
     {
@@ -261,7 +262,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       placeholder: 'Red\nBlue\nGreen',
       displayCondition: {
         field: 'resource',
-        values: ['POLL']
+        values: [TelegramResource.POLL]
       }
     },
     {
@@ -273,7 +274,7 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
       default: true,
       displayCondition: {
         field: 'resource',
-        values: ['POLL']
+        values: [TelegramResource.POLL]
       }
     },
 
@@ -334,3 +335,28 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
     }
   }
 };
+
+export enum TelegramResource {
+  MESSAGE = 'message',
+  PHOTO = 'phone',
+  VIDEO = 'video',
+  DOCUMENT = 'document',
+  AUDIO = 'audio',
+  STICKER = 'sticker',
+  LOCATION = 'location',
+  CONTACT = 'contact',
+  VENUE = 'venue',
+  ANIMATION = 'animation',
+  VOICE = 'voice',
+  POLL = 'poll',
+}
+
+export enum TelegramOperation {
+  SEND = 'send',
+  EDIT = 'edit',
+  DELETE = 'delete',
+  PIN = 'pin',
+  UNPIN = 'unpin',
+  GET = 'get',
+  FORWARD = 'forward',
+}

@@ -243,11 +243,12 @@ function listenForUpdates() {
         break;
 
       case 'qr_code':
-        qrCodeLink.value = update.link;
+        console.log("update===", update)
+        qrCodeLink.value = update.data.link;
         step.value = 'qrcode';
         loading.value = true;
         await nextTick();
-        await generateQRCode(update.link);
+        await generateQRCode(update.data.link);
         break;
 
       case 'phone_required':
@@ -285,7 +286,7 @@ function listenForUpdates() {
 
         setTimeout(() => {
           emit('success', update.credentialId);
-          handleClose();
+          // handleClose();
         }, 2000);
         break;
 
@@ -307,8 +308,9 @@ function listenForUpdates() {
 }
 
 async function generateQRCode(link: string) {
+  console.log("Generate QR Code", !qrCanvas.value);
   if (!qrCanvas.value) return;
-
+  console.log("Qr code link:", link);
   try {
     await QRCode.toCanvas(qrCanvas.value, link, {
       width: 300,
