@@ -1,8 +1,6 @@
 import type { APIResponse, LoadConfig } from '@/core/models/Api'
 import type { Workflow, WorkflowState } from './types'
 import { WorkflowService } from './service'
-import { enrichNodeMetadata, getNodeDefinition } from '@/stores/node/definitions'
-import { getNodeDisplayConfig } from '@/stores/node/constants.ts'
 
 export const actions = {
 
@@ -33,12 +31,12 @@ export const actions = {
       if (res.success && res.data) {
         // ✅ ВИПРАВЛЕННЯ 1: Використовуйте forEach або map замість for...in
         // for...in призначений для об'єктів, не для масивів
-        res.data.nodes = res.data.nodes.map(node => {
-          const config = getNodeDisplayConfig(node.discriminator);
-          console.log(config);
+        // res.data.nodes = res.data.nodes.map(node => {
+          // const config = getNodeDisplayConfig(node.discriminator);
+          // console.log(config);
           // ✅ ВИПРАВЛЕННЯ 2: Повертаємо новий об'єкт з об'єднаними властивостями
-          return { ...node, ...config };
-        });
+          // return { ...node, ...config };
+        // });
 
         this.workflow = res.data;
       }

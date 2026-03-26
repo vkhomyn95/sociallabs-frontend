@@ -6,7 +6,6 @@ import {
   NodeType,
   ParameterType
 } from '@/stores/node/types.ts'
-import { NodeColors, NodeIcons } from '@/stores/node/constants.ts'
 
 export const TelegramClientTriggerNodeDefinition: NodeDefinition = {
   // Metadata
@@ -17,8 +16,6 @@ export const TelegramClientTriggerNodeDefinition: NodeDefinition = {
   // Display
   name: 'Telegram Client Trigger',
   description: 'Trigger workflow on Telegram events via MTProto',
-  icon: NodeIcons.TELEGRAM_CLIENT,
-  color: NodeColors.TELEGRAM,
 
   // Configuration
   supportedCredentialTypes: [CredentialType.TELEGRAM_CLIENT],

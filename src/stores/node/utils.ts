@@ -1,6 +1,6 @@
 // stores/node/utils.ts
 
-import type { Node, NodeDefinition, NodeParameter, DisplayCondition } from './types';
+import type { Node, NodeDefinition, NodeParameter, DisplayCondition, NodeInstance } from './types';
 
 /**
  * Отримати дефолтні значення параметрів з definition
@@ -122,7 +122,7 @@ export function createNodeInstance(
  * Згенерувати унікальний ID для ноди
  */
 export function generateNodeId(): string {
-  return `node_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return self.crypto.randomUUID();
 }
 
 /**

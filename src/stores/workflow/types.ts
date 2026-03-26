@@ -23,7 +23,7 @@ export interface Workflow {
 export interface Connection {
   id?: number;
   sourceNodeId: string;
-  sourceOutput: string;
+  sourceOutputIndex: number;
   targetNodeId: string;
-  targetInput: string;
+  targetInputIndex: number;
 }

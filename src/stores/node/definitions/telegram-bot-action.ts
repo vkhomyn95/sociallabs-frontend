@@ -17,8 +17,6 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
   // Display
   name: 'Telegram Bot',
   description: 'Send messages and media via Telegram Bot API',
-  icon: NodeIcons.TELEGRAM_BOT,
-  color: NodeColors.TELEGRAM,
 
   // Configuration
   supportedCredentialTypes: [CredentialType.API_KEY],

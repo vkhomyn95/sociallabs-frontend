@@ -52,15 +52,15 @@ export enum NodeDiscriminator {
 // ========== Parameter Types ==========
 
 export enum ParameterType {
-  STRING = 'string',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  OPTIONS = 'options',
-  JSON = 'json',
-  MULTILINE = 'multiline',
-  COLLECTION = 'collection',
-  CONDITIONS = 'conditions',
-  SWITCH_RULES = 'switch-rules',
+  STRING       = 'STRING',
+  MULTILINE    = 'MULTILINE',
+  NUMBER       = 'NUMBER',
+  BOOLEAN      = 'BOOLEAN',
+  OPTIONS      = 'OPTIONS',
+  MULTI_OPTIONS = 'multiOptions',
+  JSON         = 'JSON',
+  CONDITIONS   = 'conditions',    // спеціальний — рендерить ConditionsEditor
+  SWITCH_RULES = 'switch-rules',  // спеціальний — рендерить SwitchRulesEditor
 }
 
 export interface NodeParameter {
@@ -68,7 +68,7 @@ export interface NodeParameter {
   displayName: string;
   description?: string;
   type: ParameterType;
-  required: boolean;
+  required?: boolean;
   default?: any;
   options?: ParameterOption[];
   min?: number;
@@ -76,6 +76,7 @@ export interface NodeParameter {
   multiline?: boolean;
   placeholder?: string;
   displayCondition?: DisplayCondition;
+  displayOptions?: { show: Record<string, any[]> }
 }
 
 export interface ParameterOption {
@@ -100,8 +101,6 @@ export interface NodeDefinition {
   // Display
   name: string;
   description: string;
-  icon: string;
-  color: string;
 
   // Configuration
   parameters: NodeParameter[];
@@ -109,8 +108,9 @@ export interface NodeDefinition {
   supportedCredentialTypes?: CredentialType[];
 
   // Behavior
-  requiresCredentials: boolean;
-  supportsMultipleItems: boolean;
+  requiresCredentials?: boolean;
+  supportsMultipleItems?: boolean;
+  dynamicOutputs?: boolean;
 }
 
 export interface NodeOutput {
@@ -118,6 +118,7 @@ export interface NodeOutput {
   displayName: string;
   type: string;
   description: string;
+  schema?: any;
 }
 
 // ========== Enriched Node (для UI) ==========
@@ -134,9 +135,9 @@ export interface EnrichedNodeMetadata extends NodeMetadata {
 export interface NodeInstance {
   id?: number;
   nodeId: string;
+  name: string;
   type: NodeType;
   discriminator: NodeDiscriminator;
-  name: string;
   positionX: number;
   positionY: number;
   parameters: Record<string, any>;
@@ -145,12 +146,4 @@ export interface NodeInstance {
   notes?: string;
   createdAt?: string;
   updatedAt?: string;
-}
-
-// ========== Display Configuration ==========
-
-export interface NodeDisplayConfig {
-  icon: string;
-  color: string;
-  category: NodeCategory;
 }

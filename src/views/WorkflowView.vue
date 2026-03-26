@@ -153,6 +153,7 @@ import Modal from '@/views/Modal.vue'
 import type { NodeInstance } from '@/stores/workflow/types';
 import CredentialsManager from '@/components/auth/CredentialsManager.vue'
 import { useCredentialStore } from '@/stores/credential'
+import { generateNodeId } from '@/stores/node/utils.ts'
 
 const route = useRoute();
 const router = useRouter();
@@ -333,7 +334,7 @@ function onDrop(event: DragEvent) {
 
   const newNode: NodeInstance = {
     ...node,
-    nodeId: `node_${Date.now()}`,
+    nodeId: generateNodeId(),
     position: { x, y },
     parameters: {},
     disabled: false

@@ -17,8 +17,6 @@ export const TelegramClientActionNodeDefinition: NodeDefinition = {
   // Display
   name: 'Telegram Client',
   description: 'Send messages and media via Telegram Client API (MTProto)',
-  icon: NodeIcons.TELEGRAM_CLIENT,
-  color: NodeColors.TELEGRAM,
 
   // Configuration
   supportedCredentialTypes: [CredentialType.TELEGRAM_CLIENT],

@@ -65,11 +65,11 @@
               v-for="node in getNodesByCategory(category)"
               :key="node.discriminator"
               class="node-item"
-              :style="{ borderLeftColor: node.color }"
+              :style="{ borderLeftColor: NodeColors[node.discriminator] }"
               draggable="true"
               @dragstart="onDragStart($event, node)"
             >
-              <i :class="node.icon" class="node-item-icon" :style="{ color: node.color }"></i>
+              <i :class="NodeIcons[node.discriminator]" class="node-item-icon" :style="{ color: NodeColors[node.discriminator] }"></i>
               <div class="node-item-content">
                 <div class="node-item-name">{{ node.name }}</div>
                 <div class="node-item-desc">{{ node.description }}</div>
@@ -83,10 +83,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useNodeStore } from '@/stores/node';
-import { NodeCategory } from '@/stores/node/types';
-import { getCategoryDisplay } from '@/stores/node/constants';
+import { computed, onMounted, ref } from 'vue'
+import { useNodeStore } from '@/stores/node'
+import { NodeCategory } from '@/stores/node/types'
+import { getCategoryDisplay, NodeColors, NodeIcons } from '@/stores/node/constants'
 
 const nodeStore = useNodeStore();
 const searchQuery = ref('');
@@ -277,6 +277,7 @@ onMounted(async () => {
   border-radius: 6px;
   cursor: grab;
   display: flex;
+  align-items: center;
   gap: 10px;
   transition: all 0.2s;
 }

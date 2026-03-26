@@ -1,15 +1,100 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { Handle } from '@vue-flow/core'
+import { useNodeStore } from '@/stores/node'
+import { NodeType, type NodeInstance, type NodeOutput } from '@/stores/node/types'
+import { getNodeDefinition } from '@/stores/node/definitions'
+import { NodeColors, NodeIcons } from '@/stores/node/constants.ts'
+
+interface OutputPort {
+  index: number        // 0, 1, 2... — реальний індекс порту для engine
+  displayName: string
+  color: string
+}
+
+const PORT_COLORS = ['#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#06b6d4', '#6366f1']
+
+const props = defineProps<{
+  data: NodeInstance & { label?: string }
+}>()
+const emit = defineEmits<{
+  delete:    [nodeId: string]
+  configure: [nodeId: string]
+  execute:   [nodeId: string]
+}>()
+
+const nodeStore   = useNodeStore()
+const showActions = ref(false)
+const isTrigger   = computed(() => props.data.type === NodeType.TRIGGER)
+const nodeDef     = computed(() => getNodeDefinition(props.data.discriminator))
+
+/**
+ * Список вихідних портів для відображення в правій колонці.
+ * Звичайна нода (1 main порт) → порожній список → рендеримо single-output-handle.
+ * IF нода → [{ index:0, 'True' }, { index:1, 'False' }]
+ * Switch нода → динамічно з rules
+ */
+const outputPorts = computed((): OutputPort[] => {
+  const def = nodeDef.value
+  if (!def) return []
+
+  // Switch — динамічні виходи з rules
+  if (def.dynamicOutputs) {
+    const rules: Array<{ outputIndex: number; outputName?: string }> =
+      props.data.parameters?.rules ?? []
+
+    const ports: OutputPort[] = rules.map((rule, i) => ({
+      index: rule.outputIndex ?? i,
+      displayName: rule.outputName || `Output ${i + 1}`,
+      color: PORT_COLORS[i % PORT_COLORS.length],
+    }))
+
+    // Fallback порт
+    if (props.data.parameters?.fallbackToDefault !== false) {
+      ports.push({
+        index: ports.length,
+        displayName: 'Fallback',
+        color: '#9ca3af',
+      })
+    }
+    return ports
+  }
+
+  // IF нода — статичні true/false
+  const outputKeys = Object.keys(def.outputs ?? {})
+  if (outputKeys.length === 1 && outputKeys[0] === 'main') return []
+
+  return outputKeys.map((key, i) => ({
+    index: i,
+    displayName: def.outputs[key].displayName,
+    color: PORT_COLORS[i % PORT_COLORS.length],
+  }))
+})
+
+const hasMultipleOutputs = computed(() => outputPorts.value.length > 0)
+
+const nodeSubtitle = computed(() => {
+  if (isTrigger.value) {
+    const event = props.data.parameters?.triggerOn || props.data.parameters?.events
+    return event ? `trigger: ${event}` : ''
+  }
+  const op  = props.data.parameters?.operation || ''
+  const res = props.data.parameters?.resource  || ''
+  return op && res ? `${op}: ${res}` : ''
+})
+
+const onPlayClick = () => emit('execute', props.data.nodeId)
+const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
+</script>
+
 <template>
   <div
     class="custom-node"
-    :class="{
-      disabled: data.disabled,
-      selected: isSelected,
-      trigger: isTrigger,
-    }"
+    :class="{ disabled: data.disabled, trigger: isTrigger }"
     @mouseenter="showActions = true"
     @mouseleave="showActions = false"
   >
-    <!-- Top controls (hover) -->
+    <!-- Top controls -->
     <Transition name="fade">
       <div v-if="showActions" class="top-controls">
         <button class="control-btn" @click.stop="onPlayClick" title="Execute">
@@ -21,187 +106,65 @@
         <button class="control-btn danger-btn" @click.stop="$emit('delete', data.nodeId)" title="Delete">
           <i class="fas fa-trash"></i>
         </button>
-        <button class="control-btn" @click.stop="$emit('configure', data.nodeId)" title="More">
+        <button class="control-btn" @click.stop="$emit('configure', data.nodeId)" title="Configure">
           <i class="fas fa-ellipsis-h"></i>
         </button>
       </div>
     </Transition>
 
-    <!-- Input Handle -->
+    <!-- Input handle -->
     <Handle
       v-if="!isTrigger"
       type="target"
       position="left"
-      id="main"
+      id="0"
       class="input-handle"
     />
 
-    <!--
-      СТРУКТУРА:
-      ┌─────────────────┬──────────────────┐
-      │  [icon]  Name   │  Label ●         │
-      │                 │  Label ●         │
-      └─────────────────┴──────────────────┘
-      Для звичайної ноди — без правої колонки, один handle по центру.
-    -->
     <div class="node-body">
-      <!-- Ліва: іконка + назва -->
+      <!-- Left: icon + name -->
       <div class="node-left">
-        <div class="node-icon-wrapper" :style="{ background: nodeColor }">
-          <i :class="data.icon || 'fas fa-cube'" class="node-icon"></i>
+        <div class="node-icon-wrapper" :style="{ background: NodeColors[data.discriminator] }">
+          <i :class="NodeIcons[data.discriminator] || 'fas fa-cube'" class="node-icon"></i>
         </div>
         <div class="node-name">{{ data.name }}</div>
-        <div v-if="data.disabled" class="node-warning-badge">
-          <i class="fas fa-exclamation-triangle"></i>
-        </div>
       </div>
 
-      <!-- Права: колонка виходів (тільки для IF/Switch) -->
+      <!-- Right: output ports (IF / Switch) -->
       <div v-if="hasMultipleOutputs" class="node-outputs">
         <div
-          v-for="(output, key) in nodeOutputs"
-          :key="key"
+          v-for="port in outputPorts"
+          :key="port.index"
           class="output-row"
         >
-          <span class="output-label" :class="getLabelClass(String(key))">
-            {{ output.displayName }}
+          <span class="output-label" :style="{ color: port.color }">
+            {{ port.displayName }}
           </span>
+          <!-- Handle ID = рядок індексу, щоб VueFlow і engine були синхронізовані -->
           <Handle
             type="source"
             position="right"
-            :id="String(key)"
-            :class="['output-handle', getHandleClass(String(key))]"
+            :id="String(port.index)"
+            class="output-handle"
+            :style="{ borderColor: port.color }"
           />
         </div>
       </div>
     </div>
 
-    <!-- Single output handle -->
+    <!-- Single output handle (звичайна нода) -->
     <Handle
       v-if="!hasMultipleOutputs"
       type="source"
       position="right"
-      id="main"
+      id="0"
       class="single-output-handle"
     />
 
     <!-- Subtitle -->
     <div v-if="nodeSubtitle" class="node-subtitle">{{ nodeSubtitle }}</div>
-
-    <!-- Bottom + button -->
-    <Transition name="fade">
-      <div v-if="showActions && !isTrigger" class="bottom-actions">
-        <button class="add-btn" title="Add node below">
-          <i class="fas fa-plus"></i>
-        </button>
-      </div>
-    </Transition>
-
-    <!-- Execution spinner -->
-    <div v-if="data.executing" class="node-execution-indicator">
-      <div class="spinner"></div>
-    </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Handle } from '@vue-flow/core'
-import { useNodeStore } from '@/stores/node'
-import { NodeOutput, NodeType } from '@/stores/node/types.ts'
-import { getNodeDefinition } from '@/stores/node/definitions'
-
-interface Props {
-  data: {
-    nodeId: string
-    name: string
-    type: string
-    disabled: boolean
-    executing?: boolean
-    icon?: string
-    color?: string
-    discriminator?: string
-    parameters?: {
-      event?: string
-      operation?: string
-      resource?: string
-      rules?: Array<{ outputIndex: string; outputName?: string }>
-      fallbackToDefault?: boolean
-      triggerOn?: string
-      [key: string]: any
-    }
-  }
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits(['delete', 'configure', 'execute'])
-
-const nodeStore = useNodeStore()
-const showActions = ref(false)
-
-const isSelected = computed(() => false)
-const isTrigger = computed(() => props.data.type === NodeType.TRIGGER)
-const nodeDef = computed(() => getNodeDefinition(props.data.discriminator))
-
-const nodeOutputs = computed((): Record<string, NodeOutput> => {
-  const def = nodeDef.value
-  if (!def?.outputs) return {}
-
-  const keys = Object.keys(def.outputs)
-  if (keys.length === 1 && keys[0] === 'main') return {}
-
-  if ((def as any).dynamicOutputs && props.data.parameters?.rules?.length) {
-    const result: Record<string, NodeOutput> = {}
-    for (const rule of props.data.parameters.rules) {
-      result[rule.outputIndex] = { displayName: rule.outputName || rule.outputIndex }
-    }
-    if (props.data.parameters.fallbackToDefault) {
-      result['default'] = { displayName: 'Default' }
-    }
-    return result
-  }
-
-  const result: Record<string, NodeOutput> = {}
-  for (const [key, out] of Object.entries(def.outputs)) {
-    if (key !== 'main') result[key] = out as NodeOutput
-  }
-  return result
-})
-
-const hasMultipleOutputs = computed(() => Object.keys(nodeOutputs.value).length > 0)
-
-function getLabelClass(key: string): string {
-  if (key === 'true') return 'label--true'
-  if (key === 'false') return 'label--false'
-  return 'label--neutral'
-}
-
-function getHandleClass(key: string): string {
-  if (key === 'true') return 'handle--true'
-  if (key === 'false') return 'handle--false'
-  return 'handle--neutral'
-}
-
-const nodeColor = computed(() => {
-  if (props.data.disabled) return '#9ca3af'
-  return props.data.color || '#6366f1'
-})
-
-const nodeSubtitle = computed(() => {
-  if (isTrigger.value) {
-    const event = props.data.parameters?.triggerOn || null
-    if (!event) return ''
-    return `trigger: ${event}`
-  }
-  const operation = props.data.parameters?.operation || ''
-  const resource = props.data.parameters?.resource || ''
-  if (!operation || !resource) return ''
-  return `${operation}: ${resource}`
-})
-
-const onPlayClick = () => emit('execute', props.data.nodeId)
-const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
-</script>
 
 <style scoped>
 /* ── Нода ── */

@@ -12,8 +12,6 @@ export const IfNodeDefinition: NodeDefinition = {
   category: NodeCategory.LOGIC,
   name: 'IF',
   description: 'Route items based on conditions',
-  icon: 'fas fa-code-branch',
-  color: '#ff6b6b',
   requiresCredentials: false,
   supportsMultipleItems: true,
 
