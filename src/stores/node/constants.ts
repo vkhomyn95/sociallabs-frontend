@@ -11,6 +11,9 @@ export const NodeIcons = {
   [NodeDiscriminator.IF_LOGIC]: 'fas fa-code-branch',
   [NodeDiscriminator.SWITCH_LOGIC]: 'fas fa-random',
 
+  // Core
+  [NodeDiscriminator.HTTP_REQUEST]: 'fas fa-globe',
+
 
 
 
@@ -59,6 +62,9 @@ export const NodeColors = {
   // Logic
   [NodeDiscriminator.IF_LOGIC]: '#ef4444',
   [NodeDiscriminator.SWITCH_LOGIC]: '#f59e0b',
+
+  // Core
+  [NodeDiscriminator.HTTP_REQUEST]: '#2563eb',
 
 
   // // Communication

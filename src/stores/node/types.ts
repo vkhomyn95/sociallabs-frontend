@@ -31,6 +31,7 @@ export enum NodeType {
 export enum NodeCategory {
   COMMUNICATION = 'COMMUNICATION',
   LOGIC = 'LOGIC',
+  CORE = 'CORE',
 }
 
 export enum CredentialType {
@@ -47,6 +48,8 @@ export enum NodeDiscriminator {
 
   IF_LOGIC = 'IF_LOGIC',
   SWITCH_LOGIC = 'SWITCH_LOGIC',
+
+  HTTP_REQUEST = 'HTTP_REQUEST',
 }
 
 // ========== Parameter Types ==========
