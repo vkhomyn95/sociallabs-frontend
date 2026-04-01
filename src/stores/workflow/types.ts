@@ -26,4 +26,29 @@ export interface Connection {
   sourceOutputIndex: number;
   targetNodeId: string;
   targetInputIndex: number;
+  type: ConnectionType;
+}
+
+export enum ConnectionType {
+  /** Звичайний data flow між нодами */
+  MAIN       = 'MAIN',
+  AI_AGENT    = 'AI_AGENT',
+  /** Tool підключений до AI Agent */
+  AI_TOOL    = 'AI_TOOL',
+  /** Memory підключена до AI Agent */
+  AI_MEMORY  = 'AI_MEMORY',
+  /** AI Agent вихідний результат (резервний) */
+  AI_OUTPUT  = 'AI_OUTPUT',
+}
+
+export const HANDLE_TO_CONNECTION_TYPE: Record<string, ConnectionType> = {
+  'ai_model':  ConnectionType.AI_AGENT,
+  'ai_memory': ConnectionType.AI_MEMORY,
+  'ai_tools':  ConnectionType.AI_TOOL,
+}
+
+export const CONNECTION_TYPE_TO_HANDLE: Partial<Record<ConnectionType, string>> = {
+  [ConnectionType.AI_AGENT]:  'ai_model',
+  [ConnectionType.AI_MEMORY]: 'ai_memory',
+  [ConnectionType.AI_TOOL]:   'ai_tools',
 }

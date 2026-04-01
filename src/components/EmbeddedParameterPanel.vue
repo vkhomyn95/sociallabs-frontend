@@ -29,160 +29,171 @@
       <!-- Parameters Tab -->
       <div v-else-if="activeTab === 'parameters' && nodeDefinition" class="parameters">
 
-        <!-- Node Name -->
-        <div class="form-group">
-          <label>Node Name</label>
-          <input
-            v-model="localNode.name"
-            type="text"
-            class="form-control"
-            placeholder="Enter node name"
-            @input="emitUpdate"
-          />
-        </div>
+        <!-- AI Agent — спеціальний редактор -->
+        <AIAgentEditor
+          v-if="localNode.discriminator === NodeDiscriminator.AI_AGENT"
+          v-model="localNode.parameters"
+          @update:model-value="emitUpdate"
+        />
 
-        <!-- Dynamic Parameters -->
-        <div
-          v-for="param in visibleParameters"
-          :key="param.name"
-          class="form-group"
-          :class="{ 'form-group--drop-active': dropTargetParam === param.name }"
-          @dragover.prevent="dropTargetParam = param.name"
-          @dragleave="dropTargetParam = null"
-          @drop="onDropToParam(param.name, $event)"
-        >
-          {{param.type}}
-          <label>
-            {{ param.displayName || param.name }}
-            <span v-if="param.required" class="required">*</span>
-          </label>
+        <template v-else>
 
-          <p v-if="param.description" class="param-description">{{ param.description }}</p>
-
-          <!-- Drop hint -->
-          <div v-if="dropTargetParam === param.name" class="drop-hint">
-            <i class="fas fa-link"></i> Drop to insert field reference
+          <!-- Node Name -->
+          <div class="form-group">
+            <label>Node Name</label>
+            <input
+              v-model="localNode.name"
+              type="text"
+              class="form-control"
+              placeholder="Enter node name"
+              @input="emitUpdate"
+            />
           </div>
 
-          <!-- String -->
-          <input
-            v-if="param.type === 'STRING' || param.type === 'string'"
-            v-model="localNode.parameters[param.name]"
-            type="text"
-            class="form-control"
-            :placeholder="param.placeholder || ''"
-            @input="emitUpdate"
-          />
-
-          <!-- Multiline -->
-          <textarea
-            v-else-if="param.type === 'MULTILINE' || param.type === 'multiline'"
-            v-model="localNode.parameters[param.name]"
-            class="form-control"
-            rows="4"
-            :placeholder="param.placeholder || ''"
-            @input="emitUpdate"
-          />
-
-          <!-- Number -->
-          <input
-            v-else-if="param.type === 'NUMBER' || param.type === 'number'"
-            v-model.number="localNode.parameters[param.name]"
-            type="number"
-            class="form-control"
-            :min="param.min"
-            :max="param.max"
-            @input="emitUpdate"
-          />
-
-          <!-- Boolean -->
-          <label
-            v-else-if="param.type === 'BOOLEAN' || param.type === 'boolean'"
-            class="checkbox-label"
+          <!-- Dynamic Parameters -->
+          <div
+            v-for="param in visibleParameters"
+            :key="param.name"
+            class="form-group"
+            :class="{ 'form-group--drop-active': dropTargetParam === param.name }"
+            @dragover.prevent="dropTargetParam = param.name"
+            @dragleave="dropTargetParam = null"
+            @drop="onDropToParam(param.name, $event)"
           >
-            <div
-              class="toggle-switch"
-              :class="{ on: !!localNode.parameters[param.name] }"
-              @click="toggleBool(param.name)"
-            >
-              <div class="toggle-thumb"></div>
+            {{param.type}}
+            <label>
+              {{ param.displayName || param.name }}
+              <span v-if="param.required" class="required">*</span>
+            </label>
+
+            <p v-if="param.description" class="param-description">{{ param.description }}</p>
+
+            <!-- Drop hint -->
+            <div v-if="dropTargetParam === param.name" class="drop-hint">
+              <i class="fas fa-link"></i> Drop to insert field reference
             </div>
-            <span class="toggle-text">
+
+            <!-- String -->
+            <input
+              v-if="param.type === 'STRING' || param.type === 'string'"
+              v-model="localNode.parameters[param.name]"
+              type="text"
+              class="form-control"
+              :placeholder="param.placeholder || ''"
+              @input="emitUpdate"
+            />
+
+            <!-- Multiline -->
+            <textarea
+              v-else-if="param.type === 'MULTILINE' || param.type === 'multiline'"
+              v-model="localNode.parameters[param.name]"
+              class="form-control"
+              rows="4"
+              :placeholder="param.placeholder || ''"
+              @input="emitUpdate"
+            />
+
+            <!-- Number -->
+            <input
+              v-else-if="param.type === 'NUMBER' || param.type === 'number'"
+              v-model.number="localNode.parameters[param.name]"
+              type="number"
+              class="form-control"
+              :min="param.min"
+              :max="param.max"
+              @input="emitUpdate"
+            />
+
+            <!-- Boolean -->
+            <label
+              v-else-if="param.type === 'BOOLEAN' || param.type === 'boolean'"
+              class="checkbox-label"
+            >
+              <div
+                class="toggle-switch"
+                :class="{ on: !!localNode.parameters[param.name] }"
+                @click="toggleBool(param.name)"
+              >
+                <div class="toggle-thumb"></div>
+              </div>
+              <span class="toggle-text">
               {{ localNode.parameters[param.name] ? 'Enabled' : 'Disabled' }}
             </span>
-          </label>
-
-          <!-- Options / Select -->
-          <select
-            v-else-if="param.type === 'OPTIONS' || param.type === 'options'"
-            v-model="localNode.parameters[param.name]"
-            class="form-control"
-            @change="emitUpdate"
-          >
-            <option value="">— Select —</option>
-            <option
-              v-for="opt in param.options"
-              :key="opt.value"
-              :value="opt.value"
-            >
-              {{ opt.name }}
-            </option>
-          </select>
-
-          <!-- Multi-options -->
-          <div
-            v-else-if="param.type === 'multiOptions'"
-            class="multi-options"
-          >
-            <label
-              v-for="opt in param.options"
-              :key="opt.value"
-              class="multi-opt"
-            >
-              <input
-                type="checkbox"
-                :checked="isMultiChecked(param.name, opt.value)"
-                @change="toggleMulti(param.name, opt.value)"
-              />
-              <span>{{ opt.name }}</span>
             </label>
+
+            <!-- Options / Select -->
+            <select
+              v-else-if="param.type === 'OPTIONS' || param.type === 'options'"
+              v-model="localNode.parameters[param.name]"
+              class="form-control"
+              @change="emitUpdate"
+            >
+              <option value="">— Select —</option>
+              <option
+                v-for="opt in param.options"
+                :key="opt.value"
+                :value="opt.value"
+              >
+                {{ opt.name }}
+              </option>
+            </select>
+
+            <!-- Multi-options -->
+            <div
+              v-else-if="param.type === 'multiOptions'"
+              class="multi-options"
+            >
+              <label
+                v-for="opt in param.options"
+                :key="opt.value"
+                class="multi-opt"
+              >
+                <input
+                  type="checkbox"
+                  :checked="isMultiChecked(param.name, opt.value)"
+                  @change="toggleMulti(param.name, opt.value)"
+                />
+                <span>{{ opt.name }}</span>
+              </label>
+            </div>
+
+            <!-- JSON -->
+            <textarea
+              v-else-if="param.type === 'JSON' || param.type === 'json'"
+              v-model="localNode.parameters[param.name]"
+              class="form-control code"
+              rows="6"
+              placeholder="{}"
+              @input="emitUpdate"
+            />
+
+            <!-- CONDITIONS type — для IF ноди -->
+            <ConditionsEditor
+              v-else-if="localNode.discriminator === NodeDiscriminator.IF_LOGIC"
+              v-model="localNode.parameters[param.name]"
+              :combine-op="localNode.parameters['combineOperation'] || 'AND'"
+              @update:combine-op="localNode.parameters['combineOperation'] = $event; emitUpdate()"
+              @update:model-value="emitUpdate"
+            />
+
+            <!-- SWITCH_RULES type — для Switch ноди -->
+            <SwitchRulesEditor
+              v-else-if="localNode.discriminator === NodeDiscriminator.SWITCH_LOGIC"
+              v-model="localNode.parameters[param.name]"
+              @update:model-value="onSwitchRulesUpdate"
+            />
+
+            <!-- Fallback -->
+            <input
+              v-else
+              v-model="localNode.parameters[param.name]"
+              type="text"
+              class="form-control"
+              @input="emitUpdate"
+            />
           </div>
+        </template>
 
-          <!-- JSON -->
-          <textarea
-            v-else-if="param.type === 'JSON' || param.type === 'json'"
-            v-model="localNode.parameters[param.name]"
-            class="form-control code"
-            rows="6"
-            placeholder="{}"
-            @input="emitUpdate"
-          />
-
-          <!-- CONDITIONS type — для IF ноди -->
-          <ConditionsEditor
-            v-else-if="param.type === 'conditions'"
-            v-model="localNode.parameters[param.name]"
-            :combine-op="localNode.parameters['combineOperation'] || 'AND'"
-            @update:combine-op="localNode.parameters['combineOperation'] = $event; emitUpdate()"
-            @update:model-value="emitUpdate"
-          />
-
-          <!-- SWITCH_RULES type — для Switch ноди -->
-          <SwitchRulesEditor
-            v-else-if="param.type === 'switch-rules'"
-            v-model="localNode.parameters[param.name]"
-            @update:model-value="onSwitchRulesUpdate"
-          />
-
-          <!-- Fallback -->
-          <input
-            v-else
-            v-model="localNode.parameters[param.name]"
-            type="text"
-            class="form-control"
-            @input="emitUpdate"
-          />
-        </div>
 
         <!-- Notes -->
         <div class="form-group">
@@ -263,13 +274,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useNodeStore } from '@/stores/node'
 import { useCredentialStore } from '@/stores/credential'
-import { CredentialType, type NodeInstance } from '@/stores/node/types'
+import { CredentialType, NodeDiscriminator, type NodeInstance } from '@/stores/node/types'
 import TelegramAuthModal from '@/components/auth/TelegramAuthModal.vue'
 import ConditionsEditor from '@/components/ConditionsEditor.vue'
 import SwitchRulesEditor from '@/components/SwitchRulesEditor.vue'
+import AIAgentEditor from '@/components/AIAgentEditor.vue'
 
 const props = defineProps<{
   node: NodeInstance

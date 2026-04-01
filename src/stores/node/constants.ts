@@ -1,4 +1,5 @@
 import { NodeCategory, NodeDiscriminator } from '@/stores/node/types.ts'
+import { ConnectionType } from '@/stores/workflow/types.ts'
 
 export const NodeIcons = {
   // Communication
@@ -13,6 +14,9 @@ export const NodeIcons = {
 
   // Core
   [NodeDiscriminator.HTTP_REQUEST]: 'fas fa-globe',
+
+  // AI
+  [NodeDiscriminator.AI_AGENT]: 'fas fa-robot',
 
 
 
@@ -66,6 +70,9 @@ export const NodeColors = {
   // Core
   [NodeDiscriminator.HTTP_REQUEST]: '#2563eb',
 
+  // AI
+  [NodeDiscriminator.AI_AGENT]: '#7c3aed',
+
 
   // // Communication
   // TELEGRAM: '#0088cc',
@@ -109,6 +116,10 @@ export const CategoryDisplay: Record<NodeCategory, { icon: string; color: string
     icon: 'fas fa-code-branch',
     color: '#ef4444'
   },
+  [NodeCategory.AI]: {
+    icon: 'fas fa-robot',
+    color: '#7c3aed'
+  }
 };
 
 // ========== Helper Functions ==========
@@ -118,4 +129,10 @@ export function getCategoryDisplay(category: NodeCategory) {
     icon: 'fas fa-folder',
     color: '#6b7280'
   };
+}
+
+const SUB_SLOT_EDGE_STYLE: Record<string, { color: string }> = {
+  [ConnectionType.AI_AGENT]:   { color: '#8b5cf6' },  // chat model — фіолетовий
+  [ConnectionType.AI_MEMORY]:  { color: '#06b6d4' },  // memory — cyan
+  [ConnectionType.AI_TOOL]:    { color: '#10b981' },  // tool — зелений
 }

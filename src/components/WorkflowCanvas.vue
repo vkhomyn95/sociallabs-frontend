@@ -47,6 +47,8 @@ import CustomNode from './CustomNode.vue'
 import NodeEditorModal from '@/components/NodeEditorModal.vue'
 import type { NodeInstance } from '@/stores/node/types'
 import type { Connection } from '@/stores/workflow/types'
+import { ConnectionType, HANDLE_TO_CONNECTION_TYPE } from '@/stores/workflow/types'
+import { SUB_SLOT_TARGET_INDEX } from '@/stores/node/types'
 
 const workflowStore = useWorkflowStore()
 const selectedNode = ref<NodeInstance | null>(null)
@@ -171,11 +173,19 @@ const onEdgesChange = (changes: any[]) => {
 }
 
 const onConnect = (params: any) => {
+  const targetHandle = params.targetHandle as string ?? '0'
+  // bottom ports мають handle id = output key ('model', 'memory', 'tools')
+  const isBottomPort = HANDLE_TO_CONNECTION_TYPE[targetHandle] !== undefined
+  const connType     = isBottomPort
+    ? HANDLE_TO_CONNECTION_TYPE[targetHandle]
+    : ConnectionType.MAIN
+
   workflowStore.ADD_CONNECTION({
-    sourceNodeId: params.source,
-    targetNodeId: params.target,
+    sourceNodeId:      params.source,
+    targetNodeId:      params.target,
     sourceOutputIndex: Number(params.sourceHandle ?? 0),
-    targetInputIndex:  Number(params.targetHandle  ?? 0),
+    targetInputIndex:  isBottomPort ? -1 : Number(targetHandle),
+    type:              connType,
   })
 }
 

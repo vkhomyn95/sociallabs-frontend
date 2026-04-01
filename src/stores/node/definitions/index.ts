@@ -13,6 +13,7 @@ import {
 } from '@/stores/node/definitions/telegram-client-trigger.ts'
 import { IfNodeDefinition } from '@/stores/node/definitions/if-logic.ts'
 import { SwitchNodeDefinition } from '@/stores/node/definitions/switch-logic.ts'
+import { AiAgentNodeDefinition } from '@/stores/node/definitions/ai-agent.ts'
 import { HttpRequestNodeDefinition } from '@/stores/node/definitions/http-request.ts'
 
 /**
@@ -25,6 +26,7 @@ export const NodeRegistry: Partial<Record<NodeDiscriminator, NodeDefinition>> = 
   [NodeDiscriminator.TELEGRAM_CLIENT_TRIGGER]: TelegramClientTriggerNodeDefinition,
   [NodeDiscriminator.IF_LOGIC]: IfNodeDefinition,
   [NodeDiscriminator.SWITCH_LOGIC]: SwitchNodeDefinition,
+  [NodeDiscriminator.AI_AGENT]: AiAgentNodeDefinition,
   [NodeDiscriminator.HTTP_REQUEST]: HttpRequestNodeDefinition,
   // Додайте інші ноди тут
 };

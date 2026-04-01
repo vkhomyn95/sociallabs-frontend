@@ -1,3 +1,5 @@
+import { ConnectionType } from '@/stores/workflow/types.ts'
+
 export interface NodeState {
   availableNodes: AvailableNodes | null;
   selectedNodeDefinition: NodeDefinition | null;
@@ -32,6 +34,7 @@ export enum NodeCategory {
   COMMUNICATION = 'COMMUNICATION',
   LOGIC = 'LOGIC',
   CORE = 'CORE',
+  AI = 'AI'
 }
 
 export enum CredentialType {
@@ -50,6 +53,8 @@ export enum NodeDiscriminator {
   SWITCH_LOGIC = 'SWITCH_LOGIC',
 
   HTTP_REQUEST = 'HTTP_REQUEST',
+
+  AI_AGENT = 'AI_AGENT',
 }
 
 // ========== Parameter Types ==========
@@ -64,6 +69,7 @@ export enum ParameterType {
   JSON         = 'JSON',
   CONDITIONS   = 'conditions',    // спеціальний — рендерить ConditionsEditor
   SWITCH_RULES = 'switch-rules',  // спеціальний — рендерить SwitchRulesEditor
+  AI_AGENT = 'ai-agent'
 }
 
 export interface NodeParameter {
@@ -149,4 +155,10 @@ export interface NodeInstance {
   notes?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export const SUB_SLOT_TARGET_INDEX: Record<string, number> = {
+  [ConnectionType.AI_AGENT]: -1,
+  [ConnectionType.AI_MEMORY]: -2,
+  [ConnectionType.AI_TOOL]: -3
 }
