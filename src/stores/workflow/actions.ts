@@ -1,6 +1,7 @@
 import type { APIResponse, LoadConfig } from '@/core/models/Api'
 import type { Workflow, WorkflowState } from './types'
 import { WorkflowService } from './service'
+import type { NodeInstance } from '@/stores/node/types.ts'
 
 export const actions = {
 

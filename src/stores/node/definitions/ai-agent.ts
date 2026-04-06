@@ -27,43 +27,6 @@ export const AI_OUTPUT_MODES = [
   { value: 'STRUCTURED',  name: 'Structured JSON'      },
 ] as const
 
-// ── Sub-node slots ────────────────────────────────────────────────────────────
-// Описують нижні порти AI Agent ноди.
-// id → VueFlow handle = `sub-${id}`
-// connectionType → що зберігається в Connection.type на бекенді
-
-// export const AI_AGENT_SUB_SLOTS: SubNodeSlot[] = [
-//   {
-//     id:             'chatModel',
-//     connectionType: ConnectionType.MAIN,
-//     // Chat Model не має окремого ConnectionType на бекенді.
-//     // Зберігається як MAIN з targetInputIndex = -1.
-//     label:          'Chat Model',
-//     icon:           'fas fa-microchip',
-//     color:          '#8b5cf6',
-//     multiple:       false,
-//     description:    'Connect an LLM node (Claude, GPT-4o…)',
-//   },
-//   {
-//     id:             'memory',
-//     connectionType: ConnectionType.AI_MEMORY,
-//     label:          'Memory',
-//     icon:           'fas fa-database',
-//     color:          '#06b6d4',
-//     multiple:       false,
-//     description:    'Connect a memory node for conversation history',
-//   },
-//   {
-//     id:             'tool',
-//     connectionType: ConnectionType.AI_TOOL,
-//     label:          'Tool',
-//     icon:           'fas fa-wrench',
-//     color:          '#10b981',
-//     multiple:       true,
-//     description:    'Connect tool nodes the agent can call',
-//   },
-// ]
-
 // ── NodeDefinition ────────────────────────────────────────────────────────────
 
 export const AiAgentNodeDefinition: NodeDefinition = {

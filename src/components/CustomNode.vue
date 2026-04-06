@@ -7,8 +7,8 @@ import { getNodeDefinition } from '@/stores/node/definitions'
 import { NodeColors, NodeIcons } from '@/stores/node/constants.ts'
 
 interface OutputPort {
-  key:         string       // ключ з outputs об'єкта
-  index:       number       // числовий індекс для engine
+  key:         string
+  index:       number
   displayName: string
   color:       string
   position:    'right' | 'bottom'
@@ -20,10 +20,12 @@ const PORT_COLORS = ['#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#06b6d4', '#63
 const props = defineProps<{
   data: NodeInstance & { label?: string }
 }>()
+
 const emit = defineEmits<{
-  delete:    [nodeId: string]
-  configure: [nodeId: string]
-  execute:   [nodeId: string]
+  delete:           [nodeId: string]
+  configure:        [nodeId: string]
+  execute:          [nodeId: string]
+  'open-sub-panel': [nodeId: string, portKey: string]
 }>()
 
 const nodeStore   = useNodeStore()
@@ -31,12 +33,10 @@ const showActions = ref(false)
 const isTrigger   = computed(() => props.data.type === NodeType.TRIGGER)
 const nodeDef     = computed(() => getNodeDefinition(props.data.discriminator))
 
-// ── Всі output порти розбиті по позиції ───────────────────────
 const allOutputPorts = computed((): OutputPort[] => {
   const def = nodeDef.value
   if (!def) return []
 
-  // Switch — динамічні виходи з rules (всі справа)
   if (def.dynamicOutputs) {
     const rules: Array<{ outputIndex: number; outputName?: string }> =
       props.data.parameters?.rules ?? []
@@ -57,7 +57,6 @@ const allOutputPorts = computed((): OutputPort[] => {
     return ports
   }
 
-  // Звичайні outputs з definition
   const outputKeys = Object.keys(def.outputs ?? {})
   return outputKeys.map((key, i) => {
     const out: NodeOutput = def.outputs[key]
@@ -72,23 +71,23 @@ const allOutputPorts = computed((): OutputPort[] => {
   })
 })
 
-// Тільки праві порти (звичайний output)
-const rightPorts = computed(() =>
-  allOutputPorts.value.filter(p => p.position === 'right')
-)
+const rightPorts  = computed(() => allOutputPorts.value.filter(p => p.position === 'right'))
+const bottomPorts = computed(() => allOutputPorts.value.filter(p => p.position === 'bottom'))
 
-// Тільки нижні порти (ai-model, ai-memory, ai-tools)
-const bottomPorts = computed(() =>
-  allOutputPorts.value.filter(p => p.position === 'bottom')
-)
-
-// Чи показувати секцію правих портів (якщо більше ніж 1 main)
 const hasMultipleRightPorts = computed(() => rightPorts.value.length > 1)
-
-// Single right output — тільки якщо є рівно 1 right порт
 const singleRightPort = computed(() =>
   rightPorts.value.length === 1 ? rightPorts.value[0] : null
 )
+
+// ── Підключені bottom порти (є хоча б один edge з targetHandle = portKey) ──
+const configuredBottomPorts = computed(() => {
+  const configured = new Set<string>()
+  const p = props.data.parameters ?? {}
+  if (p.modelId?.modelId) configured.add('ai_model')
+  if (p.memory?.enabled === true) configured.add('ai_memory')
+  if (Array.isArray(p.toolNames) && p.toolNames.length > 0) configured.add('ai_tool')
+  return configured
+})
 
 const nodeSubtitle = computed(() => {
   if (isTrigger.value) {
@@ -100,16 +99,22 @@ const nodeSubtitle = computed(() => {
   return op && res ? `${op}: ${res}` : ''
 })
 
-const onPlayClick = () => emit('execute', props.data.nodeId)
-const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
+const onPlayClick   = () => emit('execute', props.data.nodeId)
+const onTestClick   = () => nodeStore.TEST_NODE_DEFINITION(props.data)
+
+// Клік на bottom port — відкрити бокову панель
+const onBottomPortClick = (port: OutputPort, e: MouseEvent) => {
+  e.stopPropagation()
+  emit('open-sub-panel', props.data.nodeId, port.key)
+}
 </script>
 
 <template>
   <div
     class="custom-node"
     :class="{
-      disabled:    data.disabled,
-      trigger:     isTrigger,
+      disabled:           data.disabled,
+      trigger:            isTrigger,
       'has-bottom-ports': bottomPorts.length > 0,
     }"
     @mouseenter="showActions = true"
@@ -133,7 +138,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
       </div>
     </Transition>
 
-    <!-- Input handle (ліворуч) -->
+    <!-- Input handle -->
     <Handle
       v-if="!isTrigger"
       type="target"
@@ -142,7 +147,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
       class="input-handle"
     />
 
-    <!-- ── Node body ── -->
+    <!-- Node body -->
     <div class="node-body">
       <div class="node-left">
         <div
@@ -154,7 +159,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
         <div class="node-name">{{ data.name }}</div>
       </div>
 
-      <!-- Праві порти (IF / Switch — кілька виходів) -->
+      <!-- Multiple right ports (IF / Switch) -->
       <div v-if="hasMultipleRightPorts" class="node-outputs">
         <div
           v-for="port in rightPorts"
@@ -175,7 +180,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
       </div>
     </div>
 
-    <!-- Single right output handle (звичайна нода + AI Agent main) -->
+    <!-- Single right output handle -->
     <Handle
       v-if="singleRightPort"
       type="source"
@@ -187,7 +192,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
     <!-- Subtitle -->
     <div v-if="nodeSubtitle" class="node-subtitle">{{ nodeSubtitle }}</div>
 
-    <!-- ── Bottom ports: ai-model / ai-memory / ai-tools ─────── -->
+    <!-- Bottom ports: ai_model / ai_memory / ai_tools -->
     <template v-if="bottomPorts.length">
       <div class="bottom-divider"></div>
       <div class="bottom-ports">
@@ -195,26 +200,33 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
           v-for="port in bottomPorts"
           :key="port.key"
           class="bottom-port"
+          :class="{ 'bottom-port--configured': configuredBottomPorts.has(port.key) }"
+          @click="onBottomPortClick(port, $event)"
         >
-          <span class="bottom-port__label" :style="{ color: port.color }">
-            {{ port.displayName }}
-          </span>
+          <!-- Label -->
+          <span
+            class="bottom-port__label"
+            :style="{ color: configuredBottomPorts.has(port.key) ? port.color : undefined }"
+            :class="{ 'bottom-port__label--muted': !configuredBottomPorts.has(port.key) }"
+          >{{ port.displayName }}</span>
+
+          <!-- VueFlow target handle (завжди присутній для прийому edge від sub-ноди) -->
           <Handle
             type="target"
             position="bottom"
             :id="port.key"
             class="bottom-port__handle"
+            :class="{ 'bottom-port__handle--active': configuredBottomPorts.has(port.key) }"
             :style="{ '--port-color': port.color }"
           />
         </div>
       </div>
     </template>
-    <!-- ─────────────────────────────────────────────────────── -->
   </div>
 </template>
 
 <style scoped>
-/* ── Нода ── */
+/* ── Node ── */
 .custom-node {
   position: relative;
   background: white;
@@ -254,7 +266,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
 .node-icon  { font-size: 20px; color: white; }
 .node-name  { font-size: 13px; font-weight: 600; color: #111827; line-height: 1.3; white-space: nowrap; }
 
-/* ── Right outputs (IF / Switch) ── */
+/* ── Right outputs ── */
 .node-outputs {
   display: flex; flex-direction: column; justify-content: center;
   border-left: 1px solid #f0f0f0; padding: 6px 0;
@@ -292,7 +304,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
   right: -7px !important; top: 50% !important; transform: translateY(-50%) !important;
 }
 
-/* ── Bottom ports ── */
+/* ── Bottom ports container ── */
 .bottom-divider {
   height: 1px; background: #f0f0f0; margin: 0 12px;
 }
@@ -300,17 +312,18 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
 .bottom-ports {
   display: flex;
   justify-content: space-around;
-  position: relative;
-  padding: 10px 14px 28px; /* 28px = місце для handle що виходить за низ */
+  padding: 8px 14px 36px;
   gap: 12px;
 }
 
+/* ── Bottom port slot ── */
 .bottom-port {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   position: relative;
+  cursor: pointer;
 }
 
 .bottom-port__label {
@@ -320,34 +333,41 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
   letter-spacing: .4px;
   white-space: nowrap;
   line-height: 1;
-  order: 1; /* label зверху */
+}
+.bottom-port__label--muted {
+  color: #9ca3af !important;
 }
 
-/*
-  Diamond handle — ромб як у n8n.
-  VueFlow встановлює position:absolute + bottom/left через inline style —
-  ми перекриваємо його через !important.
-*/
+/* ── Bottom port configured state ── */
+.bottom-port--configured .bottom-port__label {
+  font-weight: 700;
+}
+
+/* ── Bottom handle (diamond) ── */
 .bottom-port__handle {
-  /* розмір кліка */
   width:  16px !important;
   height: 16px !important;
-  /* ромб через clip-path */
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%) !important;
-  border: 2px solid var(--port-color, #9ca3af) !important;
   border-radius: 0 !important;
-  /* позиція: знизу ноди по центру bottom-port */
+  background: #e5e7eb !important;
+  border: 2px solid #d1d5db !important;
   position: absolute !important;
   bottom: -36px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  cursor: crosshair !important;
+  cursor: pointer !important;
   transition: background .15s !important;
-  order: 2;
 }
 
-.bottom-port__handle {
+/* Active (configured) handle — filled with accent color */
+.bottom-port__handle--active {
   background: var(--port-color, #9ca3af) !important;
+  border-color: var(--port-color, #9ca3af) !important;
+}
+
+.bottom-port:hover .bottom-port__handle {
+  background: color-mix(in srgb, var(--port-color, #9ca3af) 30%, #e5e7eb) !important;
+  border-color: var(--port-color, #9ca3af) !important;
 }
 
 /* ── Top controls ── */
@@ -361,7 +381,7 @@ const onTestClick = () => nodeStore.TEST_NODE_DEFINITION(props.data)
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   border-radius: 5px; transition: all .15s; font-size: 12px;
 }
-.control-btn:hover       { background: #f3f4f6; color: #111827; }
+.control-btn:hover            { background: #f3f4f6; color: #111827; }
 .control-btn.danger-btn:hover { background: #fee2e2; color: #dc2626; }
 
 /* ── Fade ── */

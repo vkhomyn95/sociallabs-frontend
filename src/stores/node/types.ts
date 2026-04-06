@@ -28,6 +28,10 @@ export enum NodeType {
   ACTION = 'ACTION',
   TRANSFORM = 'TRANSFORM',
   LOGIC = 'LOGIC',
+
+  AI_MODEL  = 'AI_MODEL',
+  AI_MEMORY = 'AI_MEMORY',
+  AI_TOOL   = 'AI_TOOL',
 }
 
 export enum NodeCategory {
@@ -155,10 +159,4 @@ export interface NodeInstance {
   notes?: string;
   createdAt?: string;
   updatedAt?: string;
-}
-
-export const SUB_SLOT_TARGET_INDEX: Record<string, number> = {
-  [ConnectionType.AI_AGENT]: -1,
-  [ConnectionType.AI_MEMORY]: -2,
-  [ConnectionType.AI_TOOL]: -3
 }
