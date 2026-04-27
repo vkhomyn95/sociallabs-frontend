@@ -74,7 +74,5 @@ export function enrichNodeMetadata(
     ...metadata,
     name: definition?.name,
     description: definition?.description,
-    icon: definition?.icon,
-    color: definition?.color
   };
 }

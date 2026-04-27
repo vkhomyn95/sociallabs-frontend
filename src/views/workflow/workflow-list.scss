@@ -1,0 +1,185 @@
+@use '../../components/ui/variables' as *;
+
+.slb-wf-list {
+  padding: 20px;
+
+  &__title {
+    font-size: 24px;
+    font-weight: 500;
+    color: $slb-ui-gray-900;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  // ─── Loading ────────────────────────────────────────────────────────────────
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 80px 0;
+    color: $slb-ui-gray-400;
+    font-size: $slb-ui-font-base;
+  }
+
+  &__spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid $slb-ui-gray-200;
+    border-top-color: $slb-ui-primary;
+    border-radius: 50%;
+    animation: slb-wfl-spin 0.7s linear infinite;
+  }
+
+  // ─── Empty state ────────────────────────────────────────────────────────────
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    gap: 12px;
+  }
+
+  &__empty-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: $slb-ui-gray-100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+
+    i { font-size: 30px; color: $slb-ui-gray-300; }
+  }
+
+  &__empty-title {
+    font-size: 18px;
+    font-weight: $slb-ui-fw-semibold;
+    color: $slb-ui-gray-700;
+    margin: 0;
+  }
+
+  &__empty-sub {
+    font-size: $slb-ui-font-base;
+    color: $slb-ui-gray-400;
+    margin: 0;
+  }
+
+  // ─── Grid ───────────────────────────────────────────────────────────────────
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  // ─── Card ───────────────────────────────────────────────────────────────────
+  &__card {
+    background: $slb-ui-white;
+    border: 1.5px solid $slb-ui-gray-200;
+    border-radius: $slb-ui-radius-lg;
+    padding: 20px;
+    cursor: pointer;
+    transition:
+      box-shadow $slb-ui-transition,
+      transform $slb-ui-transition,
+      border-color $slb-ui-transition;
+
+    &:hover {
+      box-shadow: $slb-ui-shadow-md;
+      transform: translateY(-2px);
+      border-color: $slb-ui-gray-300;
+    }
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__card-name {
+    font-size: 15px;
+    font-weight: $slb-ui-fw-semibold;
+    color: $slb-ui-gray-900;
+    margin: 0;
+    line-height: 1.4;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: $slb-ui-radius-full;
+    font-size: $slb-ui-font-xs;
+    font-weight: $slb-ui-fw-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+
+    &--active   { background: #d1fae5; color: #065f46; }
+    &--inactive { background: $slb-ui-gray-100; color: $slb-ui-gray-500; }
+  }
+
+  &__card-desc {
+    font-size: $slb-ui-font-sm;
+    color: $slb-ui-gray-500;
+    line-height: 1.55;
+    margin: 0 0 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__card-stats {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-top: 1px solid $slb-ui-gray-100;
+    border-bottom: 1px solid $slb-ui-gray-100;
+    margin-bottom: 14px;
+  }
+
+  &__card-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: $slb-ui-font-sm;
+    color: $slb-ui-gray-400;
+
+    i { font-size: 12px; }
+  }
+
+  &__card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__card-date {
+    font-size: $slb-ui-font-sm;
+    color: $slb-ui-gray-400;
+  }
+
+  &__card-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+@keyframes slb-wfl-spin {
+  to { transform: rotate(360deg); }
+}

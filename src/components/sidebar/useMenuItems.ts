@@ -1,104 +1,52 @@
-import { markRaw, ref } from 'vue';
-import SettingIcon from '@/components/sidebar/icons/SettingIcon.vue'
-import HomeIcon from '@/components/sidebar/icons/HomeIcon.vue'
-import UserIcon from '@/components/sidebar/icons/UserIcon.vue'
-import ToolsIcon from '@/components/sidebar/icons/ToolsIcon.vue'
-import MicIcon from '@/components/sidebar/icons/MicIcon.vue'
-import MessageCircleIcon from '@/components/sidebar/icons/MessageCircleIcon.vue'
-import SmartphoneIcon from '@/components/sidebar/icons/SmartphoneIcon.vue'
-import BellIcon from '@/components/sidebar/icons/Bellicon.vue'
-import CodeIcon from '@/components/sidebar/icons/CodeIcon.vue'
+import { ref } from 'vue';
+import type { MenuItem } from './sidebar.ts';
 
-const menuItems = ref([
+const menuItems = ref<MenuItem[]>([
   {
     component: 'div',
-    class: 'sidebar__item platform-selector',
-    icon: markRaw(SettingIcon),
-    text: 'Agents Platform',
-    hasDropdown: true,
-    tooltip: 'Agents Platform'
-  },
-  {
-    component: 'div',
-    class: 'sidebar__item active',
-    icon: markRaw(HomeIcon),
+    class: 'slb-sidebar__item slb-sidebar__item--active',
+    iconClass: 'fa-solid fa-hexagon-nodes',
     text: 'Workflows',
-    tooltip: 'Workflows'
+    tooltip: 'Workflows',
+    action: '/workflows',
   },
   {
     component: 'div',
-    class: 'sidebar__section',
-    text: 'Build'
+    class: 'slb-sidebar__item',
+    iconClass: 'fa-solid fa-folder-closed',
+    text: 'Executions',
+    tooltip: 'Executions',
+    action: '/executions',
   },
   {
     component: 'div',
-    class: 'sidebar__item',
-    icon: markRaw(UserIcon),
-    text: 'Agents',
-    tooltip: 'Agents',
-    hasAction: true
+    class: 'slb-sidebar__spacer',
   },
   {
     component: 'div',
-    class: 'sidebar__item',
-    icon: markRaw(ToolsIcon),
-    text: 'Tools',
-    tooltip: 'Tools'
-  },
-  {
-    component: 'div',
-    class: 'sidebar__item',
-    icon: markRaw(MicIcon),
-    text: 'Voices',
-    tooltip: 'Voices',
-    hasAction: true
-  },
-  {
-    component: 'div',
-    class: 'sidebar__section',
-    text: 'Evaluate'
-  },
-  {
-    component: 'div',
-    class: 'sidebar__item',
-    icon: markRaw(MessageCircleIcon),
-    text: 'Conversations',
-    tooltip: 'Conversations'
-  },
-  {
-    component: 'div',
-    class: 'sidebar__section',
-    text: 'Telephony'
-  },
-  {
-    component: 'div',
-    class: 'sidebar__item',
-    icon: markRaw(SmartphoneIcon),
-    text: 'Outbound',
-    tooltip: 'Outbound'
-  },
-  {
-    component: 'div',
-    class: 'sidebar__spacer'
-  },
-  {
-    component: 'div',
-    class: 'sidebar__item',
-    icon: markRaw(CodeIcon),
+    class: 'slb-sidebar__item',
+    iconClass: 'fa-solid fa-code',
     text: 'Developers',
-    tooltip: 'Developers'
+    tooltip: 'Developers',
   },
   {
     component: 'div',
-    class: 'sidebar__item',
-    icon: markRaw(BellIcon),
+    class: 'slb-sidebar__item',
+    iconClass: 'fa-solid fa-bell',
     text: 'Notifications',
-    tooltip: 'Notifications'
-  }
+    tooltip: 'Notifications',
+    action: '/notifications',
+  },
+  {
+    component: 'div',
+    class: 'slb-sidebar__item',
+    iconClass: 'fa-solid fa-right-from-bracket',
+    text: 'Log out',
+    tooltip: 'Log out',
+    action: 'logout',
+  },
 ]);
 
 export function useMenuItems() {
-  return {
-    menuItems
-  };
+  return { menuItems };
 }

@@ -1,0 +1,327 @@
+@use '../../components/ui/variables' as *;
+
+// ─── Type tokens ──────────────────────────────────────────────────────────────
+$slb-notif-types: (
+  billing: ($slb-ui-primary,      $slb-ui-primary-light,  rgba($slb-ui-primary, 0.12)),
+  warning: ($slb-ui-warning,      $slb-ui-warning-light,  rgba($slb-ui-warning, 0.12)),
+  error:   ($slb-ui-error,        $slb-ui-error-light,    rgba($slb-ui-error,   0.12)),
+  success: ($slb-ui-success,      $slb-ui-success-light,  rgba($slb-ui-success, 0.12)),
+  info:    ($slb-ui-gray-500,     $slb-ui-gray-100,       $slb-ui-gray-100),
+);
+
+$slb-notif-radius:  $slb-ui-radius-lg;
+$slb-notif-gap:     12px;
+$bp-sm: 640px;
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+.slb-notifications {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+
+  @media (max-width: $bp-sm) {
+    padding: 20px 14px 40px;
+  }
+
+  // ── Header ──────────────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 22px;
+    font-weight: 700;
+    color: $slb-ui-gray-900;
+    letter-spacing: -0.03em;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: $slb-ui-radius-full;
+    background: $slb-ui-error;
+    color: $slb-ui-white;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    font-size: 13px;
+    color: $slb-ui-gray-500;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  // ── Filter bar ──────────────────────────────────────────────────────────
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: $slb-ui-gray-100;
+    border: 1px solid $slb-ui-gray-200;
+    border-radius: $slb-ui-radius-md;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 500;
+    color: $slb-ui-gray-500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color $slb-ui-transition, background $slb-ui-transition;
+
+    &:hover:not(&--active) {
+      color: $slb-ui-gray-700;
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &--active {
+      background: $slb-ui-white;
+      color: $slb-ui-primary;
+      font-weight: 600;
+      box-shadow: $slb-ui-shadow-sm;
+    }
+  }
+
+  &__filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: $slb-ui-radius-full;
+    background: $slb-ui-error;
+    color: $slb-ui-white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  // ── List ────────────────────────────────────────────────────────────────
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $slb-notif-gap;
+  }
+
+  // ── Item ────────────────────────────────────────────────────────────────
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid $slb-ui-gray-200;
+    border-radius: $slb-notif-radius;
+    background: $slb-ui-white;
+    box-shadow: $slb-ui-shadow-sm;
+    cursor: pointer;
+    transition:
+      border-color $slb-ui-transition,
+      box-shadow $slb-ui-transition,
+      background $slb-ui-transition;
+    position: relative;
+
+    &:hover {
+      box-shadow: $slb-ui-shadow-md;
+    }
+
+    &--unread {
+      background: $slb-ui-gray-50;
+      border-left: 3px solid transparent;
+    }
+
+    // Generate per-type unread accent
+    @each $type, $colors in $slb-notif-types {
+      $color: nth($colors, 1);
+      $bg:    nth($colors, 2);
+
+      &--#{$type}.slb-notifications__item--unread {
+        border-left-color: $color;
+        background: $bg;
+      }
+    }
+  }
+
+  // ── Item icon ───────────────────────────────────────────────────────────
+  &__item-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: $slb-ui-radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    @each $type, $colors in $slb-notif-types {
+      .slb-notifications__item--#{$type} & {
+        background: nth($colors, 3);
+
+        .slb-notifications__item-icon {
+          color: nth($colors, 1);
+        }
+      }
+    }
+  }
+
+  &__item-icon {
+    font-size: 15px;
+  }
+
+  // ── Item body ───────────────────────────────────────────────────────────
+  &__item-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  &__item-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__item-type-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: $slb-ui-radius-full;
+
+    @each $type, $colors in $slb-notif-types {
+      &--#{$type} {
+        background: nth($colors, 3);
+        color: nth($colors, 1);
+      }
+    }
+  }
+
+  &__item-time {
+    font-size: 11px;
+    color: $slb-ui-gray-400;
+    margin-left: auto;
+    white-space: nowrap;
+
+    @media (max-width: $bp-sm) {
+      margin-left: 0;
+    }
+  }
+
+  &__item-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $slb-ui-gray-900;
+    line-height: 1.35;
+  }
+
+  &__item-message {
+    font-size: 12px;
+    color: $slb-ui-gray-500;
+    line-height: 1.6;
+  }
+
+  // ── Item actions ────────────────────────────────────────────────────────
+  &__item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__unread-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $slb-ui-primary;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__dismiss-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: $slb-ui-radius-sm;
+    border: none;
+    background: transparent;
+    color: $slb-ui-gray-400;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color $slb-ui-transition, background $slb-ui-transition;
+
+    &:hover {
+      color: $slb-ui-gray-700;
+      background: $slb-ui-gray-100;
+    }
+  }
+
+  // ── Empty state ─────────────────────────────────────────────────────────
+  &__empty {
+    text-align: center;
+    padding: 56px 24px;
+    border: 1px dashed $slb-ui-gray-200;
+    border-radius: $slb-notif-radius;
+  }
+
+  &__empty-icon {
+    font-size: 32px;
+    color: $slb-ui-gray-300;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  &__empty-text {
+    font-size: 13px;
+    color: $slb-ui-gray-400;
+    margin: 0;
+  }
+}
+
+// ─── TransitionGroup animations ───────────────────────────────────────────────
+.slb-notif-list-enter-active,
+.slb-notif-list-leave-active {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.slb-notif-list-enter-from,
+.slb-notif-list-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+.slb-notif-list-move {
+  transition: transform 0.22s ease;
+}

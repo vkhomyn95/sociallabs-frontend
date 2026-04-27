@@ -1,0 +1,136 @@
+@use '../variables' as *;
+
+.slb-input {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  // ─── Label ──────────────────────────────────────────────────────────────────
+  &__label {
+    @include slb-ui-label;
+
+    .slb-input__required {
+      color: $slb-ui-error;
+      margin-left: $slb-ui-space-1;
+    }
+  }
+
+  // ─── Control wrapper ────────────────────────────────────────────────────────
+  &__control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: $slb-ui-white;
+    border: 1.5px solid $slb-ui-border;
+    border-radius: $slb-ui-radius-md;
+    transition: border-color $slb-ui-transition, box-shadow $slb-ui-transition;
+
+    &:hover:not(.slb-input__control--disabled) {
+      border-color: $slb-ui-border-hover;
+    }
+
+    &:focus-within:not(.slb-input__control--disabled) {
+      border-color: $slb-ui-primary;
+      box-shadow: 0 0 0 3px $slb-ui-primary-ring;
+    }
+
+    // Size modifiers
+    &--sm  { height: $slb-ui-height-sm; border-radius: $slb-ui-radius-sm; }
+    &--md  { height: $slb-ui-height-md; }
+    &--lg  { height: $slb-ui-height-lg; border-radius: $slb-ui-radius-lg; }
+
+    // Variant modifiers
+    &--error {
+      border-color: $slb-ui-error;
+      &:focus-within { box-shadow: 0 0 0 3px $slb-ui-error-ring; }
+    }
+
+    &--success {
+      border-color: $slb-ui-success;
+      &:focus-within { box-shadow: 0 0 0 3px $slb-ui-success-ring; }
+    }
+
+    &--disabled {
+      @include slb-ui-disabled;
+      background: $slb-ui-gray-50;
+    }
+  }
+
+  // ─── Native input ───────────────────────────────────────────────────────────
+  &__native {
+    flex: 1;
+    height: 100%;
+    padding: 0 $slb-ui-space-6;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: $slb-ui-font-base;
+    font-family: $slb-ui-font;
+    font-weight: $slb-ui-fw-normal;
+    color: $slb-ui-gray-900;
+    min-width: 0;
+
+    &::placeholder {
+      color: $slb-ui-gray-400;
+      font-weight: $slb-ui-fw-normal;
+    }
+
+    // shift when icon present
+    &--icon-left  { padding-left: 36px; }
+    &--icon-right { padding-right: 36px; }
+    &--icon-both  { padding-left: 36px; padding-right: 36px; }
+  }
+
+  // ─── Icons / Actions ────────────────────────────────────────────────────────
+  &__icon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 100%;
+    color: $slb-ui-gray-400;
+    font-size: 14px;
+    pointer-events: none;
+    flex-shrink: 0;
+
+    &--left  { left: 0; }
+    &--right { right: 0; }
+  }
+
+  &__action {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $slb-ui-gray-400;
+    font-size: 14px;
+    padding: 0;
+    transition: color $slb-ui-transition;
+    flex-shrink: 0;
+
+    &:hover { color: $slb-ui-gray-600; }
+  }
+
+  // ─── Sub-text ────────────────────────────────────────────────────────────────
+  &__hint {
+    @include slb-ui-sub-text;
+    color: $slb-ui-gray-400;
+  }
+
+  &__error {
+    @include slb-ui-sub-text;
+    color: $slb-ui-error;
+  }
+
+  &__success {
+    @include slb-ui-sub-text;
+    color: $slb-ui-success;
+  }
+}

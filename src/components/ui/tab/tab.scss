@@ -1,0 +1,225 @@
+@use '../variables' as *;
+
+.slb-tab {
+  display: flex;
+  flex-direction: column;
+
+  // ─── Tab list (nav) ──────────────────────────────────────────────────────────
+  &__list {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  // ─── Individual tab button ───────────────────────────────────────────────────
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: $slb-ui-space-3;
+    padding: 0 $slb-ui-space-6;
+    height: $slb-ui-height-md;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: $slb-ui-font;
+    font-size: $slb-ui-font-base;
+    font-weight: $slb-ui-fw-medium;
+    color: $slb-ui-gray-500;
+    white-space: nowrap;
+    transition: color $slb-ui-transition, background $slb-ui-transition;
+    outline: none;
+    position: relative;
+    border-radius: 0;
+
+    i { font-size: 14px; }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px $slb-ui-primary-ring;
+    }
+
+    &--disabled {
+      @include slb-ui-disabled;
+    }
+  }
+
+  // ─── Badge ───────────────────────────────────────────────────────────────────
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 $slb-ui-space-2;
+    border-radius: $slb-ui-radius-full;
+    font-size: $slb-ui-font-xs;
+    font-weight: $slb-ui-fw-semibold;
+    background: $slb-ui-gray-100;
+    color: $slb-ui-gray-500;
+    transition: background $slb-ui-transition, color $slb-ui-transition;
+  }
+
+  // ─── Panel (content) ─────────────────────────────────────────────────────────
+  &__panel {
+    flex: 1;
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // VARIANT: line (default — underline indicator)
+  // ══════════════════════════════════════════════════════════════════════════════
+  &--line &__list {
+    border-bottom: 2px solid $slb-ui-gray-100;
+    gap: $slb-ui-space-1;
+  }
+
+  &--line &__btn {
+    border-radius: $slb-ui-radius-sm $slb-ui-radius-sm 0 0;
+    margin-bottom: -2px;     // overlap parent border-bottom
+    border-bottom: 2px solid transparent;
+
+    &:hover:not(&--disabled) {
+      color: $slb-ui-gray-700;
+      background: $slb-ui-gray-50;
+    }
+
+    &--active {
+      color: $slb-ui-primary;
+      border-bottom-color: $slb-ui-primary;
+
+      .slb-tab__badge {
+        background: $slb-ui-primary-light;
+        color: $slb-ui-primary;
+      }
+    }
+  }
+
+  &--line &__panel {
+    padding-top: $slb-ui-space-8;
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // VARIANT: pill (floating pill background)
+  // ══════════════════════════════════════════════════════════════════════════════
+  &--pill &__list {
+    background: $slb-ui-gray-100;
+    border-radius: $slb-ui-radius-lg;
+    padding: $slb-ui-space-2;
+    gap: $slb-ui-space-1;
+    width: fit-content;
+  }
+
+  &--pill &__btn {
+    border-radius: $slb-ui-radius-md;
+    height: $slb-ui-height-sm;
+
+    &:hover:not(&--disabled):not(&--active) {
+      color: $slb-ui-gray-700;
+      background: rgba(0,0,0,.04);
+    }
+
+    &--active {
+      background: $slb-ui-white;
+      color: $slb-ui-gray-900;
+      box-shadow: $slb-ui-shadow-sm;
+
+      .slb-tab__badge {
+        background: $slb-ui-primary-light;
+        color: $slb-ui-primary;
+      }
+    }
+  }
+
+  &--pill &__panel {
+    padding-top: $slb-ui-space-8;
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // VARIANT: card (full bordered tabs)
+  // ══════════════════════════════════════════════════════════════════════════════
+  &--card &__list {
+    gap: $slb-ui-space-2;
+    border-bottom: 1.5px solid $slb-ui-border;
+  }
+
+  &--card &__btn {
+    border: 1.5px solid transparent;
+    border-bottom: none;
+    border-radius: $slb-ui-radius-md $slb-ui-radius-md 0 0;
+    margin-bottom: -1.5px;
+    padding: 0 $slb-ui-space-8;
+
+    &:hover:not(&--disabled) {
+      color: $slb-ui-gray-700;
+      background: $slb-ui-gray-50;
+    }
+
+    &--active {
+      background: $slb-ui-white;
+      color: $slb-ui-gray-900;
+      border-color: $slb-ui-border;
+      border-bottom-color: $slb-ui-white;   // "erases" the bottom border
+      font-weight: $slb-ui-fw-semibold;
+
+      .slb-tab__badge {
+        background: $slb-ui-primary-light;
+        color: $slb-ui-primary;
+      }
+    }
+  }
+
+  &--card &__panel {
+    border: 1.5px solid $slb-ui-border;
+    border-top: none;
+    border-radius: 0 0 $slb-ui-radius-md $slb-ui-radius-md;
+    padding: $slb-ui-space-8;
+    background: $slb-ui-white;
+  }
+}
+
+// ─── Panel transition ─────────────────────────────────────────────────────────
+.slb-tab-panel-enter-active,
+.slb-tab-panel-leave-active {
+  transition: opacity $slb-ui-duration $slb-ui-ease;
+}
+.slb-tab-panel-enter-from,
+.slb-tab-panel-leave-to {
+  opacity: 0;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// VARIANT: auth (white on dark/colored background)
+// ══════════════════════════════════════════════════════════════════════════════
+.slb-tab--auth {
+  .slb-tab__list {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: $slb-ui-radius-md;
+    padding: 4px;
+    gap: 2px;
+    width: 100%;
+  }
+
+  .slb-tab__btn {
+    flex: 1;
+    border-radius: $slb-ui-radius-sm;
+    height: $slb-ui-height-sm;
+    color: rgba(255, 255, 255, 0.60);
+    font-size: $slb-ui-font-base;
+
+    &:hover:not(.slb-tab__btn--disabled):not(.slb-tab__btn--active) {
+      color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    &.slb-tab__btn--active {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      font-weight: $slb-ui-fw-semibold;
+      box-shadow: 0 1px 4px rgba(0,0,0,.15);
+    }
+  }
+
+  .slb-tab__panel {
+    padding-top: $slb-ui-space-8;
+  }
+}

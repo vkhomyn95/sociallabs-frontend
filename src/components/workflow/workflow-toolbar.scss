@@ -1,0 +1,57 @@
+@use '../ui/variables' as *;
+
+.slb-wf-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 48px;
+  padding: 0 20px;
+  background: $slb-ui-white;
+  border-bottom: 1px solid $slb-ui-gray-200;
+  flex-shrink: 0;
+
+  &__left,
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__name {
+    border: none;
+    font-size: 15px;
+    font-weight: $slb-ui-fw-semibold;
+    color: $slb-ui-gray-900;
+    padding: 7px 10px;
+    border-radius: $slb-ui-radius-md;
+    background: transparent;
+    min-width: 220px;
+    max-width: 360px;
+    font-family: $slb-ui-font;
+    transition: background $slb-ui-transition, box-shadow $slb-ui-transition;
+
+    &:focus {
+      outline: none;
+      background: $slb-ui-gray-50;
+      box-shadow: 0 0 0 2px $slb-ui-primary-ring;
+    }
+
+    &::placeholder { color: $slb-ui-gray-400; }
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: $slb-ui-radius-full;
+    font-size: $slb-ui-font-sm;
+    font-weight: $slb-ui-fw-medium;
+
+    i { font-size: 10px; }
+
+    &--active   { background: #d1fae5; color: #065f46; }
+    &--inactive { background: $slb-ui-gray-100; color: $slb-ui-gray-500; }
+  }
+}

@@ -1,7 +1,7 @@
 import type { NodeInstance } from '@/stores/node/types.ts'
 
 export interface WorkflowState {
-  workflow: Workflow | null;
+  workflow: Workflow;
   workflows: Workflow[];
   count: number;
   loading: boolean;

@@ -145,14 +145,18 @@ export interface EnrichedNodeMetadata extends NodeMetadata {
 
 // ========== Node Instance (from backend) ==========
 
+interface NodeInstancePosition {
+  x: number;
+  y: number;
+}
+
 export interface NodeInstance {
   id?: number;
   nodeId: string;
   name: string;
   type: NodeType;
   discriminator: NodeDiscriminator;
-  positionX: number;
-  positionY: number;
+  position: NodeInstancePosition;
   parameters: Record<string, any>;
   credentialId?: number;
   disabled: boolean;

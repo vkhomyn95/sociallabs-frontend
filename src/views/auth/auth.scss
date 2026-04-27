@@ -1,0 +1,350 @@
+// ─── Variables ────────────────────────────────────────────────────────────────
+$slb-auth-indigo-900:   #1e1b4b;
+$slb-auth-indigo-800:   #312e81;
+$slb-auth-purple:       #4c1d95;
+$slb-auth-indigo-500:   #6366f1;
+$slb-auth-indigo-600:   #4f46e5;
+$slb-auth-indigo-300:   #a5b4fc;
+
+$slb-auth-white:        #ffffff;
+$slb-auth-white-08:     rgba(255, 255, 255, 0.08);
+$slb-auth-white-18:     rgba(255, 255, 255, 0.18);
+$slb-auth-white-25:     rgba(255, 255, 255, 0.25);
+$slb-auth-white-40:     rgba(255, 255, 255, 0.40);
+$slb-auth-white-60:     rgba(255, 255, 255, 0.60);
+$slb-auth-white-75:     rgba(255, 255, 255, 0.75);
+
+$slb-auth-gray-50:      #f9fafb;
+$slb-auth-gray-100:     #f3f4f6;
+$slb-auth-gray-200:     #e5e7eb;
+$slb-auth-gray-400:     #9ca3af;
+$slb-auth-gray-500:     #6b7280;
+$slb-auth-gray-700:     #374151;
+$slb-auth-gray-900:     #111827;
+
+$slb-auth-error:        #ef4444;
+$slb-auth-error-light:  #fef2f2;
+$slb-auth-error-border: #fca5a5;
+
+$slb-auth-radius-sm:    6px;
+$slb-auth-radius-md:    10px;
+$slb-auth-radius-lg:    16px;
+
+$slb-auth-transition:   0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+$bp-lg: 1024px;
+$bp-sm: 640px;
+$bp-xs: 375px;
+
+// ─── Root — white background ───────────────────────────────────────────────────
+.slb-auth {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: $slb-auth-white;
+
+  // ─── Left panel — dark gradient ────────────────────────────────────────────
+  &__panel {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 0 0 420px;
+    padding: 52px 52px 60px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+      160deg,
+      $slb-auth-indigo-900 0%,
+      $slb-auth-indigo-800 50%,
+      $slb-auth-purple 100%
+    );
+
+    @media (min-width: $bp-lg) {
+      display: flex;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -140px;
+      right: -140px;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background: $slb-auth-white-08;
+      pointer-events: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -80px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      pointer-events: none;
+    }
+  }
+
+  &__panel-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: $slb-auth-radius-sm;
+    background: $slb-auth-white-18;
+    border: 1px solid $slb-auth-white-25;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 800;
+    color: $slb-auth-white;
+    letter-spacing: -1px;
+    flex-shrink: 0;
+  }
+
+  &__brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: $slb-auth-white;
+    letter-spacing: -0.02em;
+  }
+
+  &__panel-copy {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__panel-headline {
+    font-size: clamp(28px, 2.6vw, 40px);
+    font-weight: 800;
+    color: $slb-auth-white;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 0 0 16px;
+  }
+
+  &__panel-sub {
+    font-size: 14px;
+    color: $slb-auth-white-60;
+    line-height: 1.65;
+    max-width: 280px;
+    margin: 0;
+  }
+
+  &__panel-dots {
+    display: grid;
+    grid-template-columns: repeat(3, 8px);
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__panel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $slb-auth-white-18;
+  }
+
+  // ─── Right form column — white ─────────────────────────────────────────────
+  &__form-col {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    background: $slb-auth-white;
+
+    @media (min-width: $bp-sm) {
+      padding: 48px 40px;
+    }
+
+    @media (min-width: $bp-lg) {
+      padding: 48px 72px;
+    }
+  }
+
+  &__form-wrap {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  // ─── Mobile brand ──────────────────────────────────────────────────────────
+  &__mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+
+    @media (min-width: $bp-lg) {
+      display: none;
+    }
+  }
+
+  &__mobile-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: $slb-auth-radius-sm;
+    background: $slb-auth-indigo-500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: $slb-auth-white;
+    flex-shrink: 0;
+  }
+
+  &__mobile-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: $slb-auth-gray-900;
+    letter-spacing: -0.02em;
+  }
+
+  // ─── Alert ─────────────────────────────────────────────────────────────────
+  &__alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: $slb-auth-error-light;
+    border: 1px solid $slb-auth-error-border;
+    border-radius: $slb-auth-radius-md;
+    font-size: 13px;
+    color: $slb-auth-error;
+    margin-bottom: 16px;
+
+    i:first-child { flex-shrink: 0; margin-top: 1px; }
+    span { flex: 1; line-height: 1.5; }
+  }
+
+  &__alert-close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    font-size: 14px;
+    opacity: 0.7;
+    flex-shrink: 0;
+    transition: opacity $slb-auth-transition;
+    &:hover { opacity: 1; }
+  }
+
+  // ─── Form ──────────────────────────────────────────────────────────────────
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__field-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+
+    @media (max-width: $bp-xs) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  &__forgot {
+    font-size: 12px;
+    font-weight: 500;
+    color: $slb-auth-indigo-500;
+    text-decoration: none;
+    transition: color $slb-auth-transition;
+    &:hover { color: $slb-auth-indigo-600; }
+  }
+
+  // ─── Divider ───────────────────────────────────────────────────────────────
+  &__or-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: $slb-auth-gray-200;
+    }
+
+    span {
+      font-size: 12px;
+      color: $slb-auth-gray-400;
+      white-space: nowrap;
+    }
+  }
+
+  // ─── Social grid ───────────────────────────────────────────────────────────
+  &__social {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+
+// ─── SlbTab auth variant override → dark tokens for white bg ─────────────────
+.slb-auth {
+  .slb-tab--auth {
+    .slb-tab__list {
+      background: $slb-auth-gray-100;
+      border: 1px solid $slb-auth-gray-200;
+      border-radius: $slb-auth-radius-md;
+      width: 100%;
+    }
+
+    .slb-tab__btn {
+      color: $slb-auth-gray-500;
+      font-size: 13px;
+
+      &:hover:not(.slb-tab__btn--disabled):not(.slb-tab__btn--active) {
+        color: $slb-auth-gray-700;
+        background: rgba(0, 0, 0, 0.04);
+      }
+
+      &.slb-tab__btn--active {
+        background: $slb-auth-white;
+        color: $slb-auth-indigo-500;
+        font-weight: 600;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    .slb-tab__panel {
+      padding-top: 20px;
+    }
+  }
+}
+
+// ─── Transitions ──────────────────────────────────────────────────────────────
+.slb-auth-fade-enter-active,
+.slb-auth-fade-leave-active { transition: opacity 0.18s ease; }
+.slb-auth-fade-enter-from,
+.slb-auth-fade-leave-to     { opacity: 0; }
+
+.slb-auth-slide-enter-active,
+.slb-auth-slide-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.slb-auth-slide-enter-from   { opacity: 0; transform: translateX(8px); }
+.slb-auth-slide-leave-to     { opacity: 0; transform: translateX(-8px); }

@@ -1,0 +1,117 @@
+// ─── Colors ───────────────────────────────────────────────────────────────────
+$slb-ui-primary:        #6366f1;
+$slb-ui-primary-dark:   #4f46e5;
+$slb-ui-primary-light:  #eef2ff;
+$slb-ui-primary-ring:   rgba(99, 102, 241, 0.18);
+
+$slb-ui-success:        #10b981;
+$slb-ui-success-light:  #ecfdf5;
+$slb-ui-success-ring:   rgba(16, 185, 129, 0.18);
+
+$slb-ui-warning:        #f59e0b;
+$slb-ui-warning-light:  #fffbeb;
+$slb-ui-warning-ring:   rgba(245, 158, 11, 0.18);
+
+$slb-ui-error:          #ef4444;
+$slb-ui-error-light:    #fef2f2;
+$slb-ui-error-ring:     rgba(239, 68, 68, 0.18);
+
+$slb-ui-white:          #ffffff;
+$slb-ui-gray-50:        #f9fafb;
+$slb-ui-gray-100:       #f3f4f6;
+$slb-ui-gray-200:       #e5e7eb;
+$slb-ui-gray-300:       #d1d5db;
+$slb-ui-gray-400:       #9ca3af;
+$slb-ui-gray-500:       #6b7280;
+$slb-ui-gray-600:       #4b5563;
+$slb-ui-gray-700:       #374151;
+$slb-ui-gray-800:       #1f2937;
+$slb-ui-gray-900:       #111827;
+
+// ─── Typography ───────────────────────────────────────────────────────────────
+$slb-ui-font:           inherit;
+$slb-ui-font-xs:        11px;
+$slb-ui-font-sm:        12px;
+$slb-ui-font-md:        13px;
+$slb-ui-font-base:      14px;
+$slb-ui-font-lg:        15px;
+
+$slb-ui-fw-normal:      400;
+$slb-ui-fw-medium:      500;
+$slb-ui-fw-semibold:    600;
+
+// ─── Spacing ──────────────────────────────────────────────────────────────────
+$slb-ui-space-1:  2px;
+$slb-ui-space-2:  4px;
+$slb-ui-space-3:  6px;
+$slb-ui-space-4:  8px;
+$slb-ui-space-5:  10px;
+$slb-ui-space-6:  12px;
+$slb-ui-space-8:  16px;
+$slb-ui-space-10: 20px;
+
+// ─── Border ───────────────────────────────────────────────────────────────────
+$slb-ui-border:         $slb-ui-gray-200;
+$slb-ui-border-hover:   $slb-ui-gray-300;
+$slb-ui-radius-sm:      4px;
+$slb-ui-radius-md:      8px;
+$slb-ui-radius-lg:      10px;
+$slb-ui-radius-full:    9999px;
+
+// ─── Heights (size scale) ─────────────────────────────────────────────────────
+$slb-ui-height-sm:  32px;
+$slb-ui-height-md:  38px;
+$slb-ui-height-lg:  44px;
+
+// ─── Transitions ──────────────────────────────────────────────────────────────
+$slb-ui-ease:      cubic-bezier(0.4, 0, 0.2, 1);
+$slb-ui-duration:  0.18s;
+$slb-ui-transition: $slb-ui-duration $slb-ui-ease;
+
+// ─── Shadows ──────────────────────────────────────────────────────────────────
+$slb-ui-shadow-sm:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+$slb-ui-shadow-md:  0 4px 12px rgba(0,0,0,.10);
+$slb-ui-shadow-lg:  0 8px 24px rgba(0,0,0,.14);
+
+// ─── Mixins ───────────────────────────────────────────────────────────────────
+
+// Render the correct border/ring/icon color per variant
+@mixin slb-ui-field-variant($border, $ring, $icon-color) {
+  border-color: $border;
+
+  &:focus-within {
+    border-color: $border;
+    box-shadow: 0 0 0 3px $ring;
+  }
+
+  .slb-ui-field__icon {
+    color: $icon-color;
+  }
+}
+
+// Label above field
+@mixin slb-ui-label {
+  display: block;
+  font-size: $slb-ui-font-sm;
+  font-weight: $slb-ui-fw-medium;
+  color: $slb-ui-gray-700;
+  margin-bottom: $slb-ui-space-2;
+  line-height: 1.4;
+}
+
+// Hint / error text below field
+@mixin slb-ui-sub-text {
+  display: flex;
+  align-items: center;
+  gap: $slb-ui-space-2;
+  font-size: $slb-ui-font-xs;
+  margin-top: $slb-ui-space-2;
+  line-height: 1.4;
+}
+
+// Disabled state
+@mixin slb-ui-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

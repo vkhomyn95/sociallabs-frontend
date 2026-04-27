@@ -1,24 +1,17 @@
-import { Component } from 'vue';
+import type { Component } from 'vue';
 
 export interface MenuItem {
   component: string | Component;
   class: string;
   text?: string;
-  icon?: Component;
+  iconClass?: string;     // Font Awesome клас, напр. 'fa-solid fa-house'
   tooltip?: string;
   hasDropdown?: boolean;
   badge?: string;
   action?: string;
 }
 
-export interface TooltipPosition {
-  show: boolean;
-  text: string;
-  top: string;
-  left: string;
-}
-
-export interface TooltipProps {
+export interface TooltipState {
   show: boolean;
   text: string;
   targetElement: HTMLElement | null;

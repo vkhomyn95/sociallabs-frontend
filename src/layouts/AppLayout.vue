@@ -1,28 +1,31 @@
-<template>
-  <div class="app-layout">
-    <Sidebar/>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <slot></slot>
-    </main>
-  </div>
-</template>
-
 <script setup lang="ts">
 import Sidebar from '@/components/sidebar/Sidebar.vue'
 </script>
 
-<style scoped>
-.app-layout {
+<template>
+  <div class="slb-app-layout">
+    <Sidebar class="slb-app-layout__sidebar" />
+    <main class="slb-app-layout__main">
+      <slot />
+    </main>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.slb-app-layout {
   display: flex;
   height: 100vh;
   overflow: hidden;
-}
 
-.main-content {
-  flex: 1;
-  overflow: auto;
-  background: #f9fafb;
+  &__sidebar {
+    flex-shrink: 0;
+  }
+
+  &__main {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--gray-50);
+  }
 }
 </style>

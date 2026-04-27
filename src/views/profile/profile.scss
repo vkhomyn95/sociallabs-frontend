@@ -1,0 +1,384 @@
+@use '../../components/ui/variables' as *;
+
+// ─── Local variables ───────────────────────────────────────────────────────────
+$slb-profile-radius:       $slb-ui-radius-lg;
+$slb-profile-card-bg:      $slb-ui-white;
+$slb-profile-card-border:  $slb-ui-gray-200;
+$slb-profile-card-shadow:  $slb-ui-shadow-sm;
+$slb-profile-gap:          16px;
+
+$slb-profile-avatar-size:  64px;
+$slb-profile-avatar-bg:    $slb-ui-primary;
+
+$slb-profile-meter-track:  $slb-ui-gray-100;
+$slb-profile-meter-fill:   $slb-ui-primary;
+$slb-profile-meter-warn:   $slb-ui-warning;
+$slb-profile-meter-danger: $slb-ui-error;
+
+// Breakpoints — враховують що сайдбар займає місце
+$bp-sm: 640px;
+$bp-lg: 1024px;
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+.slb-profile {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 16px 12px 32px;
+
+  @media (min-width: $bp-sm) { padding: 20px 20px 40px; }
+  @media (min-width: $bp-lg) { padding: 28px 32px 48px; }
+
+  // ── Header ──────────────────────────────────────────────────────────────
+  &__header {
+    margin-bottom: 16px;
+
+    @media (min-width: $bp-sm) { margin-bottom: 20px; }
+    @media (min-width: $bp-lg) { margin-bottom: 24px; }
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $slb-ui-gray-900;
+    letter-spacing: -0.02em;
+    margin: 0 0 3px;
+    white-space: nowrap;
+
+    @media (min-width: $bp-sm) { font-size: 20px; }
+    @media (min-width: $bp-lg) { font-size: 22px; }
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: $slb-ui-gray-500;
+    margin: 0;
+    line-height: 1.5;
+
+    @media (min-width: $bp-sm) { font-size: 13px; }
+  }
+
+  // ── Layout grid ─────────────────────────────────────────────────────────
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $slb-profile-gap;
+    align-items: start;
+
+    @media (min-width: $bp-lg) {
+      grid-template-columns: 260px 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 1200px) {
+      grid-template-columns: 300px 1fr;
+    }
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: $slb-profile-gap;
+
+    @media (min-width: $bp-lg) { gap: 20px; }
+  }
+
+  // ── Card base ───────────────────────────────────────────────────────────
+  &__card {
+    background: $slb-profile-card-bg;
+    border: 1px solid $slb-profile-card-border;
+    border-radius: $slb-profile-radius;
+    padding: 14px;
+    box-shadow: $slb-profile-card-shadow;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    @media (min-width: $bp-sm) { padding: 16px; gap: 14px; }
+    @media (min-width: $bp-lg) { padding: 20px; gap: 16px; }
+
+    &--danger {
+      border-color: rgba($slb-profile-meter-danger, 0.25);
+      background: rgba($slb-profile-meter-danger, 0.02);
+    }
+
+    // ── Avatar card: row on mobile → column on desktop ─────────────────
+    &--avatar {
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+
+      @media (min-width: $bp-lg) {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  }
+
+  &__card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid $slb-ui-gray-100;
+  }
+
+  &__card-icon {
+    font-size: 14px;
+    color: $slb-ui-primary;
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+
+    &--danger { color: $slb-profile-meter-danger; }
+  }
+
+  &__card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $slb-ui-gray-800;
+    margin: 0;
+
+    @media (min-width: $bp-sm) { font-size: 14px; }
+  }
+
+  // ── Avatar ──────────────────────────────────────────────────────────────
+  &__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: $slb-profile-avatar-size;
+    height: $slb-profile-avatar-size;
+  }
+
+  &__avatar {
+    width: $slb-profile-avatar-size;
+    height: $slb-profile-avatar-size;
+    border-radius: 50%;
+    background: $slb-profile-avatar-bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: $slb-ui-white;
+  }
+
+  &__avatar-btn {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: $slb-ui-gray-700;
+    border: 2px solid $slb-ui-white;
+    color: $slb-ui-white;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background $slb-ui-transition;
+
+    &:hover { background: $slb-ui-gray-900; }
+  }
+
+  // Info block (name + email + badge)
+  &__avatar-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    @media (min-width: $bp-lg) {
+      flex: unset;
+      width: 100%;
+      align-items: center;
+      text-align: center;
+    }
+  }
+
+  &__avatar-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: $slb-ui-gray-900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__avatar-email {
+    font-size: 11px;
+    color: $slb-ui-gray-500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // ── Plan badge ──────────────────────────────────────────────────────────
+  &__plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: $slb-ui-radius-full;
+    background: $slb-ui-primary-light;
+    color: $slb-ui-primary;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    align-self: flex-start;
+    margin-top: 2px;
+
+    @media (min-width: $bp-lg) { align-self: center; }
+  }
+
+  // ── Renews ──────────────────────────────────────────────────────────────
+  &__renews {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $slb-ui-gray-500;
+    margin: 0;
+    background: $slb-ui-gray-50;
+    border: 1px solid $slb-ui-gray-100;
+    border-radius: $slb-ui-radius-md;
+    padding: 7px 10px;
+
+    @media (min-width: $bp-sm) { font-size: 12px; }
+
+    i { color: $slb-ui-gray-400; flex-shrink: 0; }
+    strong { color: $slb-ui-gray-700; font-weight: 600; }
+  }
+
+  // ── Meter ───────────────────────────────────────────────────────────────
+  &__meter {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  &__meter-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__meter-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $slb-ui-gray-700;
+    white-space: nowrap;
+
+    @media (min-width: $bp-sm) { font-size: 12px; }
+
+    i { font-size: 10px; color: $slb-ui-gray-400; }
+  }
+
+  &__meter-count {
+    font-size: 11px;
+    color: $slb-ui-gray-500;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    @media (min-width: $bp-sm) { font-size: 12px; }
+
+    span { font-weight: 600; color: $slb-ui-gray-800; }
+
+    &--danger { color: $slb-profile-meter-danger !important; }
+  }
+
+  &__meter-track {
+    height: 5px;
+    border-radius: $slb-ui-radius-full;
+    background: $slb-profile-meter-track;
+    overflow: hidden;
+  }
+
+  &__meter-bar {
+    height: 100%;
+    border-radius: $slb-ui-radius-full;
+    background: $slb-profile-meter-fill;
+    transition: width 0.6s $slb-ui-ease;
+
+    &--warning { background: $slb-profile-meter-warn; }
+    &--danger  { background: $slb-profile-meter-danger; }
+  }
+
+  &__meter-sub {
+    font-size: 10px;
+    color: $slb-ui-gray-400;
+
+    @media (min-width: $bp-sm) { font-size: 11px; }
+  }
+
+  // ── Forms ───────────────────────────────────────────────────────────────
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    @media (min-width: $bp-sm) { gap: 14px; }
+  }
+
+  // 1 колонка на мобільному, 2 колонки на sm+
+  &__field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    @media (min-width: $bp-sm) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 2px;
+  }
+
+  // ── Saved badge ─────────────────────────────────────────────────────────
+  &__saved-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $slb-ui-success;
+
+    i { font-size: 11px; }
+  }
+
+  // ── Danger zone ─────────────────────────────────────────────────────────
+  &__danger-text {
+    font-size: 12px;
+    color: $slb-ui-gray-500;
+    margin: 0;
+    line-height: 1.55;
+
+    @media (min-width: $bp-sm) { font-size: 13px; }
+  }
+
+  &__danger-btn {
+    border-color: rgba($slb-profile-meter-danger, 0.4) !important;
+    color: $slb-profile-meter-danger !important;
+
+    &:hover { background: rgba($slb-profile-meter-danger, 0.06) !important; }
+  }
+}
+
+// ─── Transitions ──────────────────────────────────────────────────────────────
+.slb-profile-fade-enter-active,
+.slb-profile-fade-leave-active { transition: opacity 0.2s ease; }
+.slb-profile-fade-enter-from,
+.slb-profile-fade-leave-to     { opacity: 0; }

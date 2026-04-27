@@ -110,17 +110,22 @@ export const NodeColors = {
 export const CategoryDisplay: Record<NodeCategory, { icon: string; color: string }> = {
   [NodeCategory.COMMUNICATION]: {
     icon: 'fas fa-comments',
-    color: '#0088cc'
+    color: '#0088cc',
   },
   [NodeCategory.LOGIC]: {
     icon: 'fas fa-code-branch',
-    color: '#ef4444'
+    color: '#ef4444',
+  },
+  [NodeCategory.CORE]: {           // ← був відсутній
+    icon: 'fas fa-globe',
+    color: '#2563eb',
   },
   [NodeCategory.AI]: {
     icon: 'fas fa-robot',
-    color: '#7c3aed'
-  }
-};
+    color: '#7c3aed',
+  },
+}
+
 
 // ========== Helper Functions ==========
 

@@ -1,0 +1,213 @@
+@use '../variables' as *;
+@use "sass:color";
+
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
+.slb-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $slb-ui-space-3;
+  border: 1.5px solid transparent;
+  border-radius: $slb-ui-radius-md;
+  font-family: $slb-ui-font;
+  font-weight: $slb-ui-fw-medium;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  outline: none;
+  transition:
+    background $slb-ui-transition,
+    border-color $slb-ui-transition,
+    color $slb-ui-transition,
+    box-shadow $slb-ui-transition,
+    transform $slb-ui-duration $slb-ui-ease;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px $slb-ui-primary-ring;
+  }
+
+  &:active:not(.slb-btn--disabled) {
+    transform: translateY(1px);
+  }
+
+  // ─── Sizes ─────────────────────────────────────────────────────────────────
+  &--sm {
+    height: $slb-ui-height-sm;
+    padding: 0 $slb-ui-space-5;
+    font-size: $slb-ui-font-sm;
+    border-radius: $slb-ui-radius-sm;
+    gap: $slb-ui-space-2;
+
+    i { font-size: 12px; }
+  }
+
+  &--md {
+    height: $slb-ui-height-md;
+    padding: 0 $slb-ui-space-8;
+    font-size: $slb-ui-font-base;
+
+    i { font-size: 14px; }
+  }
+
+  &--lg {
+    height: $slb-ui-height-lg;
+    padding: 0 $slb-ui-space-10;
+    font-size: $slb-ui-font-lg;
+    border-radius: $slb-ui-radius-lg;
+
+    i { font-size: 16px; }
+  }
+
+  // ─── Icon-only (square) ────────────────────────────────────────────────────
+  &--icon-only {
+    padding: 0;
+
+    &.slb-btn--sm { width: $slb-ui-height-sm; }
+    &.slb-btn--md { width: $slb-ui-height-md; }
+    &.slb-btn--lg { width: $slb-ui-height-lg; }
+  }
+
+  // ─── Full width ────────────────────────────────────────────────────────────
+  &--full { width: 100%; }
+
+  // ─── Disabled ──────────────────────────────────────────────────────────────
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // ─── Loading overlay ───────────────────────────────────────────────────────
+  &--loading {
+    cursor: wait;
+    pointer-events: none;
+
+    .slb-btn__content { opacity: 0; }
+    .slb-btn__spinner { opacity: 1; }
+  }
+
+  &__content {
+    display: inline-flex;
+    align-items: center;
+    gap: inherit;
+    transition: opacity $slb-ui-transition;
+  }
+
+  &__spinner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity $slb-ui-transition;
+
+    &-ring {
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: slb-btn-spin 0.65s linear infinite;
+      opacity: 0.7;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // VARIANTS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // Primary
+  &--primary {
+    background: $slb-ui-primary;
+    border-color: $slb-ui-primary;
+    color: #fff;
+
+    &:hover:not(.slb-btn--disabled) {
+      background: $slb-ui-primary-dark;
+      border-color: $slb-ui-primary-dark;
+      box-shadow: 0 4px 12px rgba($slb-ui-primary, 0.35);
+    }
+  }
+
+  // Secondary (outlined)
+  &--secondary {
+    background: transparent;
+    border-color: $slb-ui-border;
+    color: $slb-ui-gray-700;
+
+    &:hover:not(.slb-btn--disabled) {
+      background: $slb-ui-gray-50;
+      border-color: $slb-ui-border-hover;
+      color: $slb-ui-gray-900;
+    }
+  }
+
+  // Ghost (no border)
+  &--ghost {
+    background: transparent;
+    border-color: transparent;
+    color: $slb-ui-gray-600;
+
+    &:hover:not(.slb-btn--disabled) {
+      background: $slb-ui-gray-100;
+      color: $slb-ui-gray-900;
+    }
+  }
+
+  // Danger
+  &--danger {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #fff;
+
+    &:hover:not(.slb-btn--disabled) {
+      background: #dc2626;
+      border-color: #dc2626;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px $slb-ui-error-ring;
+    }
+  }
+
+  // Success
+  &--success {
+    background: $slb-ui-success;
+    border-color: $slb-ui-success;
+    color: #fff;
+
+    &:hover:not(.slb-btn--disabled) {
+      background: color.adjust($slb-ui-success, $lightness: -6%);
+      border-color: color.adjust($slb-ui-success, $lightness: -6%);
+      box-shadow: 0 4px 12px rgba($slb-ui-success, 0.35);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px $slb-ui-success-ring;
+    }
+  }
+
+  // ─── White variant (for use on dark/colored backgrounds) ──────────────────
+  &--white {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+
+    &:hover:not(.slb-btn--disabled) {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+@keyframes slb-btn-spin {
+  to { transform: rotate(360deg); }
+}

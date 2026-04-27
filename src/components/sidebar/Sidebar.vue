@@ -1,20 +1,19 @@
 <template>
   <div :class="sidebarClasses">
-    <div class="sidebar__header">
-      <div class="sidebar__header-title">SocialLabs</div>
-      <div class="sidebar__collapse-btn" @click.stop="toggleCollapse">
-        <CollapseIcon />
-      </div>
+    <div class="slb-sidebar__header">
+      <div class="slb-sidebar__header-title">SocialLabs</div>
+      <button class="slb-sidebar__collapse-btn" @click.stop="toggleCollapse">
+        <i class="fa-solid fa-bars"></i>
+      </button>
     </div>
 
-    <div class="sidebar__content" ref="sidebarContentRef">
+    <div class="slb-sidebar__content" ref="sidebarContentRef">
       <component
         v-for="(item, index) in menuItems"
         :is="item.component"
         :key="index"
         :class="getItemClass(item)"
-        @mouseenter="(e: MouseEvent) => handleMouseEnter(e, item)"
-        @mouseleave="handleMouseLeave"
+        @click="handleItemClick(item)"
       >
         <SidebarItem
           :item="item"
@@ -25,79 +24,50 @@
     </div>
 
     <div
-      class="sidebar__footer"
-      @mouseenter="(e: MouseEvent) => handleMouseEnter(e, { tooltip: 'User Profile' })"
-      @mouseleave="handleMouseLeave"
+      class="slb-sidebar__footer"
     >
-      <div class="sidebar__footer__profiler">
-        <div class="sidebar__user-avatar">B</div>
-        <div v-show="!isCollapsed" class="sidebar__user-info">
-          <div class="sidebar__user-name">Volodymyr</div>
-          <div class="sidebar__user-workspace">My Workspace</div>
+      <div class="slb-sidebar__footer-profiler" @click="router.push('/profile')">
+        <div class="slb-sidebar__user-avatar">B</div>
+        <div v-show="!isCollapsed" class="slb-sidebar__user-info">
+          <div class="slb-sidebar__user-name">Volodymyr</div>
+          <div class="slb-sidebar__user-workspace">My Workspace</div>
         </div>
       </div>
-      <button v-show="!isCollapsed" class="sidebar__dropdown-toggle">▼</button>
+      <button v-show="!isCollapsed" class="slb-sidebar__dropdown-toggle">
+        <i class="fa-solid fa-chevron-down" />
+      </button>
     </div>
-
-    <Tooltip
-      :show="tooltipState.show"
-      :text="tooltipState.text"
-      :target-element="tooltipState.targetElement"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { ref } from 'vue'
+import { useSidebar } from '@/components/sidebar/useSidebar'
 import { useMenuItems } from '@/components/sidebar/useMenuItems'
+import { useAuth } from '@/composables/useAuth'
 import SidebarItem from '@/components/sidebar/SidebarItem.vue'
-import CollapseIcon from '@/components/sidebar/icons/CollapseIcon.vue'
-import type { MenuItem } from './sidebar.types'
-import Tooltip from '@/core/components/Tooltip.vue'
+import type { MenuItem } from './sidebar.ts'
+import { useRouter } from 'vue-router'
 
-const isCollapsed = ref<boolean>(false);
+const router = useRouter()
+
 const sidebarContentRef = ref<HTMLElement | null>(null);
 
-const tooltipState = reactive<{
-  show: boolean;
-  text: string;
-  targetElement: HTMLElement | null;
-}>({
-  show: false,
-  text: '',
-  targetElement: null
-});
-
+const { isCollapsed, sidebarClasses, toggleCollapse } = useSidebar();
 const { menuItems } = useMenuItems();
+const { logout } = useAuth();
 
-const sidebarClasses = computed(() => ({
-  sidebar: true,
-  'sidebar--collapsed': isCollapsed.value
-}));
+const getItemClass = (item: MenuItem): string => item.class || '';
 
-const getItemClass = (item: MenuItem): string => {
-  return item.class || '';
-};
-
-const toggleCollapse = (): void => {
-  isCollapsed.value = !isCollapsed.value;
-};
-
-const handleMouseEnter = (event: MouseEvent, item: MenuItem | { tooltip?: string }): void => {
-  if (isCollapsed.value && item.tooltip) {
-    tooltipState.show = true;
-    tooltipState.text = item.tooltip;
-    tooltipState.targetElement = event.currentTarget as HTMLElement;
+const handleItemClick = (item: MenuItem): void => {
+  if (item.action === 'logout') {
+    logout();
+  } else {
+    router.push(item.action);
   }
-};
-
-const handleMouseLeave = (): void => {
-  tooltipState.show = false;
-  tooltipState.text = '';
-  tooltipState.targetElement = null;
 };
 </script>
 
 <style scoped lang="scss">
-@import '/src/assets/sidebar';
+@use './sidebar';
 </style>

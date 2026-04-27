@@ -1,0 +1,92 @@
+@use '../variables' as *;
+@use "sass:color";
+
+.slb-toast-provider {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 3000;
+  pointer-events: none;
+}
+
+.slb-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: $slb-ui-radius-md;
+  box-shadow: $slb-ui-shadow-md;
+  font-size: $slb-ui-font-base;
+  font-weight: $slb-ui-fw-medium;
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 380px;
+  cursor: default;
+
+  &__icon { font-size: 15px; flex-shrink: 0; }
+
+  &__message { flex: 1; line-height: 1.45; }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    padding: 0;
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: opacity $slb-ui-transition;
+    display: flex;
+    align-items: center;
+
+    &:hover { opacity: 1; }
+  }
+
+  // ─── Variants ───────────────────────────────────────────────────────────────
+  &--success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  &--error {
+    background: $slb-ui-error-light;
+    color: color.adjust(#ef4444, $lightness: 18%);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+  }
+
+  &--warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+  }
+
+  &--info {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+  }
+}
+
+// ─── Transition ───────────────────────────────────────────────────────────────
+.slb-toast-enter-active {
+  transition: opacity 0.22s $slb-ui-ease, transform 0.22s $slb-ui-ease;
+}
+.slb-toast-leave-active {
+  transition: opacity 0.18s $slb-ui-ease, transform 0.18s $slb-ui-ease;
+}
+.slb-toast-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.slb-toast-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.slb-toast-move {
+  transition: transform 0.22s $slb-ui-ease;
+}

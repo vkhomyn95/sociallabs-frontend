@@ -170,6 +170,16 @@ export const actions = {
     }
   },
 
+  async SETUP_WORKFLOW(this: WorkflowState): Promise<boolean> {
+    this.workflow = {
+      name: 'New Workflow',
+      description: '',
+      active: false,
+      nodes: [],
+      connections: [],
+    }
+  },
+
   // Local actions (не API calls)
   ADD_NODE(this: WorkflowState, node: NodeInstance): void {
     if (this.workflow) {
@@ -178,11 +188,10 @@ export const actions = {
   },
 
   UPDATE_NODE(this: WorkflowState, nodeId: string, updates: Partial<NodeInstance>): void {
-    console.log(updates, nodeId)
     if (!this.workflow) return;
 
     const index = this.workflow.nodes.findIndex(n => n.nodeId === nodeId);
-    console.log(index)
+
     if (index !== -1) {
       this.workflow.nodes[index] = {
         ...this.workflow.nodes[index],

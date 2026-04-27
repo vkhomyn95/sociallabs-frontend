@@ -1,0 +1,122 @@
+@use '../variables' as *;
+
+.slb-checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: $slb-ui-space-4;
+  cursor: pointer;
+  user-select: none;
+  width: fit-content;
+
+  &--disabled {
+    @include slb-ui-disabled;
+  }
+
+  // ─── Hidden native input ─────────────────────────────────────────────────────
+  &__native {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  // ─── Visual box ──────────────────────────────────────────────────────────────
+  &__box {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    margin-top: 1px;        // optical alignment with label text
+    background: $slb-ui-white;
+    border: 1.5px solid $slb-ui-border;
+    border-radius: $slb-ui-radius-sm;
+    transition:
+      background $slb-ui-transition,
+      border-color $slb-ui-transition,
+      box-shadow $slb-ui-transition;
+
+    i {
+      font-size: 10px;
+      color: $slb-ui-white;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity $slb-ui-transition, transform $slb-ui-transition;
+    }
+
+    .slb-checkbox:hover & {
+      border-color: $slb-ui-primary;
+    }
+  }
+
+  // ─── Checked state ───────────────────────────────────────────────────────────
+  &--checked &__box {
+    background: $slb-ui-primary;
+    border-color: $slb-ui-primary;
+
+    i {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  // ─── Indeterminate state ─────────────────────────────────────────────────────
+  &--indeterminate &__box {
+    background: $slb-ui-primary;
+    border-color: $slb-ui-primary;
+
+    i { opacity: 1; transform: scale(1); }
+  }
+
+  // ─── Focus ring ──────────────────────────────────────────────────────────────
+  &:focus-within &__box {
+    box-shadow: 0 0 0 3px $slb-ui-primary-ring;
+    border-color: $slb-ui-primary;
+  }
+
+  // ─── Error state ─────────────────────────────────────────────────────────────
+  &--error &__box {
+    border-color: $slb-ui-error;
+
+    .slb-checkbox:hover & { border-color: $slb-ui-error; }
+  }
+
+  &--error.slb-checkbox--checked &__box {
+    background: $slb-ui-error;
+    border-color: $slb-ui-error;
+  }
+
+  &--error:focus-within &__box {
+    box-shadow: 0 0 0 3px $slb-ui-error-ring;
+    border-color: $slb-ui-error;
+  }
+
+  // ─── Label & description ─────────────────────────────────────────────────────
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $slb-ui-space-1;
+  }
+
+  &__label {
+    font-size: $slb-ui-font-base;
+    font-weight: $slb-ui-fw-medium;
+    color: $slb-ui-gray-800;
+    line-height: 1.45;
+  }
+
+  &__description {
+    font-size: $slb-ui-font-sm;
+    color: $slb-ui-gray-500;
+    line-height: 1.5;
+  }
+
+  &__error {
+    @include slb-ui-sub-text;
+    color: $slb-ui-error;
+    margin-top: $slb-ui-space-1;
+  }
+}
