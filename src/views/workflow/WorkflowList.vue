@@ -76,13 +76,6 @@ const formatDate = (date?: string): string => {
       </div>
       <h2 class="slb-wf-list__empty-title">No workflows yet</h2>
       <p class="slb-wf-list__empty-sub">Create your first workflow to get started</p>
-      <SlbButton
-        variant="primary"
-        size="md"
-        @click="createWorkflow"
-      >
-        Create workflow
-      </SlbButton>
     </div>
 
     <!-- Grid -->
