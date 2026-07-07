@@ -1,0 +1,41 @@
+// Shared styles for client-trigger tabs (reuse bot-trigger pattern)
+.slb-tg-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.slb-tg-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.slb-tg-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.slb-tg-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 4px 0;
+}
+
+.slb-tg-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #eef2ff;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #4338ca;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; }
+}

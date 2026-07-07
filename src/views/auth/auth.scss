@@ -96,24 +96,8 @@ $bp-xs: 375px;
     z-index: 1;
   }
 
-  &__brand-logo {
-    width: 38px;
-    height: 38px;
-    border-radius: $slb-auth-radius-sm;
-    background: $slb-auth-white-18;
-    border: 1px solid $slb-auth-white-25;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 19px;
-    font-weight: 800;
-    color: $slb-auth-white;
-    letter-spacing: -1px;
-    flex-shrink: 0;
-  }
-
   &__brand-name {
-    font-size: 17px;
+    font-size: 32px;
     font-weight: 700;
     color: $slb-auth-white;
     letter-spacing: -0.02em;

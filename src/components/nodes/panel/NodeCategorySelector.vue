@@ -14,12 +14,12 @@
         <span class="slb-node-category-selector__item-label">
           {{ formatCategory(category) }}
         </span>
-        <i class="fas fa-chevron-right slb-node-category-selector__item-arrow"></i>
+        <i class="fa-solid fa-chevron-right slb-node-category-selector__item-arrow"></i>
       </button>
     </div>
 
     <div v-if="categories.length === 0" class="slb-node-panel__state slb-node-panel__state--empty">
-      <i class="fas fa-inbox"></i>
+      <i class="fa-solid fa-inbox"></i>
       <p>No categories available</p>
     </div>
   </div>

@@ -116,7 +116,7 @@ function onMouseDown(event: MouseEvent) {
 
 .slb_sh__line {
   width: 50px;
-  height: 2px;
+  height: 1px;
   flex-shrink: 0;
   background: #e5e7eb;
 }

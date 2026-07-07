@@ -78,7 +78,6 @@ onMounted(() => clearErrors())
     <!-- ── Left decorative panel ─────────────────────────────────────────── -->
     <div class="slb-auth__panel" aria-hidden="true">
       <div class="slb-auth__panel-brand">
-        <div class="slb-auth__brand-logo">S</div>
         <span class="slb-auth__brand-name">SocialLabs</span>
       </div>
 

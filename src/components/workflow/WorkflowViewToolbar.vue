@@ -31,7 +31,7 @@ const {loading, workflow} = storeToRefs(workflowStore);
         v-if="workflow"
         class="slb-wf-toolbar__name"
         v-model="workflow!.name"
-        placeholder="Workflow Name"
+        placeholder="Workflow name"
         @input="emit('update:name', ($event.target as HTMLInputElement).value)"
         @blur="emit('update:name', ($event.target as HTMLInputElement).value)"
       />

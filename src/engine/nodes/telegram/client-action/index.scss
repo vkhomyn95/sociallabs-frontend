@@ -1,0 +1,93 @@
+// Shared styles for client-action tabs
+.slb-tg-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.slb-tg-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.slb-tg-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.slb-tg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slb-tg-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &__required { color: #ef4444; }
+}
+
+.slb-tg-textarea {
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+  background: #ffffff;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.6;
+  transition: border-color 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+  }
+
+  &::placeholder { color: #9ca3af; }
+}
+
+.slb-tg-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.slb-tg-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.slb-tg-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 4px 0;
+}
+
+.slb-tg-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #eef2ff;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #4338ca;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; }
+}

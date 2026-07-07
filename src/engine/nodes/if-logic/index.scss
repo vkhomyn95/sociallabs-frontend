@@ -1,0 +1,176 @@
+@use '../../../components/ui/variables' as *;
+
+// ─── Conditions editor ────────────────────────────────────────────────────────
+.if-params {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__section-title {
+    font-size: 13px;
+    font-weight: $slb-ui-fw-semibold;
+    color: $slb-ui-gray-800;
+    margin: 0 0 4px;
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: $slb-ui-gray-500;
+    line-height: 1.5;
+    margin: 0 0 12px;
+
+    strong { color: $slb-ui-gray-700; font-weight: $slb-ui-fw-semibold; }
+  }
+}
+
+// ─── Combine toggle ───────────────────────────────────────────────────────────
+.if-combine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+
+  &__btn {
+    padding: 4px 14px;
+    border-radius: $slb-ui-radius-sm;
+    border: 1px solid $slb-ui-gray-200;
+    background: transparent;
+    font-size: 11px;
+    font-weight: $slb-ui-fw-semibold;
+    cursor: pointer;
+    color: $slb-ui-gray-500;
+    font-family: inherit;
+    transition: all $slb-ui-transition;
+
+    &:not(.if-combine__btn--active):hover {
+      background: $slb-ui-gray-100;
+    }
+
+    &--active {
+      background: $slb-ui-primary;
+      color: $slb-ui-white;
+      border-color: $slb-ui-primary;
+    }
+  }
+
+  &__hint {
+    font-size: 11px;
+    color: $slb-ui-gray-400;
+    margin-left: 4px;
+  }
+}
+
+// ─── Condition row ────────────────────────────────────────────────────────────
+.if-condition {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+
+  &__badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: $slb-ui-gray-100;
+    font-size: 10px;
+    font-weight: $slb-ui-fw-semibold;
+    color: $slb-ui-gray-500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__expr {
+    flex: 2;
+    min-width: 0;
+  }
+
+  &__select {
+    flex: 1.5;
+    min-width: 0;
+    padding: 7px 8px;
+    border: 1.5px solid $slb-ui-gray-200;
+    border-radius: $slb-ui-radius-md;
+    font-size: 12px;
+    font-family: inherit;
+    color: $slb-ui-gray-700;
+    background: $slb-ui-white;
+    cursor: pointer;
+    transition: border-color $slb-ui-transition;
+
+    &:focus {
+      outline: none;
+      border-color: $slb-ui-primary;
+    }
+  }
+
+  &__value {
+    flex: 1.5;
+    min-width: 0;
+  }
+
+  &__spacer {
+    flex: 1.5;
+  }
+
+  &__remove {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border: 1px solid $slb-ui-gray-200;
+    border-radius: $slb-ui-radius-sm;
+    background: transparent;
+    color: $slb-ui-gray-400;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    transition: all $slb-ui-transition;
+
+    &:hover {
+      background: $slb-ui-error-light;
+      border-color: $slb-ui-error;
+      color: $slb-ui-error;
+    }
+  }
+}
+
+// ─── Add button ───────────────────────────────────────────────────────────────
+.if-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1.5px dashed $slb-ui-gray-200;
+  border-radius: $slb-ui-radius-md;
+  background: transparent;
+  color: $slb-ui-gray-400;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all $slb-ui-transition;
+  align-self: flex-start;
+  margin-top: 2px;
+
+  &:hover {
+    border-color: $slb-ui-primary;
+    color: $slb-ui-primary;
+    background: $slb-ui-primary-light;
+  }
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+.if-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: $slb-ui-radius-md;
+  background: $slb-ui-gray-50;
+  color: $slb-ui-gray-400;
+  font-size: 12px;
+
+  i { color: $slb-ui-gray-300; }
+}

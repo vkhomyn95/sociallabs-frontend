@@ -1,0 +1,110 @@
+.slb-ms-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.slb-ms-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.slb-ms-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.slb-ms-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 4px 0;
+}
+
+.slb-ms-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #eff6ff;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #1d4ed8;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; color: #0866ff; }
+}
+
+.slb-ms-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fffbeb;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #92400e;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; }
+}
+
+// Event cards
+.slb-ms-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slb-ms-event-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+
+  &:hover { border-color: #0866ff; }
+
+  &--active {
+    border-color: #0866ff;
+    background: #eff6ff;
+  }
+
+  &__check {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid #d1d5db;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+
+    .slb-ms-event-card--active & {
+      border-color: #0866ff;
+      background: #0866ff;
+    }
+
+    i {
+      font-size: 9px;
+      color: #fff;
+      display: none;
+      .slb-ms-event-card--active & { display: block; }
+    }
+  }
+
+  &__body  { flex: 1; min-width: 0; }
+  &__title { font-size: 13px; font-weight: 500; color: #111827; margin-bottom: 2px; }
+  &__desc  { font-size: 11px; color: #6b7280; line-height: 1.4; }
+}

@@ -21,13 +21,6 @@
   flex-shrink: 0;
 }
 
-.slb-node-panel__header-top {
-  display: flex;
-  align-items: center;
-  gap: $slb-ui-space-4;
-  min-height: 28px;
-}
-
 .slb-node-panel__title {
   margin: 0;
   font-size: $slb-ui-font-base;

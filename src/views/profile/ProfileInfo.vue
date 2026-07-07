@@ -73,7 +73,7 @@ const handleSubmit = async () => {
             <i class="fa-solid fa-check"></i> Saved
           </span>
         </Transition>
-        <SlbButton type="submit" variant="primary" size="md" :loading="saving" :disabled="saving">
+        <SlbButton type="submit" variant="primary" size="sm" :loading="saving" :disabled="saving">
           Save Changes
         </SlbButton>
       </div>

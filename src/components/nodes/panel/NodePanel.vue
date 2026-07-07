@@ -2,16 +2,6 @@
   <div class="slb-node-panel">
     <!-- Header -->
     <div class="slb-node-panel__header">
-      <div class="slb-node-panel__header-top">
-        <SlbButton
-          variant="ghost"
-          size="sm"
-          icon-only
-          :icon-left="canGoBack ? `fas fa-arrow-left`: `fa-solid fa-layer-group`"
-          @click="goBack"
-        />
-        <h3 class="slb-node-panel__title">{{ title }}</h3>
-      </div>
 
       <!-- Breadcrumb (прихований під час пошуку) -->
       <NodePanelBreadcrumb

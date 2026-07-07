@@ -19,7 +19,14 @@ const route = useRoute()
 const router = useRouter()
 const workflowStore = useWorkflowStore()
 const {loading, workflow} = storeToRefs(workflowStore);
-const {FETCH_WORKFLOW_BY_ID, SETUP_WORKFLOW, CREATE_WORKFLOW, UPDATE_WORKFLOW, EXECUTE_WORKFLOW, ADD_NODE} = workflowStore;
+const {
+  FETCH_WORKFLOW_BY_ID,
+  SETUP_WORKFLOW,
+  CREATE_WORKFLOW,
+  UPDATE_WORKFLOW,
+  EXECUTE_WORKFLOW,
+  ADD_NODE
+} = workflowStore;
 const modal = useModal()
 
 const toast = useToast()

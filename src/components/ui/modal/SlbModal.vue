@@ -1,23 +1,21 @@
 <script setup lang="ts">
-
 import type { ModalSize } from '@/stores/modal/types.ts'
+import { ModalType } from '@/stores/modal/types.ts'
 
 interface Props {
-  title?: string
-  size?: ModalSize
-  closable?: boolean
+  title?:           string
+  size?:            ModalSize
+  closable?:        boolean
   closeOnBackdrop?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  size: 'md',
-  closable: true,
-  closeOnBackdrop: true,
+  size:             ModalType.md,
+  closable:         true,
+  closeOnBackdrop:  true,
 })
 
-const emit = defineEmits<{
-  close: []
-}>()
+const emit = defineEmits<{ close: [] }>()
 
 const onBackdropClick = (): void => {
   if (props.closeOnBackdrop) emit('close')
@@ -43,12 +41,11 @@ const onKeydown = (event: KeyboardEvent): void => {
             class="slb-modal"
             :class="`slb-modal--${size}`"
           >
-            <!-- Header -->
-            <div class="slb-modal__header">
+            <!-- Header — hidden for max-size (node editor has its own header) -->
+            <div v-if="size !== ModalType.max" class="slb-modal__header">
               <slot name="header">
                 <h2 v-if="title" class="slb-modal__title">{{ title }}</h2>
               </slot>
-
               <button
                 v-if="closable"
                 type="button"

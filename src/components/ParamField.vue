@@ -14,7 +14,7 @@
     >
       <!-- Expand arrow -->
       <span class="arrow" :class="{ expanded, invisible: !isObject && !isArray }">
-        <i class="fas fa-chevron-right"></i>
+        <i class="fa-solid fa-chevron-right"></i>
       </span>
 
       <!-- Key -->

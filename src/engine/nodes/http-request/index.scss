@@ -1,0 +1,83 @@
+@use '../../../components/ui/variables' as *;
+
+.http-tabs {
+  display: flex;
+  border-bottom: 1px solid $slb-ui-gray-100;
+  background: $slb-ui-gray-50;
+  margin: -20px -20px 20px;
+  padding: 0 4px;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.http-tab {
+  padding: 9px 14px;
+  border: none;
+  background: transparent;
+  color: $slb-ui-gray-500;
+  font-size: 12px;
+  font-weight: $slb-ui-fw-medium;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  font-family: inherit;
+  transition: all $slb-ui-transition;
+
+  &:hover { color: $slb-ui-gray-700; }
+
+  &--active {
+    color: $slb-ui-primary;
+    border-bottom-color: $slb-ui-primary;
+    background: $slb-ui-white;
+  }
+}
+
+// ─── Tab body shared ─────────────────────────────────────────────────────────
+.http-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 $slb-ui-space-5;
+}
+
+.http-indent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 18px;
+  border-left: 2px solid $slb-ui-gray-100;
+}
+
+.http-label {
+  font-size: 12px;
+  font-weight: $slb-ui-fw-medium;
+  color: $slb-ui-gray-700;
+}
+
+.http-code {
+  padding: 10px 12px;
+  border: 1.5px solid $slb-ui-gray-200;
+  border-radius: $slb-ui-radius-md;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: $slb-ui-gray-800;
+  background: $slb-ui-gray-50;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  line-height: 1.5;
+  transition: border-color $slb-ui-transition;
+
+  &:focus {
+    outline: none;
+    border-color: $slb-ui-primary;
+    background: $slb-ui-white;
+    box-shadow: 0 0 0 3px $slb-ui-primary-ring;
+  }
+}
+
+.http-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

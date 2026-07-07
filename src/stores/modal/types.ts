@@ -1,6 +1,14 @@
 import type { Component, Raw } from 'vue'
 
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full'
+export type ModalSize = ModalType.sm | ModalType.md | ModalType.lg | ModalType.xl | ModalType.max
+
+export enum ModalType {
+  sm = 'sm',
+  md = 'md',
+  lg = 'lg',
+  xl = 'xl',
+  max = 'max'
+}
 
 export interface ModalOptions {
   size?: ModalSize

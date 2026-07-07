@@ -33,7 +33,7 @@ export function hasNodePanel(discriminator: NodeDiscriminator): boolean {
 
 // registerNodePanel(
 //   NodeDiscriminator.TELEGRAM_BOT_ACTION,
-//   () => import('./telegram/TelegramBotPanel.vue').then(m => m.default)
+//   () => import('./telegram/TelegramBotActionPanel.vue').then(m => m.default)
 // )
 //
 // registerNodePanel(

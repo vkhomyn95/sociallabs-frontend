@@ -1,0 +1,140 @@
+.slb-wa-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.slb-wa-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.slb-wa-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.slb-wa-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 4px 0;
+}
+
+.slb-wa-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f0fdf4;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #166534;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; color: #25d366; }
+}
+
+.slb-wa-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fffbeb;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #92400e;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; }
+}
+
+// Event cards
+.slb-wa-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slb-wa-event-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+
+  &:hover { border-color: #25d366; }
+
+  &--active {
+    border-color: #25d366;
+    background: #f0fdf4;
+  }
+
+  &__check {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid #d1d5db;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+
+    .slb-wa-event-card--active & {
+      border-color: #25d366;
+      background: #25d366;
+    }
+
+    i {
+      font-size: 9px;
+      color: #fff;
+      display: none;
+      .slb-wa-event-card--active & { display: block; }
+    }
+  }
+
+  &__body { flex: 1; min-width: 0; }
+  &__title { font-size: 13px; font-weight: 500; color: #111827; margin-bottom: 2px; }
+  &__desc  { font-size: 11px; color: #6b7280; line-height: 1.4; }
+}
+
+// Chip picker
+.slb-wa-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.slb-wa-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: 1.5px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 12px;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+
+  &:hover { border-color: #25d366; }
+
+  &--active {
+    border-color: #25d366;
+    background: #f0fdf4;
+    color: #166534;
+    font-weight: 500;
+  }
+}

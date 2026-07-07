@@ -1,4 +1,4 @@
-// src/stores/node/definitions/http-request.ts
+// src/stores/node/definitions/http-request-request.ts
 
 import {
   NodeCategory,

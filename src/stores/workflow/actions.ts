@@ -1,7 +1,11 @@
 import type { APIResponse, LoadConfig } from '@/core/models/Api'
 import type { Workflow, WorkflowState } from './types'
+import { ConnectionType } from './types'
 import { WorkflowService } from './service'
 import type { NodeInstance } from '@/stores/node/types.ts'
+import type { Connection, EdgeChange, NodeChange, NodeMouseEvent } from '@vue-flow/core'
+import { useModal } from '@/composables/useModal.ts'
+import { ModalType } from '@/stores/modal/types.ts'
 
 export const actions = {
 
@@ -200,23 +204,23 @@ export const actions = {
     }
   },
 
-  REMOVE_NODE(this: WorkflowState, nodeId: string): void {
-    if (!this.workflow) return;
+  // REMOVE_NODE(this: WorkflowState, nodeId: string): void {
+  //   if (!this.workflow) return;
+  //
+  //   // Remove node
+  //   this.workflow.nodes = this.workflow.nodes.filter(n => n.nodeId !== nodeId);
+  //
+  //   // Remove connections
+  //   this.workflow.connections = this.workflow.connections.filter(
+  //     c => c.sourceNodeId !== nodeId && c.targetNodeId !== nodeId
+  //   );
+  // },
 
-    // Remove node
-    this.workflow.nodes = this.workflow.nodes.filter(n => n.nodeId !== nodeId);
-
-    // Remove connections
-    this.workflow.connections = this.workflow.connections.filter(
-      c => c.sourceNodeId !== nodeId && c.targetNodeId !== nodeId
-    );
-  },
-
-  ADD_CONNECTION(this: WorkflowState, connection: Connection): void {
-    if (this.workflow) {
-      this.workflow.connections.push(connection);
-    }
-  },
+  // ADD_CONNECTION(this: WorkflowState, connection: Connection): void {
+  //   if (this.workflow) {
+  //     this.workflow.connections.push(connection);
+  //   }
+  // },
 
   REMOVE_CONNECTION(this: WorkflowState, connectionId: number): void {
     if (!this.workflow) return;
@@ -226,6 +230,8 @@ export const actions = {
     );
   },
 
+
+
   CLEAR_ERROR(this: WorkflowState): void {
     this.error = null;
   },
@@ -233,5 +239,98 @@ export const actions = {
   RESET_WORKFLOW(this: WorkflowState): void {
     this.workflow = null;
     this.error = null;
+  },
+  // ====================================
+
+
+
+
+
+
+
+
+
+  CONNECT_NODE(this: WorkflowState, connection: Connection): void {
+    this.workflow.connections.push({
+      sourceNodeId: connection.source,
+      targetNodeId: connection.target,
+      sourceOutputIndex: Number(connection.sourceHandle ?? 0),
+      targetInputIndex: Number(connection.targetHandle ?? 0),
+      type: ConnectionType.MAIN,
+    });
+  },
+
+  CHANGE_EDGE(this: WorkflowState, changes: EdgeChange[]): void {
+    changes.forEach((change: EdgeChange) => {
+      if (change.type === 'remove') {
+        const connection = this.workflow?.connections.find(
+          (conn) => `${conn.sourceNodeId}-${conn.sourceOutputIndex}-${conn.targetNodeId}` === change.id,
+        )
+        if (connection?.id) {
+          this.workflow.connections = this.workflow.connections.filter(c => c.id !== connection.id);
+        }
+      }
+    })
+  },
+
+  REMOVE_EDGE(this: WorkflowState, connectionId: string): void {
+    const connection = this.workflow?.connections.find(
+      (c) => `${c.sourceNodeId}-${c.sourceOutputIndex}-${c.targetNodeId}` === connectionId,
+    )
+
+    if (connection?.id) {
+      this.workflow.connections = this.workflow.connections.filter(
+        c => c.id !== connectionId
+      );
+    }
+  },
+
+  NODE_CHANGE(this: WorkflowState, changes: NodeChange[]): void {
+    changes.forEach((change: NodeChange) => {
+      if (change.type === 'position' && change.position) {
+        const index = this.workflow.nodes?.findIndex(n => n.nodeId === change.id);
+
+        if (index !== -1) {
+          this.workflow.nodes[index] = {
+            ...this.workflow.nodes[index],
+            position: change.position
+          };
+        }
+      }
+    })
+  },
+
+  async CLICK_NODE(this: WorkflowState, event: NodeMouseEvent): void {
+    console.log(event)
+    this.currentNodeId = event.node.id;
+
+    const node = this.workflow.nodes.find(n => n.nodeId === this.currentNodeId);
+
+    const modal = useModal();
+
+    const { default: NodeEditorModal } = await import('@/engine/NodeEditorModal.vue')
+    try {
+      await modal.open(
+        NodeEditorModal,
+        { node },
+        { size: ModalType.max, closeOnBackdrop: false }
+      )
+    } catch {
+      // User closed / cancelled — nothing to do
+    }
+  },
+
+  DELETE_NODE(this: WorkflowState, nodeId: string): void {
+    if (!this.workflow) return;
+
+    // Remove node
+    this.workflow.nodes = this.workflow.nodes.filter(n => n.nodeId !== nodeId);
+
+    // Remove connections
+    this.workflow.connections = this.workflow.connections.filter(
+      c => c.sourceNodeId !== nodeId && c.targetNodeId !== nodeId
+    );
+
+    if (this.currentNodeId === nodeId) this.currentNodeId = undefined;
   }
 };

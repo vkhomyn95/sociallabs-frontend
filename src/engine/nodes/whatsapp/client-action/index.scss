@@ -1,0 +1,144 @@
+// Shared styles for WhatsApp client-action tabs — prefix .slb-wa-
+.slb-wa-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.slb-wa-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.slb-wa-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.slb-wa-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slb-wa-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &__required { color: #ef4444; }
+}
+
+.slb-wa-textarea {
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+  background: #ffffff;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.6;
+  transition: border-color 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:focus {
+    outline: none;
+    border-color: #25d366;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.18);
+  }
+
+  &::placeholder { color: #9ca3af; }
+
+  &--code {
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    font-size: 12px;
+    background: #f9fafb;
+    line-height: 1.5;
+  }
+}
+
+.slb-wa-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.slb-wa-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.slb-wa-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 4px 0;
+}
+
+.slb-wa-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f0fdf4;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #166534;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; color: #25d366; }
+}
+
+.slb-wa-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fffbeb;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #92400e;
+  line-height: 1.5;
+
+  i { flex-shrink: 0; margin-top: 2px; }
+}
+
+// Interactive type selector chips
+.slb-wa-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.slb-wa-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: 1.5px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 12px;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+
+  &:hover { border-color: #25d366; }
+
+  &--active {
+    border-color: #25d366;
+    background: #f0fdf4;
+    color: #166534;
+    font-weight: 500;
+  }
+}

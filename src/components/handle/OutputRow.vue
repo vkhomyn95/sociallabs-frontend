@@ -63,7 +63,7 @@ function onDragZoneMouseDown(event: MouseEvent) {
       </Transition>
     </template>
     <template v-else>
-      <div class="slb_row__line" :style="{ background: currentColor }" />
+      <div class="slb_row__line" v-if="!isConnected()" :style="{ background: currentColor }" />
     </template>
   </div>
 </template>
