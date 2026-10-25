@@ -4,6 +4,7 @@ import { onMounted, ref, shallowRef, watch } from 'vue'
 import { SlbButton } from '@/components/ui'
 import type { NodeInstance } from '@/stores/node/types'
 import { resolveNodePanel } from './node-panel-registry'
+import NodeCredentialSection from './NodeCredentialSection.vue'
 
 const props = defineProps<{ node: NodeInstance }>()
 
@@ -50,6 +51,7 @@ function updateName(val: string | number) {
 
     <!-- Dynamic panel — resolved from registry, no v-if chains -->
     <div v-else class="slb-ned__params-scroll">
+      <NodeCredentialSection :node="localNode" @update:node="onNodeUpdate" />
       <component
         :is="panelComponent"
         :node="localNode"

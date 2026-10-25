@@ -1,8 +1,7 @@
-import type { CredentialState } from './types';
+import type { CredentialState } from './types'
 
-export const state: CredentialState = {
-  credentials: [],
-  selectedCredential: null,
-  loading: false,
-  error: null
-};
+export const state = (): CredentialState => ({
+  types: [],
+  typesLoading: false,
+  summary: null,
+})

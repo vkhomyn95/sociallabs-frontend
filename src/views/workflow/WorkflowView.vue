@@ -13,6 +13,7 @@ import WorkflowSettingsModal from '@/components/workflow/WorkflowSettingsModal.v
 import { generateNodeId } from '@/stores/node/utils'
 import type { NodeInstance } from '@/stores/node/types.ts'
 import { storeToRefs } from 'pinia'
+import { RouteName } from '@/layouts/navigation'
 import NodePanel from '@/components/nodes/panel/NodePanel.vue'
 
 const route = useRoute()
@@ -117,10 +118,11 @@ const openSettings = async (): Promise<void> => {
   }
 }
 
-// ─── Credentials modal ────────────────────────────────────────────────────────
-const openCredentials = async (): Promise<void> => {
-  const { default: CredentialsManager } = await import('@/components/auth/CredentialsManager.vue')
-  await modal.open(CredentialsManager, {}, { size: 'lg', closeOnBackdrop: false })
+// ─── Credentials ──────────────────────────────────────────────────────────────
+// Connections are managed on their own pages; a new tab keeps the unsaved canvas intact.
+// Credentials for a specific node can also be added inline from the node editor.
+const openCredentials = (): void => {
+  window.open(router.resolve({ name: RouteName.ACCOUNTS }).href, '_blank', 'noopener')
 }
 
 // ─── Drop handler ─────────────────────────────────────────────────────────────

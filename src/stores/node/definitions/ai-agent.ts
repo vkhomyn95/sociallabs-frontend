@@ -2,7 +2,6 @@
 // stores/node/definitions/ai-agent.ts
 // ─────────────────────────────────────────────────────────────────────────────
 import {
-  CredentialType,
   NodeCategory,
   type NodeDefinition,
   NodeDiscriminator,
@@ -36,7 +35,6 @@ export const AiAgentNodeDefinition: NodeDefinition = {
   name:                 'AI Agent',
   description:          'ReAct agent — LLM with tools, memory and guardrails',
   requiresCredentials:  true,
-  supportedCredentialTypes: [CredentialType.API_KEY],
   supportsMultipleItems: true,
 
   outputs: {

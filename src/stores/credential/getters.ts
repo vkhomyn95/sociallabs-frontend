@@ -1,20 +1,15 @@
-import type { CredentialState, Credential, CredentialType } from './types';
+import type { CredentialKind, CredentialState, CredentialType, CredentialTypeDescriptor } from './types'
 
 export const getters = {
+  /** Descriptor lookup by type. */
+  typeDescriptor: (state: CredentialState) => (type: CredentialType): CredentialTypeDescriptor | undefined =>
+    state.types.find((descriptor) => descriptor.type === type),
 
-  getCredentialById: (state: CredentialState) => (id: number): Credential | undefined => {
-    return state.credentials.find(c => c.id === id);
-  },
+  /** Descriptors of one kind, in backend order. */
+  typesOfKind: (state: CredentialState) => (kind: CredentialKind): CredentialTypeDescriptor[] =>
+    state.types.filter((descriptor) => descriptor.kind === kind),
 
-  getCredentialsByType: (state: CredentialState) => (type: CredentialType) => {
-    return state.credentials.filter(c => c.type === type);
-  },
-
-  hasTelegramCredentials: (state: CredentialState): boolean => {
-    return state.credentials.some(c => c.type === 'TELEGRAM_CLIENT');
-  },
-
-  credentialCount: (state: CredentialState): number => {
-    return state.credentials.length;
-  }
-};
+  /** Number of credentials of a kind, 0 until the summary is loaded. */
+  countOfKind: (state: CredentialState) => (kind: CredentialKind): number =>
+    state.summary?.counts[kind] ?? 0,
+}

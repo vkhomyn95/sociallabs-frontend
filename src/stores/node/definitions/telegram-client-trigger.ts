@@ -1,5 +1,4 @@
 import {
-  CredentialType,
   NodeCategory,
   type NodeDefinition,
   NodeDiscriminator,
@@ -18,7 +17,6 @@ export const TelegramClientTriggerNodeDefinition: NodeDefinition = {
   description: 'Trigger workflow on Telegram events via MTProto',
 
   // Configuration
-  supportedCredentialTypes: [CredentialType.TELEGRAM_CLIENT],
   requiresCredentials: true,
   supportsMultipleItems: false,
 

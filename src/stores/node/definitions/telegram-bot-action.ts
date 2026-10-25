@@ -1,5 +1,4 @@
 import {
-  CredentialType,
   NodeCategory,
   type NodeDefinition,
   NodeDiscriminator,
@@ -19,7 +18,6 @@ export const TelegramBotActionNodeDefinition: NodeDefinition = {
   description: 'Send messages and media via Telegram Bot API',
 
   // Configuration
-  supportedCredentialTypes: [CredentialType.API_KEY],
   requiresCredentials: true,
   supportsMultipleItems: true,
 

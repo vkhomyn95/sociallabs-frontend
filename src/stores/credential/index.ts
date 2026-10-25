@@ -4,10 +4,10 @@ import { getters } from './getters'
 import { actions } from './actions'
 
 export const useCredentialStore = defineStore('credential', {
-  state: () => state,
+  state,
   getters,
-  actions
-});
+  actions,
+})
 
-export * from './types';
-export * from './service';
+export * from './types'
+export * from './service'

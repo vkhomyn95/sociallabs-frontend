@@ -1,5 +1,4 @@
 import {
-  CredentialType,
   NodeCategory,
   type NodeDefinition,
   NodeDiscriminator,
@@ -19,7 +18,6 @@ export const TelegramClientActionNodeDefinition: NodeDefinition = {
   description: 'Send messages and media via Telegram Client API (MTProto)',
 
   // Configuration
-  supportedCredentialTypes: [CredentialType.TELEGRAM_CLIENT],
   requiresCredentials: true,
   supportsMultipleItems: true,
 

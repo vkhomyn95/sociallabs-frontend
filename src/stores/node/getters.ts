@@ -1,7 +1,15 @@
-import type { EnrichedNodeMetadata, NodeState } from './types'
+import type { EnrichedNodeMetadata, NodeMetadata, NodeState } from './types'
 import { enrichNodeMetadata, getNodeDefinition } from '@/stores/node/definitions'
 
 export const getters = {
+  /**
+   * Backend metadata of a node type (credential requirements, category).
+   */
+  metadataOf(state: NodeState) {
+    return (discriminator: string): NodeMetadata | undefined =>
+      state.availableNodes?.nodes.find(node => node.discriminator === discriminator);
+  },
+
   /**
    * Отримати всі категорії
    */

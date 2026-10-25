@@ -1,4 +1,5 @@
 import { ConnectionType } from '@/stores/workflow/types.ts'
+import { CredentialType } from '@/stores/credential/types'
 
 export interface NodeState {
   availableNodes: AvailableNodes | null;
@@ -18,7 +19,10 @@ export interface NodeMetadata {
   discriminator: NodeDiscriminator;
   type: NodeType;
   category: NodeCategory;
-  supportedCredential: CredentialType | null;
+  /** Credential types the node accepts (from the backend registry), empty when none. */
+  credentialTypes: CredentialType[];
+  /** Whether the node cannot run without a credential. */
+  credentialRequired: boolean;
 }
 
 // ========== Enums ==========
@@ -41,11 +45,8 @@ export enum NodeCategory {
   AI = 'AI'
 }
 
-export enum CredentialType {
-  API_KEY = 'API_KEY',
-  HTTP_AUTH = 'HTTP_AUTH',
-  TELEGRAM_CLIENT = 'TELEGRAM_CLIENT',
-}
+// Єдине джерело — credential store; реекспорт для наявних імпортів з node/types.
+export { CredentialType }
 
 export enum NodeDiscriminator {
   TELEGRAM_BOT_ACTION = 'TELEGRAM_BOT_ACTION',
@@ -134,7 +135,6 @@ export interface NodeDefinition {
   // Configuration
   parameters: NodeParameter[];
   outputs: Record<string, NodeOutput>;
-  supportedCredentialTypes?: CredentialType[];
 
   // Behavior
   requiresCredentials?: boolean;
