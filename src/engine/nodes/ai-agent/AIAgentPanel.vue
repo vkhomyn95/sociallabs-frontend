@@ -8,7 +8,7 @@ import { SlbTab } from '@/components/ui'
 import type { TabItem } from '@/components/ui/tab/useTab'
 import type { NodeInstance } from '@/stores/node/types'
 import { type AiAgentParams, defaultAiAgentParams } from './index'
-import AiAgentPromptTab     from './AiAgentPromptTab.vue'
+import AiAgentPromptTab     from './components/AiAgentPromptTab.vue'
 import AiAgentGuardrailsTab from './AiAgentGuardrailsTab.vue'
 
 const props = defineProps<{ node: NodeInstance }>()
