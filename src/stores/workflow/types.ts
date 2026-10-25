@@ -31,6 +31,28 @@ export interface Connection {
   type: ConnectionType;
 }
 
+type ConnectionEnds = Pick<Connection, 'sourceNodeId' | 'sourceOutputIndex' | 'targetNodeId' | 'targetInputIndex'>
+
+/**
+ * Identity of a connection on the canvas, also used as the Vue Flow edge id.
+ * Works for unsaved connections, which have no database id yet.
+ *
+ * @param connection connection ends and ports
+ * @returns stable key
+ */
+export function connectionKey(connection: ConnectionEnds): string {
+  return `${connection.sourceNodeId}-${connection.sourceOutputIndex}-${connection.targetNodeId}-${connection.targetInputIndex}`
+}
+
+/**
+ * @param connections current connections
+ * @param keys keys (edge ids) to remove
+ * @returns connections without the removed ones
+ */
+export function withoutConnections(connections: Connection[], keys: ReadonlySet<string>): Connection[] {
+  return connections.filter((connection) => !keys.has(connectionKey(connection)))
+}
+
 export enum ConnectionType {
   /** Звичайний data flow між нодами */
   MAIN       = 'MAIN',

@@ -1,6 +1,6 @@
 import type { APIResponse, LoadConfig } from '@/core/models/Api'
 import type { Workflow, WorkflowState } from './types'
-import { ConnectionType } from './types'
+import { ConnectionType, withoutConnections } from './types'
 import { WorkflowService } from './service'
 import type { NodeInstance } from '@/stores/node/types.ts'
 import type { Connection, EdgeChange, NodeChange, NodeMouseEvent } from '@vue-flow/core'
@@ -261,28 +261,19 @@ export const actions = {
   },
 
   CHANGE_EDGE(this: WorkflowState, changes: EdgeChange[]): void {
-    changes.forEach((change: EdgeChange) => {
-      if (change.type === 'remove') {
-        const connection = this.workflow?.connections.find(
-          (conn) => `${conn.sourceNodeId}-${conn.sourceOutputIndex}-${conn.targetNodeId}` === change.id,
-        )
-        if (connection?.id) {
-          this.workflow.connections = this.workflow.connections.filter(c => c.id !== connection.id);
-        }
-      }
-    })
+    if (!this.workflow) return;
+
+    // Edge ids are connection keys, so unsaved connections (no database id) can be removed too.
+    const removed = new Set(changes.filter((change) => change.type === 'remove').map((change) => change.id));
+    if (removed.size) {
+      this.workflow.connections = withoutConnections(this.workflow.connections, removed);
+    }
   },
 
-  REMOVE_EDGE(this: WorkflowState, connectionId: string): void {
-    const connection = this.workflow?.connections.find(
-      (c) => `${c.sourceNodeId}-${c.sourceOutputIndex}-${c.targetNodeId}` === connectionId,
-    )
+  REMOVE_EDGE(this: WorkflowState, edgeId: string): void {
+    if (!this.workflow) return;
 
-    if (connection?.id) {
-      this.workflow.connections = this.workflow.connections.filter(
-        c => c.id !== connectionId
-      );
-    }
+    this.workflow.connections = withoutConnections(this.workflow.connections, new Set([edgeId]));
   },
 
   NODE_CHANGE(this: WorkflowState, changes: NodeChange[]): void {

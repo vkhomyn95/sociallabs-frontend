@@ -1,5 +1,6 @@
 import type { WorkflowState } from './types'
 import {
+  connectionKey,
   NODE_DISCRIMINATOR_TO_WORKFLOW_NODE_TYPE,
   resolveEdgeColor,
   resolveEdgeLabel,
@@ -39,7 +40,7 @@ export const getters = {
       const label = resolveEdgeLabel(sourceNode, conn.sourceOutputIndex)
 
       result.push({
-        id: `${conn.sourceNodeId}-${conn.sourceOutputIndex}-${conn.targetNodeId}`,
+        id: connectionKey(conn),
         source: conn.sourceNodeId,
         target: conn.targetNodeId,
         sourceHandle: String(conn.sourceOutputIndex),
