@@ -12,6 +12,8 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
     "lint": "eslint . --fix --cache",
     "format": "prettier --write src/",
     "lib:sync": "npm --prefix ../sociallabs-frontend-components run build-only && rm -rf node_modules/@sociallabs/frontend-components && npm install @sociallabs/frontend-components --no-audit --no-fund"
@@ -46,6 +48,7 @@
     "typescript": "~5.9.0",
     "vite": "^7.1.11",
     "vite-plugin-vue-devtools": "^8.0.3",
+    "vitest": "^3.2.4",
     "vue-tsc": "^3.1.1"
   }
 }
