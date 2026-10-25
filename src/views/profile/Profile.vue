@@ -4,6 +4,7 @@ import ProfileAvatar   from './ProfileAvatar.vue'
 import ProfileBilling  from './ProfileBilling.vue'
 import ProfileInfo     from './ProfileInfo.vue'
 import ProfilePassword from './ProfilePassword.vue'
+import ProfileSecurity from './security/ProfileSecurity.vue'
 import type { QuotaItem } from './ProfileBilling.vue'
 
 const user = reactive({
@@ -59,6 +60,7 @@ const quotas: QuotaItem[] = [
           :email="user.email"
         />
         <ProfilePassword />
+        <ProfileSecurity />
       </div>
 
     </div>

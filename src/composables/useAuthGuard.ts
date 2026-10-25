@@ -1,6 +1,7 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth/auth.store';
+import { useAuthStore } from '@/stores/auth';
+import type { UserRole } from '@/stores/auth/types';
 
 /**
  * Composable для захисту компонент і перевірки прав доступу
@@ -10,12 +11,12 @@ export function useAuthGuard() {
   const router = useRouter();
 
   const isAuthenticated = computed(() => authStore.isAuthenticated);
-  const currentUser = computed(() => authStore.currentUser);
+  const currentUser = computed(() => authStore.user);
 
   /**
    * Перевірка чи користувач має певну роль
    */
-  const hasRole = (role: string | string[]): boolean => {
+  const hasRole = (role: UserRole | UserRole[]): boolean => {
     if (!currentUser.value) return false;
 
     const userRole = currentUser.value.role;
@@ -30,18 +31,19 @@ export function useAuthGuard() {
   /**
    * Перевірка чи користувач має хоча б одну з ролей
    */
-  const hasAnyRole = (roles: string[]): boolean => {
+  const hasAnyRole = (roles: UserRole[]): boolean => {
     return hasRole(roles);
   };
 
   /**
    * Перевірка чи користувач має всі зазначені ролі (для складніших систем)
    */
-  const hasAllRoles = (roles: string[]): boolean => {
+  const hasAllRoles = (roles: UserRole[]): boolean => {
     if (!currentUser.value) return false;
 
     // Для простої системи з однією роллю завжди false якщо більше 1 ролі
-    return roles.length === 1 && hasRole(roles[0]);
+    const [only] = roles;
+    return roles.length === 1 && only !== undefined && hasRole(only);
   };
 
   /**
@@ -69,7 +71,7 @@ export function useAuthGuard() {
    * Перевірка доступу і редірект
    */
   const requireRole = (
-    role: string | string[],
+    role: UserRole | UserRole[],
     redirectTo = '/unauthorized'
   ): void => {
     if (!isAuthenticated.value) {
