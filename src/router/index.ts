@@ -1,82 +1,154 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { LayoutType } from '@/layouts/layout.types'
+import { safeRedirect, useAuthStore } from '@/stores/auth'
+import { NavSection, RouteName } from '@/layouts/navigation'
+import { CredentialKind } from '@/stores/credential/types'
 
+declare module 'vue-router' {
+  interface RouteMeta {
+    title?: string
+    /** За замовчуванням true; успадковується від layout-маршруту. */
+    requiresAuth?: boolean
+    /** Пункт лівого меню, який підсвічується на цій сторінці. */
+    nav?: NavSection
+  }
+}
+
+// Спільна заглушка для ще не реалізованих розділів меню.
+const ComingSoon = () => import('@/views/placeholder/ComingSoon.vue')
+
+// One page component serves all four connection sections; the kind comes via props.
+const CredentialsView = () => import('@/views/credentials/CredentialsView.vue')
+
+/**
+ * Layout — це батьківський маршрут, сторінки — його children.
+ * Поки перша навігація не завершилась (guard чекає /auth/refresh), RouterView
+ * нічого не рендерить — тож при перезавантаженні не блимає «чужий» layout.
+ */
 const routes: RouteRecordRaw[] = [
+  // Першим: обидва layout-маршрути теж мають path '/', і без цього '/' зловив би AuthLayout.
+  { path: '/', redirect: '/workflows' },
   {
-    path: '/login',
-    name: 'Auth',
-    component: () => import('@/views/auth/Auth.vue'),
-    meta: {
-      title: 'Login',
-      layout: LayoutType.Auth,
-      requiresAuth: false,
-    }
+    path: '/',
+    component: () => import('@/layouts/AuthLayout.vue'),
+    meta: { requiresAuth: false },
+    children: [
+      {
+        path: 'login',
+        name: 'Auth',
+        component: () => import('@/views/auth/Auth.vue'),
+        meta: { title: 'Login' },
+      },
+      {
+        path: 'auth/callback',
+        name: 'AuthCallback',
+        component: () => import('@/views/auth/AuthCallback.vue'),
+        meta: { title: 'Signing in' },
+      },
+    ],
   },
   {
     path: '/',
-    redirect: '/workflows'
-  },
-  {
-    path: '/workflows',
-    name: 'WorkflowList',
-    component: () => import('@/views/workflow/WorkflowList.vue'),
-    meta: {
-      title: 'Workflows',
-      layout: LayoutType.App,
-      requiresAuth: true,
-    }
-  },
-  {
-    path: '/workflow',
-    name: 'WorkflowCreate',
-    component: () => import('@/views/workflow/WorkflowView.vue'),
-    meta: {
-      title: 'Workflow',
-      layout: LayoutType.App,
-      requiresAuth: true,
-    }
-  },
-  {
-    path: '/workflows/:id',
-    name: 'WorkflowEdit',
-    component: () => import('@/views/workflow/WorkflowView.vue'),
-    meta: {
-      title: 'Workflow',
-      layout: LayoutType.App,
-      requiresAuth: true,
-    }
-  },
-  {
-    path: '/executions',
-    name: 'ExecutionList',
-    component: () => import('@/views/execution/ExecutionList.vue'),
-    meta: {
-      title: 'Executions',
-      layout: LayoutType.App,
-      requiresAuth: true,
-    }
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: () => import('@/views/profile/Profile.vue'),
-    meta: {
-      title: 'Profile & Billing',
-      layout: LayoutType.App,
-      requiresAuth: true,
-    }
-  },
-  {
-    path: '/notifications',
-    name: 'Notifications',
-    component: () => import('@/views/notification/NotificationList.vue'),
-    meta: {
-      title: 'Notifications',
-      layout: LayoutType.App,
-      requiresAuth: true,
-    }
+    component: () => import('@/layouts/AppLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      // Повноекранні сторінки з власним тулбаром — без хедера.
+      {
+        path: 'workflow',
+        name: 'WorkflowCreate',
+        component: () => import('@/views/workflow/WorkflowView.vue'),
+        meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
+      },
+      {
+        path: 'workflows/:id',
+        name: 'WorkflowEdit',
+        component: () => import('@/views/workflow/WorkflowView.vue'),
+        meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
+      },
+      {
+        path: 'dialogs',
+        name: RouteName.DIALOGS,
+        component: () => import('@/views/dialogs/DialogsView.vue'),
+        meta: { title: 'Dialogs', nav: NavSection.DIALOGS },
+      },
+      // Звичайні сторінки: хедер із breadcrumb + прокручувана область.
+      {
+        path: '',
+        component: () => import('@/layouts/PageLayout.vue'),
+        children: [
+          {
+            path: 'workflows',
+            name: RouteName.WORKFLOW_LIST,
+            component: () => import('@/views/workflow/WorkflowList.vue'),
+            meta: { title: 'Workflows', nav: NavSection.WORKFLOWS },
+          },
+          {
+            path: 'agents',
+            name: RouteName.AGENTS,
+            component: () => import('@/views/agents/AgentsView.vue'),
+            meta: { title: 'Agents', nav: NavSection.AGENTS },
+          },
+          {
+            path: 'executions',
+            name: RouteName.EXECUTION_LIST,
+            component: () => import('@/views/execution/ExecutionList.vue'),
+            meta: { title: 'Executions', nav: NavSection.EXECUTIONS },
+          },
+          {
+            path: 'monitoring',
+            name: RouteName.MONITORING,
+            component: ComingSoon,
+            meta: { title: 'Monitoring', nav: NavSection.MONITORING },
+          },
+          {
+            path: 'connections/accounts',
+            name: RouteName.ACCOUNTS,
+            component: CredentialsView,
+            props: { kind: CredentialKind.ACCOUNT },
+            meta: { title: 'Accounts', nav: NavSection.ACCOUNTS },
+          },
+          {
+            path: 'connections/bots',
+            name: RouteName.BOTS,
+            component: CredentialsView,
+            props: { kind: CredentialKind.BOT },
+            meta: { title: 'Bots', nav: NavSection.BOTS },
+          },
+          {
+            path: 'connections/ai',
+            name: RouteName.AI_PROVIDERS,
+            component: CredentialsView,
+            props: { kind: CredentialKind.AI_PROVIDER },
+            meta: { title: 'AI providers', nav: NavSection.AI_PROVIDERS },
+          },
+          {
+            path: 'connections/credentials',
+            name: RouteName.CREDENTIALS,
+            component: CredentialsView,
+            props: { kind: CredentialKind.GENERIC },
+            meta: { title: 'Credentials', nav: NavSection.CREDENTIALS },
+          },
+          {
+            path: 'profile',
+            name: RouteName.PROFILE,
+            component: () => import('@/views/profile/Profile.vue'),
+            meta: { title: 'Profile & Billing' },
+          },
+          {
+            path: 'developers',
+            name: RouteName.DEVELOPERS,
+            component: ComingSoon,
+            meta: { title: 'Developers' },
+          },
+          {
+            path: 'notifications',
+            name: RouteName.NOTIFICATIONS,
+            component: () => import('@/views/notification/NotificationList.vue'),
+            meta: { title: 'Notifications', nav: NavSection.NOTIFICATIONS },
+          },
+        ],
+      },
+    ],
   },
 ]
 
@@ -89,21 +161,22 @@ const router = createRouter({
   }
 })
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
-  if (!authStore.isInitialized) {
+  // Перший перехід: тихо відновлюємо сесію з refresh-cookie.
+  if (!authStore.initialized) {
     await authStore.initialize()
   }
 
-  document.title = (to.meta.title as string) || 'SocialLabs'
+  document.title = to.meta.title ? `${to.meta.title} · SocialLabs` : 'SocialLabs'
 
-  const requiresAuth = to.meta.requiresAuth !== false
-
-  if (requiresAuth && !authStore.isAuthenticated) {
-    next({ name: 'Auth', query: { redirect: to.fullPath } })
-  } else {
-    next()
+  // meta зливається від батька до дитини, тож requiresAuth приходить з layout-маршруту.
+  if (to.meta.requiresAuth !== false && !authStore.isAuthenticated) {
+    return { name: 'Auth', query: { redirect: to.fullPath } }
+  }
+  if (to.name === 'Auth' && authStore.isAuthenticated) {
+    return safeRedirect(to.query.redirect)
   }
 })
 

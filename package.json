@@ -13,9 +13,11 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix --cache",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "lib:sync": "npm --prefix ../sociallabs-frontend-components run build-only && rm -rf node_modules/@sociallabs/frontend-components && npm install @sociallabs/frontend-components --no-audit --no-fund"
   },
   "dependencies": {
+    "@sociallabs/frontend-components": "file:../sociallabs-frontend-components",
     "@vue-flow/background": "^1.3.2",
     "@vue-flow/controls": "^1.1.3",
     "@vue-flow/core": "^1.47.0",
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^22.18.11",
+    "@types/qrcode": "^1.5.6",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",

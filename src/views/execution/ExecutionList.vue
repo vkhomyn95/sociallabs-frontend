@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import SlbButton from '@/components/ui/button/SlbButton.vue'
-import WorkflowListToolbar from '@/components/workflow/WorkflowListToolbar.vue'
-import SlbTable from '@/components/ui/table/SlbTable.vue'
-import type { SortState, TableColumn } from '@/components/ui/table/table.types'
+import { SlbTable } from '@sociallabs/frontend-components'
+import type { SortState, TableColumn } from '@sociallabs/frontend-components'
 
 interface User {
   id: number
@@ -56,8 +55,6 @@ function editRow(row: User) {
 </script>
 
 <template>
-  <WorkflowListToolbar @create="" />
-
   <div class="slb-wf-list">
     <SlbTable
       :columns="columns"

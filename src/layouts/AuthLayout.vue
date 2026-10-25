@@ -1,17 +1,11 @@
 <script setup lang="ts">
+import { RouterView } from 'vue-router'
+import { SlbAuthLayout } from '@sociallabs/frontend-components'
 </script>
 
 <template>
-  <div class="slb-auth-layout">
-    <slot />
-  </div>
+  <!-- Спільна оболонка екранів входу: бренд зверху, контент по центру. -->
+  <SlbAuthLayout brand="SocialLabs">
+    <RouterView />
+  </SlbAuthLayout>
 </template>
-
-<style lang="scss" scoped>
-.slb-auth-layout {
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  align-items: stretch;
-}
-</style>

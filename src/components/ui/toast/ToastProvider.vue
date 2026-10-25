@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useToastStore } from '@/stores/toast'
-import type { ToastType } from '@/stores/toast/types.ts'
+import { ToastType } from '@/stores/toast/types.ts'
 
 const toastStore = useToastStore()
 
 const icons: Record<ToastType, string> = {
-  success: 'fa-solid fa-circle-check',
-  error:   'fa-solid fa-circle-xmark',
-  warning: 'fa-solid fa-triangle-exclamation',
-  info:    'fa-solid fa-circle-info',
+  [ToastType.SUCCESS]: 'fa-solid fa-circle-check',
+  [ToastType.ERROR]:   'fa-solid fa-circle-xmark',
+  [ToastType.WARNING]: 'fa-solid fa-triangle-exclamation',
+  [ToastType.INFO]:    'fa-solid fa-circle-info',
 }
 </script>
 

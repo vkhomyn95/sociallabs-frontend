@@ -14,5 +14,12 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
+    // Бібліотека підключена через file: (symlink) — інакше вона тягне власну копію Vue.
+    dedupe: ['vue'],
+  },
+  optimizeDeps: {
+    // Локальна бібліотека змінюється через `npm run lib:sync` — без пребандлу Vite
+    // не тримає її стару копію в node_modules/.vite і нова версія видна після перезавантаження.
+    exclude: ['@sociallabs/frontend-components'],
   },
 })

@@ -1,4 +1,5 @@
-import type { ToastStore, ToastType } from '@/stores/toast/types.ts'
+import { ToastType } from '@/stores/toast/types.ts'
+import type { ToastStore } from '@/stores/toast/types.ts'
 
 export const actions = {
 
@@ -13,19 +14,19 @@ export const actions = {
   },
 
   success(this: ToastStore, message: string, duration?: number): void {
-    this.show('success', message, duration)
+    this.show(ToastType.SUCCESS, message, duration)
   },
 
   error(this: ToastStore, message: string, duration?: number): void {
-    this.show('error', message, duration)
+    this.show(ToastType.ERROR, message, duration)
   },
 
   warning(this: ToastStore, message: string, duration?: number): void {
-    this.show('warning', message, duration)
+    this.show(ToastType.WARNING, message, duration)
   },
 
   info(this: ToastStore, message: string, duration?: number): void {
-    this.show('info', message, duration)
+    this.show(ToastType.INFO, message, duration)
   },
 
   dismiss(this: ToastStore, id: string): void {

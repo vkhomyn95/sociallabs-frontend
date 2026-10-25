@@ -5,7 +5,6 @@ import { useWorkflowStore } from '@/stores/workflow'
 import { useModal } from '@/composables/useModal'
 import SlbButton from '@/components/ui/button/SlbButton.vue'
 import ConfirmModal from '@/components/ui/modal/ConfirmModal.vue'
-import WorkflowListToolbar from '@/components/workflow/WorkflowListToolbar.vue'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
@@ -60,9 +59,11 @@ const formatDate = (date?: string): string => {
 </script>
 
 <template>
-  <WorkflowListToolbar @create="createWorkflow" />
-
   <div class="slb-wf-list">
+    <div class="slb-wf-list__actions">
+      <SlbButton icon-left="fas fa-plus" @click="createWorkflow">Create workflow</SlbButton>
+    </div>
+
     <!-- Loading -->
     <div v-if="loading" class="slb-wf-list__loading">
       <div class="slb-wf-list__spinner" aria-hidden="true"></div>
