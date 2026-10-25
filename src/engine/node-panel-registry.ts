@@ -6,10 +6,8 @@ import { NodeDiscriminator } from '@/stores/node/types'
 // Add new node panels here only
 
 const NODE_PANEL_REGISTRY: Partial<Record<NodeDiscriminator, Component>> = {
-  [NodeDiscriminator.AI_AGENT]:
-    defineAsyncComponent(() =>
-      import('./nodes/ai-agent/AIAgentPanel.vue')
-    ),
+  // AI_AGENT: panel is an unfinished stub (./nodes/ai-agent); it gets a generated form in migration step 11.
+  // Until then the editor shows only the node name and credential section for it.
 
   [NodeDiscriminator.IF_LOGIC]:
     defineAsyncComponent(() =>
