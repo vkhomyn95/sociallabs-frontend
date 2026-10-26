@@ -4,6 +4,8 @@ import { NodeTypeCatalog } from '@/core/node-types/NodeTypeCatalog'
 import { CommandHistory, MoveNodesCommand, RemoveNodesCommand, UpdateNodeCommand } from '@/core/workflow/commands'
 import { WorkflowDocument } from '@/core/workflow/WorkflowDocument'
 import { link, node } from '@/core/workflow/__tests__/fixtures'
+import { ExecutionTracker, NodeRunState } from '@/core/execution/ExecutionTracker'
+import { ExecutionEventType } from '@/core/execution/types'
 import { CanvasModelFactory } from '../canvas/canvasModel'
 import { CanvasProjection, type CanvasPort } from '../canvas/CanvasProjection'
 
@@ -82,5 +84,26 @@ describe('CanvasProjection', () => {
     const data = projection.dataOf('a')!
     expect(data.descriptor).toBeUndefined()
     expect([data.inputs.length, data.outputs.length]).toEqual([1, 1])
+  })
+
+  it('shows run states of the followed execution on the card and keeps them across edits', () => {
+    const doc = new WorkflowDocument({ nodes: [node('a'), node('b')], connections: [link('a', 'b')] })
+    const canvas = recordingCanvas()
+    const tracker = new ExecutionTracker()
+    const projection = new CanvasProjection(doc, new CanvasModelFactory(new NodeTypeCatalog([])), canvas.port, tracker)
+    projection.render()
+    canvas.calls.length = 0
+
+    tracker.follow(1)
+    tracker.apply({ type: ExecutionEventType.NODE_STARTED, executionId: 1, workflowId: 1, nodeId: 'a', status: null,
+      itemsOut: null, durationMs: null, error: null, at: '' })
+    expect(canvas.calls).toEqual(['updateNode:a:data'])
+    expect(projection.dataOf('a')?.run?.state).toBe(NodeRunState.RUNNING)
+
+    new CommandHistory(doc).execute(new UpdateNodeCommand('a', 'name', 'A'))
+    expect(projection.dataOf('a')?.run?.state, 'kept after an edit').toBe(NodeRunState.RUNNING)
+
+    tracker.follow(2)
+    expect(projection.dataOf('a')?.run).toBeNull()
   })
 })

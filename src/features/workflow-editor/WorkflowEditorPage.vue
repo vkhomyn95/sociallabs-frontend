@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { SlbAlert, SlbToastProvider } from '@sociallabs/frontend-components'
 import type { NodeTypeDescriptor } from '@/core/node-types/descriptor'
 import EditorCanvas from './canvas/EditorCanvas.vue'
+import NodeDetailsView from './ndv/NodeDetailsView.vue'
 import NodePalette from './palette/NodePalette.vue'
 import EditorToolbar from './toolbar/EditorToolbar.vue'
 import { useEditorShortcuts } from './composables/useEditorShortcuts'
@@ -54,10 +55,23 @@ function addFromPalette(type: NodeTypeDescriptor): void {
           ref="canvas"
           :session="editor.session.value"
           :catalog="editor.catalog.value"
+          :tracker="editor.runs.tracker"
           @open="editor.openNode"
           @rejected="editor.onRejected"
         />
       </div>
+      <NodeDetailsView
+        v-if="editor.openNodeId.value"
+        :key="editor.openNodeId.value"
+        :session="editor.session.value"
+        :catalog="editor.catalog.value"
+        :node-id="editor.openNodeId.value"
+        :run-data="editor.runs.runData.value"
+        :tracker="editor.runs.tracker"
+        :executing="editor.toolbar.executing"
+        @close="editor.closeNode"
+        @execute="editor.execute"
+      />
     </template>
 
     <div v-else class="wf-editor__loading">Loading workflow…</div>

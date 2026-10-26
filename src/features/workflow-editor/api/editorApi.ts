@@ -13,13 +13,6 @@ export interface PublishResult {
   created: boolean
 }
 
-/** `POST /workflows/{id}/execute` */
-export interface ManualExecutionResult {
-  executionId: number
-  status: string
-  error?: string | null
-}
-
 const serverMessage = (error: unknown): string =>
   (isAxiosError(error) && (error.response?.data as { message?: string } | undefined)?.message) ||
   (error instanceof Error ? error.message : String(error))
@@ -65,11 +58,6 @@ export const editorApi = {
 
   async setActive(id: number, active: boolean): Promise<WorkflowDto> {
     return (await api.post<WorkflowDto>(`/workflows/${id}/${active ? 'activate' : 'deactivate'}`)).data
-  },
-
-  async execute(id: number): Promise<ManualExecutionResult> {
-    // Manual runs wait for the execution; the default 10 s timeout is too short for real workflows.
-    return (await api.post<ManualExecutionResult>(`/workflows/${id}/execute`, {}, { timeout: 120_000 })).data
   },
 
   errorMessage: serverMessage,

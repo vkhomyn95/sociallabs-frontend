@@ -1,3 +1,4 @@
+import type { ExecutionTracker, NodeRunView } from '@/core/execution/ExecutionTracker'
 import type { NodeId, NodeModel } from '@/core/workflow/model'
 import type { WorkflowDocument } from '@/core/workflow/WorkflowDocument'
 import type { CanvasEdge, CanvasEdgeData, CanvasModelFactory, CanvasNode, CanvasNodeData } from './canvasModel'
@@ -26,9 +27,11 @@ export class CanvasProjection {
     private readonly doc: WorkflowDocument,
     private readonly factory: CanvasModelFactory,
     private readonly canvas: CanvasPort,
+    private readonly tracker?: ExecutionTracker,
   ) {
     const events = doc.events
     this.unsubscribe = [
+      ...(tracker ? [tracker.events.on('node', (id, view) => this.onRunChanged(id, view))] : []),
       events.on('loaded', () => this.render()),
       events.on('nodeAdded', (node) => this.canvas.addNodes([this.toCanvasNode(node)])),
       events.on('nodeRemoved', (node) => {
@@ -59,8 +62,20 @@ export class CanvasProjection {
     this.unsubscribe.forEach((off) => off())
   }
 
+  private runOf(id: NodeId): NodeRunView | null {
+    return this.tracker?.view(id) ?? null
+  }
+
+  private onRunChanged(id: NodeId, run: NodeRunView | null): void {
+    const current = this.data.get(id)
+    if (!current || current.run === run) return
+    const data = this.factory.withRun(current, run)
+    this.data.set(id, data)
+    this.canvas.updateNode(id, { data })
+  }
+
   private toCanvasNode(node: NodeModel): CanvasNode {
-    const canvasNode = this.factory.node(node)
+    const canvasNode = this.factory.node(node, this.runOf(node.id))
     this.data.set(node.id, canvasNode.data)
     return canvasNode
   }
@@ -74,7 +89,7 @@ export class CanvasProjection {
       return
     }
     const oldData = this.data.get(node.id)
-    const data = this.factory.nodeData(node)
+    const data = this.factory.nodeData(node, this.runOf(node.id))
     this.data.set(node.id, data)
     this.canvas.updateNode(node.id, { data, position: { ...node.position } })
     if (oldData && !samePorts(oldData, data)) {

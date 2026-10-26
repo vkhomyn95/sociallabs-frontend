@@ -5,6 +5,7 @@ import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import type { WorkflowEditorSession, ConnectRejection } from '@/core/editor/WorkflowEditorSession'
+import type { ExecutionTracker } from '@/core/execution/ExecutionTracker'
 import type { NodeTypeCatalog } from '@/core/node-types/NodeTypeCatalog'
 import type { NodeId, Position } from '@/core/workflow/model'
 import { CanvasModelFactory, EDGE_TYPE, handleIndex, NODE_TYPE, type CanvasNodeData } from './canvasModel'
@@ -17,6 +18,7 @@ import { NODE_TYPE_DRAG_FORMAT } from '../palette/dragFormat'
 const props = defineProps<{
   session: WorkflowEditorSession
   catalog: NodeTypeCatalog
+  tracker: ExecutionTracker
 }>()
 
 const emit = defineEmits<{
@@ -48,7 +50,7 @@ flow.onNodesInitialized(() => {
 })
 
 onMounted(() => {
-  projection = new CanvasProjection(props.session.document, new CanvasModelFactory(props.catalog), canvasPort)
+  projection = new CanvasProjection(props.session.document, new CanvasModelFactory(props.catalog), canvasPort, props.tracker)
   projection.render()
 })
 

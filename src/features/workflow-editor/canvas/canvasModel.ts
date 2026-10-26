@@ -1,4 +1,5 @@
 import { markRaw } from 'vue'
+import type { NodeRunView } from '@/core/execution/ExecutionTracker'
 import type { NodeTypeCatalog } from '@/core/node-types/NodeTypeCatalog'
 import { inputPorts, outputPorts, PortRole, type PortView } from '@/core/node-types/ports'
 import { NodeKind, PortKind, type NodeTypeDescriptor } from '@/core/node-types/descriptor'
@@ -16,6 +17,8 @@ export interface CanvasNodeData {
   readonly inputs: readonly PortView[]
   readonly outputs: readonly PortView[]
   readonly trigger: boolean
+  /** State in the execution the editor follows, null when the node did not run in it. */
+  readonly run: NodeRunView | null
 }
 
 export interface CanvasEdgeData {
@@ -56,11 +59,11 @@ export const handleIndex = (handle: string | null | undefined): number => Number
 export class CanvasModelFactory {
   constructor(private readonly catalog: NodeTypeCatalog) {}
 
-  node(node: NodeModel): CanvasNode {
-    return { id: node.id, type: NODE_TYPE, position: { ...node.position }, data: this.nodeData(node) }
+  node(node: NodeModel, run: NodeRunView | null = null): CanvasNode {
+    return { id: node.id, type: NODE_TYPE, position: { ...node.position }, data: this.nodeData(node, run) }
   }
 
-  nodeData(node: NodeModel): CanvasNodeData {
+  nodeData(node: NodeModel, run: NodeRunView | null = null): CanvasNodeData {
     const descriptor = this.catalog.get(typeKeyOf(node))
     return markRaw({
       node,
@@ -70,7 +73,13 @@ export class CanvasModelFactory {
       inputs: descriptor ? inputPorts(descriptor) : [FALLBACK_PORT],
       outputs: descriptor ? outputPorts(descriptor, node) : [FALLBACK_PORT],
       trigger: descriptor?.kind === NodeKind.TRIGGER,
+      run,
     })
+  }
+
+  /** @returns the same node data with another run state */
+  withRun(data: CanvasNodeData, run: NodeRunView | null): CanvasNodeData {
+    return markRaw({ ...data, run })
   }
 
   edge(connection: ConnectionModel, sourceData: CanvasNodeData | undefined): CanvasEdge {

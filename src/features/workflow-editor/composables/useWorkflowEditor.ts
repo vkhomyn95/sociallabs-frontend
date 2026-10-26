@@ -7,8 +7,8 @@ import { SyncStatus } from '@/core/sync/DraftSync'
 import { toSnapshot, type WorkflowDto } from '@/core/workflow/dto'
 import type { NodeId, Position } from '@/core/workflow/model'
 import { editorApi, httpDraftApi } from '../api/editorApi'
-import { openLegacyNodeEditor } from '../legacy/legacyNodeEditor'
 import type { ToolbarState } from '../toolbar/EditorToolbar.vue'
+import { useEditorRuns } from './useEditorRuns'
 
 const REJECTIONS: Record<ConnectRejection, string> = {
   [ConnectRejection.SAME_NODE]: 'A node cannot connect to itself',
@@ -35,6 +35,9 @@ export function useWorkflowEditor(workflowId: number) {
     publishing: false,
     executing: false,
   })
+  const runs = useEditorRuns(workflowId, (running) => (toolbar.executing = running))
+  /** Node open in the node details view. */
+  const openNodeId = shallowRef<NodeId | null>(null)
   const unbind: Array<() => void> = []
   let description: string | null = null
 
@@ -72,6 +75,7 @@ export function useWorkflowEditor(workflowId: number) {
       bind(current)
       applyWorkflow(dto)
       session.value = current
+      void runs.loadLatest()
     } catch (error) {
       loadError.value = editorApi.errorMessage(error)
     }
@@ -121,17 +125,7 @@ export function useWorkflowEditor(workflowId: number) {
   }
 
   async function execute(): Promise<void> {
-    if (!(await save())) return
-    toolbar.executing = true
-    try {
-      const result = await editorApi.execute(workflowId)
-      if (result.status === 'SUCCESS') slbToast.success(`Execution ${result.executionId} succeeded`)
-      else slbToast.error(`Execution ${result.executionId}: ${result.error ?? result.status}`)
-    } catch (error) {
-      slbToast.error(`Execution failed: ${editorApi.errorMessage(error)}`)
-    } finally {
-      toolbar.executing = false
-    }
+    if (await save()) await runs.execute()
   }
 
   async function rename(name: string): Promise<void> {
@@ -147,7 +141,11 @@ export function useWorkflowEditor(workflowId: number) {
   }
 
   function openNode(nodeId: NodeId): void {
-    if (session.value && catalog.value) void openLegacyNodeEditor(session.value, catalog.value, nodeId)
+    openNodeId.value = nodeId
+  }
+
+  function closeNode(): void {
+    openNodeId.value = null
   }
 
   function onRejected(reason: ConnectRejection): void {
@@ -176,6 +174,8 @@ export function useWorkflowEditor(workflowId: number) {
     catalog,
     loadError,
     toolbar,
+    runs,
+    openNodeId,
     undo: () => session.value?.undo(),
     redo: () => session.value?.redo(),
     save,
@@ -186,6 +186,7 @@ export function useWorkflowEditor(workflowId: number) {
     rename,
     addNode,
     openNode,
+    closeNode,
     onRejected,
   }
 }

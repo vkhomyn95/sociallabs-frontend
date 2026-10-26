@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { SlbIcon } from '@sociallabs/frontend-components'
+import type { SlbIconName } from '@sociallabs/frontend-components'
+import { NodeRunState } from '@/core/execution/ExecutionTracker'
 import { NodeTypeStatus } from '@/core/node-types/descriptor'
 import type { CanvasNodeData } from '../canvasModel'
 import NodePorts from './NodePorts.vue'
@@ -24,6 +26,22 @@ const MIN_HEIGHT = 64
 const height = computed(() => Math.max(MIN_HEIGHT, (Math.max(props.data.outputs.length, props.data.inputs.length) + 1) * PORT_ROW))
 const subtitle = computed(() => props.data.descriptor?.displayName ?? `${props.data.node.type} (unknown type)`)
 const preview = computed(() => props.data.descriptor?.status === NodeTypeStatus.PREVIEW)
+
+const RUN_ICONS: Record<NodeRunState, SlbIconName> = {
+  [NodeRunState.RUNNING]: 'shape_spinner',
+  [NodeRunState.SUCCESS]: 'status_success',
+  [NodeRunState.ERROR]: 'status_error',
+  [NodeRunState.SKIPPED]: 'action_minus',
+}
+
+const runLabel = computed(() => {
+  const run = props.data.run
+  if (!run) return ''
+  if (run.state === NodeRunState.ERROR) return run.error ?? 'Failed'
+  if (run.state === NodeRunState.RUNNING) return 'Running'
+  if (run.state === NodeRunState.SKIPPED) return 'Skipped'
+  return `${run.itemsOut} ${run.itemsOut === 1 ? 'item' : 'items'}`
+})
 </script>
 
 <template>
@@ -34,6 +52,7 @@ const preview = computed(() => props.data.descriptor?.status === NodeTypeStatus.
       'wf-node--disabled': data.node.disabled,
       'wf-node--trigger': data.trigger,
       'wf-node--unknown': !data.descriptor,
+      [`wf-node--run-${data.run?.state.toLowerCase()}`]: data.run,
     }"
     :style="{ height: `${height}px`, '--wf-node-accent': data.presentation.color }"
     @dblclick.stop="emit('open', id)"
@@ -48,6 +67,10 @@ const preview = computed(() => props.data.descriptor?.status === NodeTypeStatus.
       <span class="wf-node__type">{{ subtitle }}</span>
     </div>
     <span v-if="preview" class="wf-node__flag" title="Not runnable yet">preview</span>
+    <span v-if="data.run" class="wf-node__run" :title="runLabel">
+      <SlbIcon :name="RUN_ICONS[data.run.state]" :size="12" />
+      <span v-if="data.run.state === NodeRunState.SUCCESS">{{ runLabel }}</span>
+    </span>
 
     <div class="wf-node__actions nodrag">
       <button type="button" title="Open" @click.stop="emit('open', id)">
@@ -107,6 +130,51 @@ const preview = computed(() => props.data.descriptor?.status === NodeTypeStatus.
 
   &--unknown {
     border-style: dashed;
+  }
+
+  &--run-running {
+    border-color: var(--slb-color-primary);
+  }
+
+  &--run-success {
+    border-color: var(--slb-color-success);
+  }
+
+  &--run-error {
+    border-color: var(--slb-color-error);
+  }
+}
+
+.wf-node__run {
+  position: absolute;
+  right: 8px;
+  bottom: -10px;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 1px 6px;
+  font-size: 10px;
+  color: var(--slb-color-text-muted);
+  background: var(--slb-color-surface, #fff);
+  border: 1px solid var(--slb-color-border);
+  border-radius: var(--slb-radius-full);
+
+  .wf-node--run-success & {
+    color: var(--slb-color-success);
+  }
+
+  .wf-node--run-error & {
+    color: var(--slb-color-error);
+  }
+
+  .wf-node--run-running & :deep(svg) {
+    animation: wf-node-spin 1s linear infinite;
+  }
+}
+
+@keyframes wf-node-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
