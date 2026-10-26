@@ -1,4 +1,5 @@
 import type { NodeTypeDescriptor } from '@/core/node-types/descriptor'
+import { defaultParameters } from '@/core/node-types/parameters'
 import type { DraftApi } from '@/core/sync/DraftApi'
 import { DraftSync, type DraftSyncOptions } from '@/core/sync/DraftSync'
 import {
@@ -74,9 +75,7 @@ export class WorkflowEditorSession {
       type: type.name,
       typeVersion: type.version,
       position,
-      parameters: Object.fromEntries(
-        type.properties.filter((p) => p.defaultValue !== undefined).map((p) => [p.name, p.defaultValue]),
-      ),
+      parameters: defaultParameters(type.properties),
       credentialId: null,
       disabled: false,
       notes: null,
