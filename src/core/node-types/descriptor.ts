@@ -3,6 +3,8 @@
 export enum NodeKind {
   ACTION = 'ACTION',
   TRIGGER = 'TRIGGER',
+  /** Sub-node (chat model, memory, tool) attached to another node's sub-node input; never runs with items. */
+  SUPPLY = 'SUPPLY',
 }
 
 export enum NodeGroup {

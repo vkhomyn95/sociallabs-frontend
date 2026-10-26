@@ -3,6 +3,87 @@
 /** A parameter value with {{ }} expressions, resolved per item at run time. */
 export type Expression = `${string}{{${string}}}${string}`
 
+/** AI Agent (`ai.agent@1`) */
+export interface AiAgentV1Params {
+  /** Prompt */
+  prompt: string
+  /** System message */
+  systemPrompt?: string
+  /** Put answer in field */
+  outputField?: string
+  /** Output */
+  outputMode?: 'ANSWER_ONLY' | 'WITH_STEPS' | 'STRUCTURED'
+  /** Max model calls */
+  maxIterations?: number
+  /** Max tool calls */
+  maxToolCalls?: number
+  /** Max tokens */
+  maxTotalTokens?: number
+  /** Timeout (ms) */
+  timeoutMs?: number
+  /** Continue on fail */
+  continueOnFail?: boolean
+}
+
+/** Conversation memory (`ai.memory.conversation@1`) */
+export interface AiMemoryConversationV1Params {
+  /** Session key: Evaluated per item; messages with the same key share a conversation */
+  sessionKey?: string
+  /** Context window (messages) */
+  windowSize?: number
+  /** Storage */
+  storage?: 'DATABASE' | 'REDIS' | 'IN_PROCESS'
+}
+
+/** Anthropic chat model (`ai.model.anthropic@1`) */
+export interface AiModelAnthropicV1Params {
+  /** Model */
+  model: string
+  /** Temperature */
+  temperature?: number
+  /** Max tokens */
+  maxTokens?: number
+}
+
+/** OpenAI chat model (`ai.model.openai@1`) */
+export interface AiModelOpenaiV1Params {
+  /** Model */
+  model: string
+  /** Temperature */
+  temperature?: number
+  /** Max tokens */
+  maxTokens?: number
+}
+
+/** HTTP tool (`ai.tool.http@1`) */
+export interface AiToolHttpV1Params {
+  /** Description for the model */
+  description: string
+  /** Base URL */
+  baseUrl: string
+  /** Allowed methods */
+  allowedMethods: Array<'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS'>
+  /** Timeout (ms) */
+  timeout?: number
+}
+
+/** If (`core.if@1`) */
+export interface CoreIfV1Params {
+  /** Conditions */
+  conditions: Array<{
+    /** Value */
+    leftValue?: string
+    /** Operation */
+    operation: 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ENDS_WITH' | 'IS_EMPTY' | 'IS_NOT_EMPTY' | 'GT' | 'LT' | 'GTE' | 'LTE' | 'REGEX' | 'IS_TRUE' | 'IS_FALSE'
+    /** Compare with */
+    rightValue?: string
+    /** Compare as */
+    type?: 'STRING' | 'NUMBER' | 'BOOLEAN' | 'DATE'
+  }>
+  /** Combine */
+  combineOperation?: 'AND' | 'OR'
+}
+
 /** Schedule (`core.schedule@1`) */
 export interface CoreScheduleV1Params {
   /** Cron: second minute hour day month weekday */
@@ -11,12 +92,149 @@ export interface CoreScheduleV1Params {
   timeZone?: string
 }
 
+/** Switch (`core.switch@1`) */
+export interface CoreSwitchV1Params {
+  /** Mode */
+  mode: 'RULES' | 'EXPRESSION'
+  /** Routing rules: Each rule is an output, in this order */
+  rules?: Array<{
+    /** Output name */
+    outputName?: string
+    /** Conditions */
+    conditions?: Array<{
+      /** Value */
+      leftValue?: string
+      /** Operation */
+      operation: 'EQUALS' | 'NOT_EQUALS' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ENDS_WITH' | 'IS_EMPTY' | 'IS_NOT_EMPTY' | 'GT' | 'LT' | 'GTE' | 'LTE' | 'REGEX' | 'IS_TRUE' | 'IS_FALSE'
+      /** Compare with */
+      rightValue?: string
+      /** Compare as */
+      type?: 'STRING' | 'NUMBER' | 'BOOLEAN' | 'DATE'
+    }>
+    /** Combine */
+    combineOperation?: 'AND' | 'OR'
+  }>
+  /** Output index: Index of the rule output, counted from 0; anything else goes to the fallback */
+  expression?: string
+  /** Send unmatched items to the fallback output */
+  fallbackEnabled?: boolean
+}
+
 /** Webhook (`core.webhook@1`) */
 export interface CoreWebhookV1Params {
   /** Path: Public: use a long, hard to guess value */
   path: string
   /** HTTP method */
   method: 'ANY' | 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+}
+
+/** HTTP Request (`http.request@1`) */
+export interface HttpRequestV1Params {
+  /** Method */
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS'
+  /** URL */
+  url: string
+  /** Authentication: Inline authentication; an attached credential takes precedence */
+  authType?: 'NONE' | 'BASIC' | 'BEARER' | 'HEADER' | 'QUERY'
+  /** User */
+  basicUsername?: string
+  /** Password */
+  basicPassword?: string
+  /** Header name */
+  headerAuthName?: string
+  /** Header value */
+  headerAuthValue?: string
+  /** Query parameter */
+  queryAuthName?: string
+  /** Query value */
+  queryAuthValue?: string
+  /** Token */
+  bearerToken?: string
+  /** Send query parameters */
+  sendQueryParams?: boolean
+  /** Specify query parameters */
+  queryParamsInputMode?: 'KEY_VALUE' | 'JSON'
+  /** Query parameters */
+  queryParams?: Array<{
+    /** Name */
+    name?: string
+    /** Value */
+    value?: string
+  }>
+  /** Query parameters (JSON) */
+  queryParamsJson?: string
+  /** Send headers */
+  sendHeaders?: boolean
+  /** Specify headers */
+  headersInputMode?: 'KEY_VALUE' | 'JSON'
+  /** Headers */
+  headers?: Array<{
+    /** Name */
+    name?: string
+    /** Value */
+    value?: string
+  }>
+  /** Headers (JSON) */
+  headersJson?: string
+  /** Lowercase header names */
+  lowercaseHeaders?: boolean
+  /** Send body */
+  sendBody?: boolean
+  /** Body content type */
+  bodyContentType?: 'JSON' | 'FORM_URL_ENCODED' | 'FORM_DATA' | 'BINARY' | 'RAW'
+  /** Specify body */
+  bodyInputMode?: 'KEY_VALUE' | 'JSON'
+  /** Body fields */
+  bodyParams?: Array<{
+    /** Name */
+    name?: string
+    /** Value */
+    value?: string
+  }>
+  /** JSON */
+  bodyJson?: string
+  /** Body */
+  rawBody?: string
+  /** Content type */
+  rawContentType?: string
+  /** Binary field: Item field with base64 data */
+  binaryFieldName?: string
+  /** Response format */
+  responseFormat?: 'AUTODETECT' | 'JSON' | 'TEXT' | 'FILE'
+  /** Put response in field */
+  responseOutputField?: string
+  /** Include status code and headers */
+  includeResponseMetadata?: boolean
+  /** Never error: Treat 4xx and 5xx responses as success */
+  neverError?: boolean
+  /** Timeout (ms) */
+  timeout?: number
+  /** Follow redirects */
+  followRedirects?: boolean
+  /** Ignore SSL issues */
+  ignoreSslIssues?: boolean
+  /** Proxy */
+  proxy?: string
+  /** Pagination */
+  paginationMode?: 'OFF' | 'UPDATE_PARAM' | 'RESPONSE_URL'
+  /** Next page URL: Evaluated against the last page: $json.body, $json.statusCode, $json.headers */
+  nextUrlExpression?: string
+  /** Page parameter */
+  paginationParamName?: string
+  /** First value */
+  paginationStartValue?: number
+  /** Increment */
+  paginationIncrement?: number
+  /** Stop at an empty page */
+  paginationStopOnEmpty?: boolean
+  /** Max pages */
+  paginationMaxRequests?: number
+  /** Batch size: Items requested at the same time */
+  batchSize?: number
+  /** Batch interval (ms) */
+  batchInterval?: number
+  /** Continue on fail: Output the input item with an _error field instead of failing */
+  continueOnFail?: boolean
 }
 
 /** Telegram account trigger (`telegram.accountTrigger@1`) */
@@ -41,6 +259,12 @@ export interface TelegramAccountTriggerV1Params {
   ignoreOwnMessages?: boolean
 }
 
+/** Scripted model (`test.scriptedModel@1`) */
+export interface TestScriptedModelV1Params {
+  /** Script */
+  script?: unknown
+}
+
 /** Viber account trigger (`viber.accountTrigger@1`) */
 export interface ViberAccountTriggerV1Params {
   /** Events */
@@ -59,9 +283,18 @@ export interface ViberAccountTriggerV1Params {
 
 /** Parameters of each schema-driven node type, by `name@version`. */
 export interface NodeParamsMap {
+  'ai.agent@1': AiAgentV1Params
+  'ai.memory.conversation@1': AiMemoryConversationV1Params
+  'ai.model.anthropic@1': AiModelAnthropicV1Params
+  'ai.model.openai@1': AiModelOpenaiV1Params
+  'ai.tool.http@1': AiToolHttpV1Params
+  'core.if@1': CoreIfV1Params
   'core.schedule@1': CoreScheduleV1Params
+  'core.switch@1': CoreSwitchV1Params
   'core.webhook@1': CoreWebhookV1Params
+  'http.request@1': HttpRequestV1Params
   'telegram.accountTrigger@1': TelegramAccountTriggerV1Params
+  'test.scriptedModel@1': TestScriptedModelV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
 }
 

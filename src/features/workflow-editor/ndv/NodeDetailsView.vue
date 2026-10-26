@@ -69,6 +69,8 @@ const tab = ref<string>(Tab.PARAMETERS)
 const descriptor = computed(() => (node.value ? props.catalog.get(typeKeyOf(node.value)) : undefined))
 const presentation = computed(() => presentationOf(node.value?.type ?? '', descriptor.value))
 const isTrigger = computed(() => descriptor.value?.kind === NodeKind.TRIGGER)
+// Sub-nodes never run with items, so they have neither input nor output data.
+const isSupply = computed(() => descriptor.value?.kind === NodeKind.SUPPLY)
 const hasSchema = computed(() => (descriptor.value?.properties.length ?? 0) > 0)
 
 // ─── Run data ────────────────────────────────────────────────────────
@@ -207,15 +209,15 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         </button>
       </header>
 
-      <SlbResizable class="wf-ndv__body" :storage-key="isTrigger ? 'wf-ndv-trigger' : 'wf-ndv'">
-        <template v-if="!isTrigger">
+      <SlbResizable class="wf-ndv__body" :storage-key="isSupply ? 'wf-ndv-supply' : isTrigger ? 'wf-ndv-trigger' : 'wf-ndv'">
+        <template v-if="!isTrigger && !isSupply">
           <SlbResizablePanel :default-size="28" :min-size="15" collapsible>
             <RunDataPanel title="Input" :sources="inputSources" :empty-text="inputEmptyText" />
           </SlbResizablePanel>
           <SlbResizableHandle />
         </template>
 
-        <SlbResizablePanel :default-size="isTrigger ? 55 : 44" :min-size="30">
+        <SlbResizablePanel :default-size="isSupply ? 100 : isTrigger ? 55 : 44" :min-size="30">
           <div class="wf-ndv__editor">
             <SlbTab v-model="tab" :tabs="TABS" />
             <div class="wf-ndv__form">
@@ -257,8 +259,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           </div>
         </SlbResizablePanel>
 
-        <SlbResizableHandle />
-        <SlbResizablePanel :default-size="isTrigger ? 45 : 28" :min-size="15" collapsible>
+        <SlbResizableHandle v-if="!isSupply" />
+        <SlbResizablePanel v-if="!isSupply" :default-size="isTrigger ? 45 : 28" :min-size="15" collapsible>
           <RunDataPanel
             title="Output"
             :sources="outputSources"

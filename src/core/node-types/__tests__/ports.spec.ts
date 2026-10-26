@@ -61,3 +61,14 @@ describe('NodeTypeCatalog', () => {
     expect(catalog.isTrigger('b@1')).toBe(true)
   })
 })
+
+describe('connectionTypeFor', () => {
+  it('connects main to main and sub-nodes only to inputs of their kind', async () => {
+    const { connectionTypeFor } = await import('../ports')
+    const { ConnectionType } = await import('@/core/workflow/model')
+    expect(connectionTypeFor({ kind: PortKind.MAIN }, { kind: PortKind.MAIN })).toBe(ConnectionType.MAIN)
+    expect(connectionTypeFor({ kind: PortKind.AI_TOOL }, { kind: PortKind.AI_TOOL })).toBe(ConnectionType.AI_TOOL)
+    expect(connectionTypeFor({ kind: PortKind.AI_MODEL }, { kind: PortKind.AI_TOOL })).toBeNull()
+    expect(connectionTypeFor({ kind: PortKind.AI_MODEL }, { kind: PortKind.MAIN })).toBeNull()
+  })
+})

@@ -4,10 +4,11 @@ import { VueFlow, useVueFlow, type Connection, type NodeDragEvent } from '@vue-f
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import type { WorkflowEditorSession, ConnectRejection } from '@/core/editor/WorkflowEditorSession'
+import { ConnectRejection, type WorkflowEditorSession } from '@/core/editor/WorkflowEditorSession'
+import { connectionTypeFor } from '@/core/node-types/ports'
 import type { ExecutionTracker } from '@/core/execution/ExecutionTracker'
 import type { NodeTypeCatalog } from '@/core/node-types/NodeTypeCatalog'
-import type { NodeId, Position } from '@/core/workflow/model'
+import { ConnectionType, type NodeId, type Position } from '@/core/workflow/model'
 import { CanvasModelFactory, EDGE_TYPE, handleIndex, NODE_TYPE, type CanvasNodeData } from './canvasModel'
 import { CanvasProjection, type CanvasPort } from './CanvasProjection'
 import WorkflowNodeCard from './nodes/WorkflowNodeCard.vue'
@@ -57,12 +58,16 @@ onMounted(() => {
 onBeforeUnmount(() => projection?.dispose())
 
 function onConnect(connection: Connection): void {
-  const rejection = props.session.connect({
-    source: connection.source,
-    sourceOutput: handleIndex(connection.sourceHandle),
-    target: connection.target,
-    targetInput: handleIndex(connection.targetHandle),
-  })
+  const sourceOutput = handleIndex(connection.sourceHandle)
+  const targetInput = handleIndex(connection.targetHandle)
+  const sourcePort = projection?.dataOf(connection.source)?.outputs.find((p) => p.index === sourceOutput)
+  const targetPort = projection?.dataOf(connection.target)?.inputs.find((p) => p.index === targetInput)
+  const type = sourcePort && targetPort ? connectionTypeFor(sourcePort, targetPort) : ConnectionType.MAIN
+  if (!type) {
+    emit('rejected', ConnectRejection.PORT_KIND)
+    return
+  }
+  const rejection = props.session.connect({ source: connection.source, sourceOutput, target: connection.target, targetInput, type })
   if (rejection) emit('rejected', rejection)
 }
 

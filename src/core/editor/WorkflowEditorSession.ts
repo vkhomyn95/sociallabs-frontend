@@ -29,6 +29,8 @@ export enum ConnectRejection {
   SAME_NODE = 'SAME_NODE',
   DUPLICATE = 'DUPLICATE',
   CYCLE = 'CYCLE',
+  /** A sub-node output into a main input, or between different sub-node kinds. */
+  PORT_KIND = 'PORT_KIND',
 }
 
 /**

@@ -26,7 +26,7 @@ const path = computed(() => getBezierPath(props))
     :id="id"
     :path="path[0]"
     class="wf-edge"
-    :class="{ 'wf-edge--selected': selected }"
+    :class="{ 'wf-edge--selected': selected, 'wf-edge--sub-node': data.subNode }"
     :style="{ stroke: data.color }"
     :interaction-width="20"
   />
@@ -51,6 +51,10 @@ const path = computed(() => getBezierPath(props))
 
 .wf-edge--selected {
   stroke-width: 3;
+}
+
+.wf-edge--sub-node {
+  stroke-dasharray: 6 4;
 }
 
 .wf-edge__label {

@@ -3,7 +3,7 @@ import type { NodeRunView } from '@/core/execution/ExecutionTracker'
 import type { NodeTypeCatalog } from '@/core/node-types/NodeTypeCatalog'
 import { inputPorts, outputPorts, PortRole, type PortView } from '@/core/node-types/ports'
 import { NodeKind, PortKind, type NodeTypeDescriptor } from '@/core/node-types/descriptor'
-import { connectionKey, typeKeyOf, type ConnectionModel, type NodeModel, type Position } from '@/core/workflow/model'
+import { ConnectionType, connectionKey, typeKeyOf, type ConnectionModel, type NodeModel, type Position } from '@/core/workflow/model'
 import { presentationOf, type NodePresentation } from '../presentation'
 
 export const NODE_TYPE = 'workflow'
@@ -17,6 +17,8 @@ export interface CanvasNodeData {
   readonly inputs: readonly PortView[]
   readonly outputs: readonly PortView[]
   readonly trigger: boolean
+  /** Sub-node (model, memory, tool): output on top, never runs. */
+  readonly supply: boolean
   /** State in the execution the editor follows, null when the node did not run in it. */
   readonly run: NodeRunView | null
 }
@@ -24,6 +26,8 @@ export interface CanvasNodeData {
 export interface CanvasEdgeData {
   readonly label: string
   readonly color: string
+  /** Sub-node attachment rather than a data connection. */
+  readonly subNode: boolean
 }
 
 /** The subset of a Vue Flow node the projection produces. */
@@ -73,6 +77,7 @@ export class CanvasModelFactory {
       inputs: descriptor ? inputPorts(descriptor) : [FALLBACK_PORT],
       outputs: descriptor ? outputPorts(descriptor, node) : [FALLBACK_PORT],
       trigger: descriptor?.kind === NodeKind.TRIGGER,
+      supply: descriptor?.kind === NodeKind.SUPPLY,
       run,
     })
   }
@@ -95,11 +100,12 @@ export class CanvasModelFactory {
   }
 
   edgeData(connection: ConnectionModel, sourceData: CanvasNodeData | undefined): CanvasEdgeData {
+    if (connection.type !== ConnectionType.MAIN) return { label: '', color: NEUTRAL, subNode: true }
     const outputs = sourceData?.outputs ?? []
     const port = outputs.find((p) => p.index === connection.sourceOutput)
-    if (!port || outputs.length < 2) return { label: port?.label ?? '', color: NEUTRAL }
+    if (!port || outputs.length < 2) return { label: port?.label ?? '', color: NEUTRAL, subNode: false }
     const color =
       port.role === PortRole.ERROR ? ERROR : port.role === PortRole.FALLBACK ? NEUTRAL : PORT_COLORS[port.index % PORT_COLORS.length]!
-    return { label: port.label, color }
+    return { label: port.label, color, subNode: false }
   }
 }

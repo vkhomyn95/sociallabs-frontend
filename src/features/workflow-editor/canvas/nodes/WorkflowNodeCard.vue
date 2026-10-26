@@ -5,7 +5,9 @@ import type { SlbIconName } from '@sociallabs/frontend-components'
 import { NodeRunState } from '@/core/execution/ExecutionTracker'
 import { NodeTypeStatus } from '@/core/node-types/descriptor'
 import type { CanvasNodeData } from '../canvasModel'
+import { isSubNodePort } from '@/core/node-types/ports'
 import NodePorts from './NodePorts.vue'
+import SubNodePorts from './SubNodePorts.vue'
 
 /** Draws any node from its descriptor: icon, name, ports and state; there are no per-type card components. */
 const props = defineProps<{
@@ -23,7 +25,11 @@ const emit = defineEmits<{
 const PORT_ROW = 26
 const MIN_HEIGHT = 64
 
-const height = computed(() => Math.max(MIN_HEIGHT, (Math.max(props.data.outputs.length, props.data.inputs.length) + 1) * PORT_ROW))
+const mainInputs = computed(() => props.data.inputs.filter((p) => !isSubNodePort(p)))
+const subInputs = computed(() => props.data.inputs.filter(isSubNodePort))
+const mainOutputs = computed(() => props.data.outputs.filter((p) => !isSubNodePort(p)))
+const subOutputs = computed(() => props.data.outputs.filter(isSubNodePort))
+const height = computed(() => Math.max(MIN_HEIGHT, (Math.max(mainOutputs.value.length, mainInputs.value.length) + 1) * PORT_ROW))
 const subtitle = computed(() => props.data.descriptor?.displayName ?? `${props.data.node.type} (unknown type)`)
 const preview = computed(() => props.data.descriptor?.status === NodeTypeStatus.PREVIEW)
 
@@ -51,13 +57,17 @@ const runLabel = computed(() => {
       'wf-node--selected': selected,
       'wf-node--disabled': data.node.disabled,
       'wf-node--trigger': data.trigger,
+      'wf-node--supply': data.supply,
+      'wf-node--agent': subInputs.length > 0,
       'wf-node--unknown': !data.descriptor,
       [`wf-node--run-${data.run?.state.toLowerCase()}`]: data.run,
     }"
     :style="{ height: `${height}px`, '--wf-node-accent': data.presentation.color }"
     @dblclick.stop="emit('open', id)"
   >
-    <NodePorts :ports="data.inputs" side="input" />
+    <NodePorts :ports="mainInputs" side="input" />
+    <SubNodePorts :ports="subInputs" side="input" />
+    <SubNodePorts :ports="subOutputs" side="output" />
 
     <div class="wf-node__icon">
       <SlbIcon :name="data.presentation.icon" :size="20" color="#fff" />
@@ -84,7 +94,7 @@ const runLabel = computed(() => {
       </button>
     </div>
 
-    <NodePorts :ports="data.outputs" side="output" />
+    <NodePorts :ports="mainOutputs" side="output" />
   </div>
 </template>
 
@@ -130,6 +140,15 @@ const runLabel = computed(() => {
 
   &--unknown {
     border-style: dashed;
+  }
+
+  &--supply {
+    width: 180px;
+    border-radius: 32px;
+  }
+
+  &--agent {
+    margin-bottom: 18px;
   }
 
   &--run-running {

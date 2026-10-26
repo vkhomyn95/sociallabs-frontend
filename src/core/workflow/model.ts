@@ -13,6 +13,7 @@ export enum ConnectionType {
   AI_TOOL = 'AI_TOOL',
   AI_MEMORY = 'AI_MEMORY',
   AI_OUTPUT = 'AI_OUTPUT',
+  AI_MODEL = 'AI_MODEL',
 }
 
 /** Mirrors backend OnError. */

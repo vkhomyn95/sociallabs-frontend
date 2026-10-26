@@ -1,4 +1,4 @@
-import { OnError, type NodeModel } from '@/core/workflow/model'
+import { ConnectionType, OnError, type NodeModel } from '@/core/workflow/model'
 import { PortKind, type NodeTypeDescriptor } from './descriptor'
 
 /** A port as the canvas draws it; `index` is what connections store. */
@@ -58,4 +58,24 @@ function labelOf(element: unknown, field: string): string {
   if (!field || typeof element !== 'object' || element === null) return ''
   const value = (element as Record<string, unknown>)[field]
   return typeof value === 'string' ? value : ''
+}
+
+/** Whether a port carries a sub-node attachment (model, memory, tool) rather than items. */
+export const isSubNodePort = (port: Pick<PortView, 'kind'>): boolean => port.kind !== PortKind.MAIN
+
+const CONNECTION_TYPES: Readonly<Record<PortKind, ConnectionType>> = {
+  [PortKind.MAIN]: ConnectionType.MAIN,
+  [PortKind.AI_MODEL]: ConnectionType.AI_MODEL,
+  [PortKind.AI_MEMORY]: ConnectionType.AI_MEMORY,
+  [PortKind.AI_TOOL]: ConnectionType.AI_TOOL,
+}
+
+/**
+ * Connection type between two ports, as the backend validates it: items between main ports, and a sub-node
+ * output only into an input of the same kind.
+ *
+ * @returns the type, or null when the ports cannot be connected
+ */
+export function connectionTypeFor(source: Pick<PortView, 'kind'>, target: Pick<PortView, 'kind'>): ConnectionType | null {
+  return source.kind === target.kind ? CONNECTION_TYPES[source.kind] : null
 }

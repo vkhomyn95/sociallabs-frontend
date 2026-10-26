@@ -14,6 +14,7 @@ const REJECTIONS: Record<ConnectRejection, string> = {
   [ConnectRejection.SAME_NODE]: 'A node cannot connect to itself',
   [ConnectRejection.DUPLICATE]: 'These ports are already connected',
   [ConnectRejection.CYCLE]: 'This connection would create a loop',
+  [ConnectRejection.PORT_KIND]: 'Sub-nodes connect only to the matching input of an agent (model, memory or tools)',
 }
 
 /**
