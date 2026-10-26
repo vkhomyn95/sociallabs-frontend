@@ -237,6 +237,28 @@ export interface HttpRequestV1Params {
   continueOnFail?: boolean
 }
 
+/** Telegram account (`telegram.accountAction@1`) */
+export interface TelegramAccountActionV1Params {
+  /** Operation */
+  operation?: 'SEND' | 'EDIT' | 'DELETE' | 'SEND_TYPING'
+  /** Chat ID */
+  chatId: string
+  /** Text */
+  text?: string
+  /** Message ID */
+  messageId?: string
+  /** Reply to message ID */
+  replyToMessageId?: string
+  /** Send silently */
+  disableNotification?: boolean
+  /** Delete for everyone */
+  revoke?: boolean
+  /** Action */
+  chatAction?: 'TYPING' | 'UPLOAD_PHOTO' | 'RECORD_VIDEO' | 'UPLOAD_VIDEO' | 'RECORD_VOICE' | 'UPLOAD_VOICE' | 'UPLOAD_DOCUMENT' | 'CHOOSE_STICKER' | 'FIND_LOCATION' | 'RECORD_VIDEO_NOTE' | 'UPLOAD_VIDEO_NOTE' | 'CANCEL'
+  /** Timeout (seconds) */
+  requestTimeout?: number
+}
+
 /** Telegram account trigger (`telegram.accountTrigger@1`) */
 export interface TelegramAccountTriggerV1Params {
   /** Events */
@@ -259,10 +281,91 @@ export interface TelegramAccountTriggerV1Params {
   ignoreOwnMessages?: boolean
 }
 
-/** Scripted model (`test.scriptedModel@1`) */
-export interface TestScriptedModelV1Params {
-  /** Script */
-  script?: unknown
+/** Telegram bot (`telegram.botAction@1`) */
+export interface TelegramBotActionV1Params {
+  /** Operation */
+  operation?: 'SEND_MESSAGE' | 'SEND_PHOTO' | 'SEND_VIDEO' | 'SEND_DOCUMENT' | 'SEND_AUDIO' | 'SEND_VOICE' | 'SEND_ANIMATION' | 'SEND_STICKER' | 'SEND_LOCATION' | 'SEND_CONTACT' | 'SEND_POLL' | 'EDIT_TEXT' | 'DELETE_MESSAGE' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'FORWARD_MESSAGE'
+  /** Chat ID */
+  chatId: string
+  /** Text */
+  text?: string
+  /** File (URL or file_id) */
+  file?: string
+  /** Caption */
+  caption?: string
+  /** Format */
+  parseMode?: 'NONE' | 'HTML' | 'MARKDOWN_V2' | 'MARKDOWN'
+  /** Disable link preview */
+  disableWebPagePreview?: boolean
+  /** Latitude */
+  latitude?: string
+  /** Longitude */
+  longitude?: string
+  /** Phone number */
+  phoneNumber?: string
+  /** First name */
+  firstName?: string
+  /** Question */
+  question?: string
+  /** Options (one per line) */
+  pollOptions?: string
+  /** Message ID */
+  messageId?: string
+  /** From chat ID */
+  fromChatId?: string
+  /** Reply to message ID */
+  replyToMessageId?: string
+  /** Buttons */
+  buttons?: Array<{
+    /** Text */
+    text?: string
+    /** URL */
+    url?: string
+    /** Callback data */
+    callbackData?: string
+  }>
+  /** Send silently */
+  disableNotification?: boolean
+  /** Protect content: Prevent forwarding and saving */
+  protectContent?: boolean
+  /** Timeout (seconds) */
+  requestTimeout?: number
+}
+
+/** Telegram bot trigger (`telegram.botTrigger@1`) */
+export interface TelegramBotTriggerV1Params {
+  /** Updates */
+  events?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'REACTION' | 'NEW_CHAT' | 'CHAT_UPDATED' | 'CHAT_MEMBER_UPDATED' | 'USER_STATUS_CHANGED' | 'CALLBACK_QUERY' | 'INLINE_QUERY' | 'OTHER'>
+  /** Only command: Leave empty for every message */
+  command?: string
+  /** Only selected chats */
+  filterChats?: boolean
+  /** Chat IDs: Comma-separated */
+  chatIds?: string
+  /** Only selected users */
+  filterUsers?: boolean
+  /** User IDs: Comma-separated */
+  userIds?: string
+}
+
+/** Viber account (`viber.accountAction@1`) */
+export interface ViberAccountActionV1Params {
+  /** Operation */
+  operation?: 'SEND_TEXT' | 'REPLY' | 'DELETE_MESSAGE' | 'LIKE' | 'MARK_READ' | 'MARK_UNREAD' | 'PIN' | 'UNPIN'
+  /** Chat by */
+  targetBy?: 'CHAT_ID' | 'PHONE'
+  /** Chat ID */
+  chatId?: string
+  /** Phone */
+  phone?: string
+  /** Text */
+  text?: string
+  /** Message ID */
+  messageId?: string
+  /** Delete for everyone */
+  forEveryone?: boolean
+  /** Timeout (seconds) */
+  timeout?: number
 }
 
 /** Viber account trigger (`viber.accountTrigger@1`) */
@@ -293,8 +396,11 @@ export interface NodeParamsMap {
   'core.switch@1': CoreSwitchV1Params
   'core.webhook@1': CoreWebhookV1Params
   'http.request@1': HttpRequestV1Params
+  'telegram.accountAction@1': TelegramAccountActionV1Params
   'telegram.accountTrigger@1': TelegramAccountTriggerV1Params
-  'test.scriptedModel@1': TestScriptedModelV1Params
+  'telegram.botAction@1': TelegramBotActionV1Params
+  'telegram.botTrigger@1': TelegramBotTriggerV1Params
+  'viber.accountAction@1': ViberAccountActionV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
 }
 
