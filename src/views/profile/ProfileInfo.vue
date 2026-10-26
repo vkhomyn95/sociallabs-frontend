@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import SlbInput from '@/components/ui/input/SlbInput.vue'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbInput } from '@sociallabs/frontend-components'
+import { SlbButton } from '@sociallabs/frontend-components'
 
 const props = defineProps<{
   firstName: string
@@ -41,7 +41,7 @@ const handleSubmit = async () => {
           v-model="form.firstName"
           label="First Name"
           placeholder="John"
-          icon-left="fa-regular fa-user"
+          icon-left="object_user"
           :error="errors.firstName"
           :disabled="saving"
         />
@@ -50,7 +50,7 @@ const handleSubmit = async () => {
           v-model="form.lastName"
           label="Last Name"
           placeholder="Doe"
-          icon-left="fa-regular fa-user"
+          icon-left="object_user"
           :error="errors.lastName"
           :disabled="saving"
         />
@@ -62,7 +62,7 @@ const handleSubmit = async () => {
         type="email"
         label="Email Address"
         placeholder="you@example.com"
-        icon-left="fa-regular fa-envelope"
+        icon-left="object_mail"
         :error="errors.email"
         :disabled="saving"
       />

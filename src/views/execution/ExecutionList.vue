@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbButton } from '@sociallabs/frontend-components'
 import { SlbTable } from '@sociallabs/frontend-components'
 import type { SortState, TableColumn } from '@sociallabs/frontend-components'
 

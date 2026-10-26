@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbButton } from '@sociallabs/frontend-components'
 import ProfileMeter from './ProfileMeter.vue'
 
 export interface QuotaItem {

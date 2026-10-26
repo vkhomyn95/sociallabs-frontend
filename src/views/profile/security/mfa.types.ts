@@ -1,5 +1,5 @@
 import type { ComputedRef } from 'vue'
-import type { ButtonVariant } from '@/components/ui/button/useButton'
+import type { ButtonVariant } from '@sociallabs/frontend-components'
 import type { MfaStatus, TotpSetup } from '@/stores/auth/types'
 
 /**

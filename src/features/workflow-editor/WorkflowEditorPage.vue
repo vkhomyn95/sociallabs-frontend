@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { SlbAlert, SlbToastProvider } from '@sociallabs/frontend-components'
+import { SlbAlert } from '@sociallabs/frontend-components'
 import type { NodeTypeDescriptor } from '@/core/node-types/descriptor'
 import EditorCanvas from './canvas/EditorCanvas.vue'
 import NodeDetailsView from './ndv/NodeDetailsView.vue'
@@ -32,7 +32,6 @@ function addFromPalette(type: NodeTypeDescriptor): void {
 
 <template>
   <div class="wf-editor">
-    <SlbToastProvider />
     <SlbAlert v-if="editor.loadError.value" variant="error" class="wf-editor__error">
       Could not open workflow {{ workflowId }}: {{ editor.loadError.value }}
     </SlbAlert>

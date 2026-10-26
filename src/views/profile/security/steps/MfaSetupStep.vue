@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { SlbOtpInput } from '@sociallabs/frontend-components'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbButton } from '@sociallabs/frontend-components'
 import { useMfaSettings } from '../useMfaSettings'
 import type { MfaSetupStepProps } from '../mfa.types'
 

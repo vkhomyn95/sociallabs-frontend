@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbButton } from '@sociallabs/frontend-components'
 import { useMfaSettings } from '../useMfaSettings'
 import { copyRecoveryCodes, downloadRecoveryCodes } from '../recovery-codes'
 import type { MfaRecoveryCodesStepProps } from '../mfa.types'

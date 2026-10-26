@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import SlbInput from '@/components/ui/input/SlbInput.vue'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbInput } from '@sociallabs/frontend-components'
+import { SlbButton } from '@sociallabs/frontend-components'
 
 const form   = reactive({ current: '', next: '', confirm: '' })
 const errors = reactive({ current: '', next: '', confirm: '' })
@@ -31,7 +31,7 @@ const handleSubmit = async () => {
         type="password"
         label="Current Password"
         placeholder="••••••••"
-        icon-left="fa-solid fa-lock"
+        icon-left="object_lock"
         :error="errors.current"
         :disabled="saving"
       />
@@ -41,7 +41,7 @@ const handleSubmit = async () => {
         type="password"
         label="New Password"
         placeholder="Min. 8 characters"
-        icon-left="fa-solid fa-lock"
+        icon-left="object_lock"
         :error="errors.next"
         :disabled="saving"
       />
@@ -51,7 +51,7 @@ const handleSubmit = async () => {
         type="password"
         label="Confirm New Password"
         placeholder="Repeat password"
-        icon-left="fa-solid fa-shield-check"
+        icon-left="object_shield_check"
         :error="errors.confirm"
         :disabled="saving"
       />

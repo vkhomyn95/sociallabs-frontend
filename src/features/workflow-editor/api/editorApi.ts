@@ -36,6 +36,14 @@ export const httpDraftApi: DraftApi = {
 
 /** Workflow endpoints the editor uses besides draft saves. */
 export const editorApi = {
+  async list(): Promise<WorkflowDto[]> {
+    return (await api.get<WorkflowDto[]>('/workflows')).data
+  },
+
+  async remove(id: number): Promise<void> {
+    await api.delete(`/workflows/${id}`)
+  },
+
   async load(id: number): Promise<WorkflowDto> {
     return (await api.get<WorkflowDto>(`/workflows/${id}`)).data
   },

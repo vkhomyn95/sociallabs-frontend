@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbButton } from '@sociallabs/frontend-components'
 import { useMfaSettings } from '../useMfaSettings'
 import { MfaSensitiveAction } from '../mfa.types'
 

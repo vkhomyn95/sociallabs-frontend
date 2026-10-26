@@ -1,75 +1,72 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
-import { useWorkflowStore } from '@/stores/workflow'
-import { useModal } from '@/composables/useModal'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
-import ConfirmModal from '@/components/ui/modal/ConfirmModal.vue'
-import { storeToRefs } from 'pinia'
+import { SlbButton, SlbConfirmModal, slbToast } from '@sociallabs/frontend-components'
 import { RouteName } from '@/layouts/navigation'
+import type { WorkflowDto } from '@/core/workflow/dto'
 import { editorApi } from '@/features/workflow-editor/api/editorApi'
-import { useToast } from '@/composables/useToast'
+import { executionApi } from '@/features/workflow-editor/api/executionApi'
 
 const router = useRouter()
-const workflowStore = useWorkflowStore();
-const {loading, workflows} = storeToRefs(workflowStore);
-const {FETCH_WORKFLOWS, EXECUTE_WORKFLOW, DELETE_WORKFLOW} = workflowStore;
-const modal = useModal()
-const toast = useToast()
+const workflows = shallowRef<WorkflowDto[]>([])
+const loading = ref(true)
+const pendingDelete = ref<WorkflowDto | null>(null)
+const deleting = ref(false)
 
-/** Route flag of migration step 10: which editor opens a workflow by default. */
-const NEW_EDITOR_DEFAULT = import.meta.env.VITE_WORKFLOW_EDITOR === 'v2'
-
-onMounted(() => {
-  FETCH_WORKFLOWS()
-})
-
-const createWorkflow = async (): Promise<void> => {
-  if (!NEW_EDITOR_DEFAULT) {
-    router.push('/workflow')
-    return
-  }
+async function load(): Promise<void> {
+  loading.value = true
   try {
-    const created = await editorApi.create('New workflow')
-    openInNewEditor(created.id)
+    workflows.value = await editorApi.list()
   } catch (error) {
-    toast.error(editorApi.errorMessage(error))
+    slbToast.error(`Could not load workflows: ${editorApi.errorMessage(error)}`)
+  } finally {
+    loading.value = false
   }
 }
 
-const openInNewEditor = (workflowId: number): void => {
+onMounted(load)
+
+const openWorkflow = (workflowId: number): void => {
   router.push({ name: RouteName.WORKFLOW_EDITOR, params: { id: workflowId } })
 }
 
-const editWorkflow = (workflowId: number): void => {
-  if (NEW_EDITOR_DEFAULT) openInNewEditor(workflowId)
-  else router.push(`/workflows/${workflowId}`)
-}
-
-const executeWorkflow = (workflowId: number): void => {
-  EXECUTE_WORKFLOW(workflowId)
-}
-
-const deleteWorkflow = async (workflowId: number): Promise<void> => {
+async function createWorkflow(): Promise<void> {
   try {
-    await modal.open(ConfirmModal, {
-      title: 'Delete workflow',
-      message: 'Are you sure you want to delete this workflow? This action cannot be undone.',
-      confirmLabel: 'Delete',
-      danger: true,
-    }, { size: 'sm', closeOnBackdrop: false })
-
-    await DELETE_WORKFLOW(workflowId)
-  } catch {
-    // User cancelled — do nothing
+    openWorkflow((await editorApi.create('New workflow')).id)
+  } catch (error) {
+    slbToast.error(editorApi.errorMessage(error))
   }
 }
 
-const formatDate = (date?: string): string => {
+async function executeWorkflow(workflow: WorkflowDto): Promise<void> {
+  try {
+    const started = await executionApi.start(workflow.id)
+    if (started.executionId) slbToast.success(`Execution ${started.executionId} of ${workflow.name} started`)
+    else slbToast.error(`Execution was not started: ${started.error ?? 'rejected'}`)
+  } catch (error) {
+    slbToast.error(editorApi.errorMessage(error))
+  }
+}
+
+async function confirmDelete(): Promise<void> {
+  const workflow = pendingDelete.value
+  if (!workflow) return
+  deleting.value = true
+  try {
+    await editorApi.remove(workflow.id)
+    workflows.value = workflows.value.filter((w) => w.id !== workflow.id)
+    pendingDelete.value = null
+  } catch (error) {
+    slbToast.error(`Delete failed: ${editorApi.errorMessage(error)}`)
+  } finally {
+    deleting.value = false
+  }
+}
+
+const formatDate = (date?: string | null): string => {
   if (!date) return 'Never'
   const d = new Date(date)
-  const diff = Date.now() - d.getTime()
-  const days = Math.floor(diff / 86_400_000)
+  const days = Math.floor((Date.now() - d.getTime()) / 86_400_000)
 
   if (days === 0) return 'Today'
   if (days === 1) return 'Yesterday'
@@ -82,7 +79,7 @@ const formatDate = (date?: string): string => {
 <template>
   <div class="slb-wf-list">
     <div class="slb-wf-list__actions">
-      <SlbButton icon-left="fas fa-plus" @click="createWorkflow">Create workflow</SlbButton>
+      <SlbButton icon-left="action_plus" @click="createWorkflow">Create workflow</SlbButton>
     </div>
 
     <!-- Loading -->
@@ -108,8 +105,8 @@ const formatDate = (date?: string): string => {
         class="slb-wf-list__card"
         tabindex="0"
         :aria-label="`Open workflow ${workflow.name}`"
-        @click="editWorkflow(workflow.id!)"
-        @keydown.enter="editWorkflow(workflow.id!)"
+        @click="openWorkflow(workflow.id)"
+        @keydown.enter="openWorkflow(workflow.id)"
       >
         <div class="slb-wf-list__card-header">
           <h3 class="slb-wf-list__card-name">{{ workflow.name }}</h3>
@@ -146,31 +143,33 @@ const formatDate = (date?: string): string => {
               variant="ghost"
               size="sm"
               icon-only
-              icon-left="fas fa-play"
+              icon-left="media_play"
               :aria-label="`Execute ${workflow.name}`"
-              @click="executeWorkflow(workflow.id!)"
+              @click="executeWorkflow(workflow)"
             />
             <SlbButton
               variant="ghost"
               size="sm"
               icon-only
-              :icon-left="NEW_EDITOR_DEFAULT ? 'fas fa-pen' : 'fas fa-diagram-project'"
-              :aria-label="NEW_EDITOR_DEFAULT ? `Open ${workflow.name} in the legacy editor` : `Open ${workflow.name} in the new editor`"
-              :title="NEW_EDITOR_DEFAULT ? 'Legacy editor' : 'New editor'"
-              @click="NEW_EDITOR_DEFAULT ? router.push(`/workflows/${workflow.id}`) : openInNewEditor(workflow.id!)"
-            />
-            <SlbButton
-              variant="ghost"
-              size="sm"
-              icon-only
-              icon-left="fas fa-trash"
+              icon-left="action_trash"
               :aria-label="`Delete ${workflow.name}`"
-              @click="deleteWorkflow(workflow.id!)"
+              @click="pendingDelete = workflow"
             />
           </div>
         </div>
       </article>
     </div>
+
+    <SlbConfirmModal
+      :model-value="pendingDelete !== null"
+      title="Delete workflow"
+      :message="`Delete ${pendingDelete?.name ?? 'this workflow'}? Its versions and execution history go too. This cannot be undone.`"
+      confirm-label="Delete"
+      danger
+      :loading="deleting"
+      @update:model-value="!$event && (pendingDelete = null)"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 

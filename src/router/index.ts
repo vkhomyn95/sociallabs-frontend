@@ -54,23 +54,14 @@ const routes: RouteRecordRaw[] = [
     children: [
       // Повноекранні сторінки з власним тулбаром — без хедера.
       {
-        path: 'workflow',
-        name: 'WorkflowCreate',
-        component: () => import('@/views/workflow/WorkflowView.vue'),
-        meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
-      },
-      {
         path: 'workflows/:id',
-        name: 'WorkflowEdit',
-        component: () => import('@/views/workflow/WorkflowView.vue'),
-        meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
-      },
-      {
-        path: 'workflows/:id/editor',
         name: RouteName.WORKFLOW_EDITOR,
         component: () => import('@/features/workflow-editor/WorkflowEditorPage.vue'),
         meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
       },
+      // Links of the time both editors existed.
+      { path: 'workflows/:id/editor', redirect: (to) => `/workflows/${to.params.id}` },
+      { path: 'workflow', redirect: '/workflows' },
       {
         path: 'dialogs',
         name: RouteName.DIALOGS,

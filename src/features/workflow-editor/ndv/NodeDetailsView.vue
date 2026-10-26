@@ -26,7 +26,6 @@ import { connectionKey, typeKeyOf, type NodeId, type NodeModel, type NodeSetting
 import { executionApi } from '../api/executionApi'
 import CredentialField from '../credentials/CredentialField.vue'
 import { provideExpressionContext } from '../expression/expressionContext'
-import { openLegacyNodeEditor } from '../legacy/legacyNodeEditor'
 import ParameterForm from '../parameters/ParameterForm.vue'
 import { presentationOf } from '../presentation'
 import RunDataPanel from '../run-data/RunDataPanel.vue'
@@ -174,7 +173,6 @@ const setSettings = (settings: NodeSettings) => props.session.update(props.nodeI
 const setDisabled = (disabled: boolean) => props.session.update(props.nodeId, 'disabled', disabled)
 const setNotes = (notes: string | null) => props.session.update(props.nodeId, 'notes', notes)
 
-const openLegacy = () => void openLegacyNodeEditor(props.session, props.catalog, props.nodeId)
 
 // ─── Closing ─────────────────────────────────────────────────────────
 
@@ -182,7 +180,7 @@ const root = ref<HTMLElement>()
 
 function onKeydown(event: KeyboardEvent): void {
   if (event.key !== 'Escape') return
-  // Escape inside a dialog opened on top (legacy editor, credential connect) belongs to that dialog.
+  // Escape inside a dialog opened on top (credential connect) belongs to that dialog.
   const target = event.target as Node | null
   if (target && target !== document.body && !root.value?.contains(target)) return
   emit('close')
@@ -241,10 +239,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
                   :issues="issues"
                   @update:values="setParameters"
                 />
-                <div v-else-if="descriptor" class="wf-ndv__legacy">
-                  <p>This node still uses its own parameter editor.</p>
-                  <SlbButton variant="secondary" size="sm" icon-left="action_edit" @click="openLegacy">Edit parameters</SlbButton>
-                </div>
+                <p v-else-if="descriptor" class="wf-ndv__empty">This node has no parameters.</p>
               </template>
               <NodeSettingsForm
                 v-else
@@ -361,16 +356,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   overflow-y: auto;
 }
 
-.wf-ndv__legacy {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-start;
+.wf-ndv__empty {
+  margin: 0;
   font-size: var(--slb-font-sm);
   color: var(--slb-color-text-muted);
-
-  p {
-    margin: 0;
-  }
 }
 </style>

@@ -7,8 +7,6 @@ export interface WorkflowNodeDto {
   name: string
   typeName: string
   typeVersion: number | null
-  /** Legacy node type; the legacy node editor panels are keyed by it until the nodes move to the SDK. */
-  discriminator: string | null
   position: { x: number | null; y: number | null } | null
   parameters: Record<string, unknown> | null
   credentialId: number | null
@@ -37,6 +35,8 @@ export interface WorkflowDto {
   hasUnpublishedChanges: boolean
   nodes: WorkflowNodeDto[]
   connections: WorkflowConnectionDto[]
+  createdAt?: string | null
+  updatedAt?: string | null
 }
 
 export const toNodeModel = (dto: WorkflowNodeDto): NodeModel => ({

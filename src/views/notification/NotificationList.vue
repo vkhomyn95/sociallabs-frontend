@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import SlbButton from '@/components/ui/button/SlbButton.vue'
+import { SlbButton } from '@sociallabs/frontend-components'
 
 type NotifType = 'billing' | 'warning' | 'info' | 'success' | 'error'
 type NotifFilter = 'all' | 'unread' | NotifType
