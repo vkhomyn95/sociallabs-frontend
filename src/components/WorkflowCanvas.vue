@@ -73,44 +73,6 @@
         <WorkflowEdge v-bind="edgeProps" @remove="REMOVE_EDGE" />
       </template>
     </VueFlow>
-
-    <div class="slb_workflow-controls">
-      <button
-        v-if="isRunning"
-        class="slb_workflow-controls__btn slb_workflow-controls__btn--stop"
-        @click="stopWorkflow"
-      >
-        <i class="fas fa-stop"></i>
-        <span class="slb_workflow-controls__spinner"></span>
-      </button>
-      <button
-        v-else
-        class="slb_workflow-controls__btn slb_workflow-controls__btn--run"
-        @click="runWorkflow"
-      >
-        <i class="fas fa-play"></i>
-      </button>
-      <button class="slb_workflow-controls__btn" @click="resetWorkflow" title="Reset">
-        <i class="fas fa-undo"></i>
-      </button>
-    </div>
-
-<!--    <NodeEditorModal-->
-<!--      v-if="selectedNode"-->
-<!--      :visible="!!selectedNode"-->
-<!--      :node="selectedNode"-->
-<!--      :input-data="{}"-->
-<!--      @close="selectedNode = null"-->
-<!--      @save="onUpdateNode"-->
-<!--    />-->
-
-    <!--    <RightParameterPanel-->
-    <!--      :visible="rightPanel.visible"-->
-    <!--      :port-key="rightPanel.portKey"-->
-    <!--      :agent-node="rightPanel.agentNode"-->
-    <!--      @close="rightPanel.visible = false"-->
-    <!--      @save="onRightPanelSave"-->
-    <!--    />-->
   </div>
 </template>
 
@@ -122,7 +84,6 @@ import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 
 import { useWorkflowStore } from '@/stores/workflow'
-import { useWorkflowRunner } from '@/composables/useWorkflowRunner'
 // import { type NodeInstance, NodeType } from '@/stores/node/types'
 
 import BaseNode from './nodes/BaseNode.vue'
@@ -154,7 +115,6 @@ const {
 
 
 
-const { run, stop, reset, isRunning } = useWorkflowRunner()
 // const selectedNode = ref<NodeInstance | null>(null)
 
 // const rightPanel = reactive<{
@@ -416,17 +376,6 @@ const onExecuteNode = (_nodeId: string) => {}
 //   if (conn?.id) workflowStore.REMOVE_CONNECTION(conn.id)
 // }
 
-async function runWorkflow() {
-  await run(nodes.value as any)
-}
-
-async function stopWorkflow() {
-  await stop()
-}
-
-function resetWorkflow() {
-  reset(nodes.value as any)
-}
 </script>
 
 <style>
@@ -451,82 +400,5 @@ function resetWorkflow() {
 .vue-flow__node-switch,
 .vue-flow__node-sub {
   overflow: visible !important;
-}
-
-.slb_workflow-controls {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: flex;
-  gap: 8px;
-  z-index: 10;
-  background: white;
-  padding: 8px 10px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-.slb_workflow-controls__btn {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 8px;
-  background: #f3f4f6;
-  color: #374151;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  transition:
-    background 0.15s,
-    color 0.15s;
-  position: relative;
-}
-
-.slb_workflow-controls__btn:hover {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.slb_workflow-controls__btn--run {
-  background: #10b981;
-  color: white;
-}
-
-.slb_workflow-controls__btn--run:hover {
-  background: #059669;
-}
-
-.slb_workflow-controls__btn--stop {
-  background: #ef4444;
-  color: white;
-}
-
-.slb_workflow-controls__btn--stop i {
-  display: none;
-}
-
-.slb_workflow-controls__btn--stop:hover i {
-  display: block;
-}
-
-.slb_workflow-controls__btn--stop:hover .slb_workflow-controls__spinner {
-  display: none;
-}
-
-.slb_workflow-controls__spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: slb-canvas-spin 0.8s linear infinite;
-}
-
-@keyframes slb-canvas-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>
