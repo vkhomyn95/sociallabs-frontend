@@ -2,15 +2,14 @@
 /**
  * NodeEditorModal.vue
  *
- * Відкривається через useModal():
- *   const result = await modal.open(NodeEditorModal, { node }, { size: 'full' })
+ * Opened through useModal():
+ *   const updated = await modal.open<NodeInstance>(NodeEditorModal, { node, upstream }, { size: 'full' })
  *
- * При Save — resolve(updatedNode)
- * При Cancel — reject()
+ * Save resolves with the edited copy; the caller applies it (the legacy store or the new editor's commands).
+ * Cancel rejects.
  */
 import { computed, ref } from 'vue'
 import { useModalStore } from '@/stores/modal'
-import { useWorkflowStore } from '@/stores/workflow'
 import { NodeService } from '@/stores/node/service'
 import type { NodeInstance } from '@/stores/node/types'
 import { NodeColors, NodeIcons } from '@/stores/node/constants'
@@ -24,10 +23,10 @@ import { SlbButton } from '@/components/ui'
 const props = defineProps<{
   modalId: string
   node:    NodeInstance
+  /** Nodes connected to the inputs of this node. */
+  upstream: NodeInstance[]
 }>()
 
-const modalStore    = useWorkflowStore()  // to find previous nodes
-const workflowStore = useWorkflowStore()
 const modalStoreUi  = useModalStore()
 
 // ── Local state ───────────────────────────────────────────────────────────────
@@ -36,23 +35,9 @@ const outputData = ref<Record<string, any>[] | null>(null)
 const outputError = ref<string | null>(null)
 const isTesting   = ref(false)
 
-// ── Compute upstream nodes (all nodes that connect TO this node) ──────────────
-const inputNodes = computed((): InputNode[] => {
-  const workflow = workflowStore.workflow
-  if (!workflow) return []
-
-  // Find all source node IDs connected to current node
-  const sourceIds = workflow.connections
-    .filter(c => c.targetNodeId === props.node.nodeId)
-    .map(c => c.sourceNodeId)
-
-  return sourceIds.map(id => {
-    const node = workflow.nodes.find(n => n.nodeId === id)
-    return node
-      ? { node, data: null, hasData: false }
-      : null
-  }).filter(Boolean) as InputNode[]
-})
+const inputNodes = computed((): InputNode[] =>
+  props.upstream.map((node) => ({ node, data: null, hasData: false })),
+)
 
 const nodeColor = computed(
   () => NodeColors[props.node.discriminator as keyof typeof NodeColors] ?? '#6b7280'
@@ -82,7 +67,6 @@ async function executeStep() {
 }
 
 function onSave(updated: NodeInstance) {
-  workflowStore.UPDATE_NODE(updated.nodeId, updated)
   modalStoreUi.close(props.modalId, updated)
 }
 

@@ -291,21 +291,25 @@ export const actions = {
     })
   },
 
-  async CLICK_NODE(this: WorkflowState, event: NodeMouseEvent): void {
-    console.log(event)
+  async CLICK_NODE(this: WorkflowState & { UPDATE_NODE(nodeId: string, updates: Partial<NodeInstance>): void }, event: NodeMouseEvent): Promise<void> {
     this.currentNodeId = event.node.id;
 
     const node = this.workflow.nodes.find(n => n.nodeId === this.currentNodeId);
+    if (!node) return
+
+    const sourceIds = new Set(this.workflow.connections.filter(c => c.targetNodeId === node.nodeId).map(c => c.sourceNodeId))
+    const upstream = this.workflow.nodes.filter(n => sourceIds.has(n.nodeId))
 
     const modal = useModal();
 
     const { default: NodeEditorModal } = await import('@/engine/NodeEditorModal.vue')
     try {
-      await modal.open(
+      const updated = await modal.open<NodeInstance>(
         NodeEditorModal,
-        { node },
+        { node, upstream },
         { size: ModalType.max, closeOnBackdrop: false }
       )
+      this.UPDATE_NODE(updated.nodeId, updated)
     } catch {
       // User closed / cancelled — nothing to do
     }

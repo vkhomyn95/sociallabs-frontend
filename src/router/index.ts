@@ -66,6 +66,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
       },
       {
+        path: 'workflows/:id/editor',
+        name: RouteName.WORKFLOW_EDITOR,
+        component: () => import('@/features/workflow-editor/WorkflowEditorPage.vue'),
+        meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
+      },
+      {
         path: 'dialogs',
         name: RouteName.DIALOGS,
         component: () => import('@/views/dialogs/DialogsView.vue'),

@@ -27,6 +27,8 @@ export enum AccountAction {
 /** Іменовані маршрути, на які веде навігація. */
 export enum RouteName {
   WORKFLOW_LIST = 'WorkflowList',
+  /** New document-based editor (migration step 10); the legacy one stays at /workflows/:id until step 12. */
+  WORKFLOW_EDITOR = 'WorkflowEditor',
   AGENTS = 'Agents',
   EXECUTION_LIST = 'ExecutionList',
   DIALOGS = 'Dialogs',

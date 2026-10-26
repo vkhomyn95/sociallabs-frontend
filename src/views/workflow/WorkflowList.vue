@@ -6,23 +6,44 @@ import { useModal } from '@/composables/useModal'
 import SlbButton from '@/components/ui/button/SlbButton.vue'
 import ConfirmModal from '@/components/ui/modal/ConfirmModal.vue'
 import { storeToRefs } from 'pinia'
+import { RouteName } from '@/layouts/navigation'
+import { editorApi } from '@/features/workflow-editor/api/editorApi'
+import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
 const workflowStore = useWorkflowStore();
 const {loading, workflows} = storeToRefs(workflowStore);
 const {FETCH_WORKFLOWS, EXECUTE_WORKFLOW, DELETE_WORKFLOW} = workflowStore;
 const modal = useModal()
+const toast = useToast()
+
+/** Route flag of migration step 10: which editor opens a workflow by default. */
+const NEW_EDITOR_DEFAULT = import.meta.env.VITE_WORKFLOW_EDITOR === 'v2'
 
 onMounted(() => {
   FETCH_WORKFLOWS()
 })
 
-const createWorkflow = (): void => {
-  router.push('/workflow')
+const createWorkflow = async (): Promise<void> => {
+  if (!NEW_EDITOR_DEFAULT) {
+    router.push('/workflow')
+    return
+  }
+  try {
+    const created = await editorApi.create('New workflow')
+    openInNewEditor(created.id)
+  } catch (error) {
+    toast.error(editorApi.errorMessage(error))
+  }
+}
+
+const openInNewEditor = (workflowId: number): void => {
+  router.push({ name: RouteName.WORKFLOW_EDITOR, params: { id: workflowId } })
 }
 
 const editWorkflow = (workflowId: number): void => {
-  router.push(`/workflows/${workflowId}`)
+  if (NEW_EDITOR_DEFAULT) openInNewEditor(workflowId)
+  else router.push(`/workflows/${workflowId}`)
 }
 
 const executeWorkflow = (workflowId: number): void => {
@@ -128,6 +149,15 @@ const formatDate = (date?: string): string => {
               icon-left="fas fa-play"
               :aria-label="`Execute ${workflow.name}`"
               @click="executeWorkflow(workflow.id!)"
+            />
+            <SlbButton
+              variant="ghost"
+              size="sm"
+              icon-only
+              :icon-left="NEW_EDITOR_DEFAULT ? 'fas fa-pen' : 'fas fa-diagram-project'"
+              :aria-label="NEW_EDITOR_DEFAULT ? `Open ${workflow.name} in the legacy editor` : `Open ${workflow.name} in the new editor`"
+              :title="NEW_EDITOR_DEFAULT ? 'Legacy editor' : 'New editor'"
+              @click="NEW_EDITOR_DEFAULT ? router.push(`/workflows/${workflow.id}`) : openInNewEditor(workflow.id!)"
             />
             <SlbButton
               variant="ghost"
