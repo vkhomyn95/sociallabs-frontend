@@ -1,13 +1,12 @@
 import { onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef } from 'vue'
 import { slbToast } from '@sociallabs/frontend-components'
 import { ConnectRejection, WorkflowEditorSession } from '@/core/editor/WorkflowEditorSession'
-import type { NodeTypeDescriptor } from '@/core/node-types/descriptor'
 import { NodeTypeCatalog } from '@/core/node-types/NodeTypeCatalog'
 import { SyncStatus } from '@/core/sync/DraftSync'
 import { toSnapshot, type WorkflowDto } from '@/core/workflow/dto'
-import type { NodeId, Position } from '@/core/workflow/model'
+import type { NodeId } from '@/core/workflow/model'
 import { editorApi, httpDraftApi } from '../api/editorApi'
-import type { ToolbarState } from '../toolbar/EditorToolbar.vue'
+import type { ToolbarState } from '../toolbar/toolbarState'
 import { useEditorRuns } from './useEditorRuns'
 
 const REJECTIONS: Record<ConnectRejection, string> = {
@@ -15,6 +14,7 @@ const REJECTIONS: Record<ConnectRejection, string> = {
   [ConnectRejection.DUPLICATE]: 'These ports are already connected',
   [ConnectRejection.CYCLE]: 'This connection would create a loop',
   [ConnectRejection.PORT_KIND]: 'Sub-nodes connect only to the matching input of an agent (model, memory or tools)',
+  [ConnectRejection.NO_PORT]: 'Connect an output to an input; triggers have no input',
 }
 
 /**
@@ -137,10 +137,6 @@ export function useWorkflowEditor(workflowId: number) {
     }
   }
 
-  function addNode(type: NodeTypeDescriptor, position: Position): void {
-    session.value?.addNode(type, position)
-  }
-
   function openNode(nodeId: NodeId): void {
     openNodeId.value = nodeId
   }
@@ -185,7 +181,6 @@ export function useWorkflowEditor(workflowId: number) {
     toggleActive,
     execute,
     rename,
-    addNode,
     openNode,
     closeNode,
     onRejected,

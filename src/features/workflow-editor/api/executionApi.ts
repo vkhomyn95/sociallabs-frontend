@@ -2,23 +2,15 @@ import { EventSourcePolyfill } from 'event-source-polyfill'
 import api, { API_URL } from '@/core/services/api'
 import { getAccessToken } from '@/core/services/auth-token'
 import type { NodeSample } from '@/core/execution/RunDataView'
+import { ExecutionService, type StartedExecution } from '@/stores/execution/service'
 import {
   ExecutionEventType,
   type ExecutionDetail,
   type ExecutionEvent,
-  type ExecutionPage,
   type ExecutionSummary,
   type ItemJson,
   type RunData,
 } from '@/core/execution/types'
-
-/** `POST /workflows/{id}/execute?wait=false` */
-export interface StartedExecution {
-  /** 0 when the run was rejected before it started. */
-  executionId: number
-  status: string
-  error: string | null
-}
 
 /** `POST /expressions/preview` */
 export interface PreviewRequest {
@@ -36,22 +28,16 @@ export interface PreviewResult {
 
 /** Execution endpoints the editor uses. */
 export const executionApi = {
-  async start(workflowId: number): Promise<StartedExecution> {
-    return (await api.post<StartedExecution>(`/workflows/${workflowId}/execute`, {}, { params: { wait: false } })).data
-  },
+  start: (workflowId: number): Promise<StartedExecution> => ExecutionService.start(workflowId),
 
   async latest(workflowId: number): Promise<ExecutionSummary | null> {
-    const { data } = await api.get<ExecutionPage>('/executions', { params: { workflowId, limit: 1 } })
-    return data.items[0] ?? null
+    const page = await ExecutionService.list({ workflowId, status: null }, null, 1)
+    return page.items[0] ?? null
   },
 
-  async detail(id: number): Promise<ExecutionDetail> {
-    return (await api.get<ExecutionDetail>(`/executions/${id}`)).data
-  },
+  detail: (id: number): Promise<ExecutionDetail> => ExecutionService.detail(id),
 
-  async data(id: number): Promise<RunData> {
-    return (await api.get<RunData>(`/executions/${id}/data`)).data
-  },
+  data: (id: number): Promise<RunData> => ExecutionService.data(id),
 
   async preview(request: PreviewRequest): Promise<PreviewResult> {
     return (await api.post<PreviewResult>('/expressions/preview', request)).data

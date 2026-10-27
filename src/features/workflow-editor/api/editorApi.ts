@@ -4,6 +4,7 @@ import type { NodeTypeDescriptor } from '@/core/node-types/descriptor'
 import { DraftConflictError, DraftRejectedError, type DraftApi } from '@/core/sync/DraftApi'
 import type { DraftOp } from '@/core/sync/ops'
 import type { WorkflowDto } from '@/core/workflow/dto'
+import { WorkflowService } from '@/stores/workflow/service'
 
 /** `POST /workflows/{id}/publish` */
 export interface PublishResult {
@@ -36,25 +37,11 @@ export const httpDraftApi: DraftApi = {
 
 /** Workflow endpoints the editor uses besides draft saves. */
 export const editorApi = {
-  async list(): Promise<WorkflowDto[]> {
-    return (await api.get<WorkflowDto[]>('/workflows')).data
-  },
-
-  async remove(id: number): Promise<void> {
-    await api.delete(`/workflows/${id}`)
-  },
-
   async load(id: number): Promise<WorkflowDto> {
     return (await api.get<WorkflowDto>(`/workflows/${id}`)).data
   },
 
-  async create(name: string): Promise<WorkflowDto> {
-    return (await api.post<WorkflowDto>('/workflows', { name, nodes: [], connections: [] })).data
-  },
-
-  async nodeTypes(): Promise<NodeTypeDescriptor[]> {
-    return (await api.get<NodeTypeDescriptor[]>('/node-types')).data
-  },
+  nodeTypes: (): Promise<NodeTypeDescriptor[]> => WorkflowService.nodeTypes(),
 
   async rename(id: number, name: string, description: string | null): Promise<WorkflowDto> {
     return (await api.patch<WorkflowDto>(`/workflows/${id}`, { name, description })).data
@@ -64,9 +51,7 @@ export const editorApi = {
     return (await api.post<PublishResult>(`/workflows/${id}/publish`)).data
   },
 
-  async setActive(id: number, active: boolean): Promise<WorkflowDto> {
-    return (await api.post<WorkflowDto>(`/workflows/${id}/${active ? 'activate' : 'deactivate'}`)).data
-  },
+  setActive: (id: number, active: boolean): Promise<WorkflowDto> => WorkflowService.setActive(id, active),
 
   errorMessage: serverMessage,
 }

@@ -79,6 +79,19 @@ describe('CanvasProjection', () => {
     expect([...edgeLabels.values()]).toEqual(['gold', 'fallback'])
   })
 
+  it('marks an edge into a node without that input as broken, so it can be found and removed', () => {
+    const trigger: NodeTypeDescriptor = { ...switchType, key: 'core.webhook@1', name: 'core.webhook', kind: NodeKind.TRIGGER, inputs: [] }
+    const doc = new WorkflowDocument({ nodes: [node('a'), node('t', { type: 'core.webhook' })], connections: [link('a', 't')] })
+    const edges: boolean[] = []
+    const canvas = recordingCanvas()
+    const projection = new CanvasProjection(doc, new CanvasModelFactory(new NodeTypeCatalog([trigger])), {
+      ...canvas.port,
+      setEdges: (list) => list.forEach((edge) => edges.push(edge.data.broken)),
+    })
+    projection.render()
+    expect(edges).toEqual([true])
+  })
+
   it('unknown node types still render with one main port each way', () => {
     const { projection } = setup()
     const data = projection.dataOf('a')!

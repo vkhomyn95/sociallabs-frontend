@@ -1,4 +1,5 @@
 import { markRaw } from 'vue'
+import type { GraphNode } from '@vue-flow/core'
 import type { NodeRunView } from '@/core/execution/ExecutionTracker'
 import type { NodeTypeCatalog } from '@/core/node-types/NodeTypeCatalog'
 import { inputPorts, outputPorts, PortRole, type PortView } from '@/core/node-types/ports'
@@ -8,6 +9,16 @@ import { presentationOf, type NodePresentation } from '../presentation'
 
 export const NODE_TYPE = 'workflow'
 export const EDGE_TYPE = 'workflow'
+
+/** Side of a regular node card; nodes with many ports grow taller, agents wider. */
+export const NODE_SIZE = 100
+
+/** Height below a card taken by its name and subtitle, which hang outside the box Vue Flow measures. */
+export const NODE_LABEL_SPACE = 48
+
+/** @returns lowest point a drawn node takes, its name and subtitle included */
+export const floorOf = (node: Pick<GraphNode, 'computedPosition' | 'dimensions'>): number =>
+  node.computedPosition.y + node.dimensions.height + NODE_LABEL_SPACE
 
 /** Everything a node card renders; replaced as a whole when the node changes, never mutated. */
 export interface CanvasNodeData {
@@ -28,6 +39,14 @@ export interface CanvasEdgeData {
   readonly color: string
   /** Sub-node attachment rather than a data connection. */
   readonly subNode: boolean
+  /** Joins ports the nodes do not have (e.g. into a trigger); drawn as an error so it can be removed. */
+  readonly broken: boolean
+}
+
+/** The nodes an edge joins, as the canvas knows them; undefined while a node is missing. */
+export interface EdgeEnds {
+  readonly source: CanvasNodeData | undefined
+  readonly target: CanvasNodeData | undefined
 }
 
 /** The subset of a Vue Flow node the projection produces. */
@@ -58,6 +77,8 @@ const ERROR = '#dc2626'
 export const outputHandle = (index: number): string => `out-${index}`
 export const inputHandle = (index: number): string => `in-${index}`
 export const handleIndex = (handle: string | null | undefined): number => Number(handle?.split('-')[1] ?? 0)
+export const isOutputHandle = (handle: string | null | undefined): boolean => handle?.startsWith('out-') ?? false
+export const isInputHandle = (handle: string | null | undefined): boolean => handle?.startsWith('in-') ?? false
 
 /** Builds canvas nodes and edges from document models and node type descriptors. */
 export class CanvasModelFactory {
@@ -87,7 +108,7 @@ export class CanvasModelFactory {
     return markRaw({ ...data, run })
   }
 
-  edge(connection: ConnectionModel, sourceData: CanvasNodeData | undefined): CanvasEdge {
+  edge(connection: ConnectionModel, ends: EdgeEnds): CanvasEdge {
     return {
       id: connectionKey(connection),
       type: EDGE_TYPE,
@@ -95,17 +116,21 @@ export class CanvasModelFactory {
       target: connection.target,
       sourceHandle: outputHandle(connection.sourceOutput),
       targetHandle: inputHandle(connection.targetInput),
-      data: this.edgeData(connection, sourceData),
+      data: this.edgeData(connection, ends),
     }
   }
 
-  edgeData(connection: ConnectionModel, sourceData: CanvasNodeData | undefined): CanvasEdgeData {
-    if (connection.type !== ConnectionType.MAIN) return { label: '', color: NEUTRAL, subNode: true }
-    const outputs = sourceData?.outputs ?? []
+  edgeData(connection: ConnectionModel, ends: EdgeEnds): CanvasEdgeData {
+    const subNode = connection.type !== ConnectionType.MAIN
+    const outputs = ends.source?.outputs ?? []
     const port = outputs.find((p) => p.index === connection.sourceOutput)
-    if (!port || outputs.length < 2) return { label: port?.label ?? '', color: NEUTRAL, subNode: false }
+    const targetPort = ends.target?.inputs.find((p) => p.index === connection.targetInput)
+    // Nodes not drawn yet are not judged; a missing port of a drawn node is.
+    if ((ends.source && !port) || (ends.target && !targetPort)) return { label: 'broken', color: ERROR, subNode, broken: true }
+    if (subNode) return { label: '', color: NEUTRAL, subNode, broken: false }
+    if (!port || outputs.length < 2) return { label: port?.label ?? '', color: NEUTRAL, subNode, broken: false }
     const color =
       port.role === PortRole.ERROR ? ERROR : port.role === PortRole.FALLBACK ? NEUTRAL : PORT_COLORS[port.index % PORT_COLORS.length]!
-    return { label: port.label, color, subNode: false }
+    return { label: port.label, color, subNode, broken: false }
   }
 }

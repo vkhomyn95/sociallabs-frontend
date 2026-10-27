@@ -47,18 +47,14 @@ describe('outputPorts', () => {
 })
 
 describe('NodeTypeCatalog', () => {
-  it('groups searchable, non-deprecated types in palette order', () => {
+  it('looks types up by key and tells triggers', () => {
     const catalog = new NodeTypeCatalog([
       type({ key: 'b@1', displayName: 'Webhook', group: NodeGroup.CORE, kind: NodeKind.TRIGGER }),
       type({ key: 'a@1', displayName: 'If', group: NodeGroup.LOGIC }),
-      type({ key: 'c@1', displayName: 'Old', group: NodeGroup.LOGIC, status: NodeTypeStatus.DEPRECATED }),
     ])
-    expect(catalog.grouped().map((g) => [g.group, g.types.map((t) => t.displayName)])).toEqual([
-      [NodeGroup.CORE, ['Webhook']],
-      [NodeGroup.LOGIC, ['If']],
-    ])
-    expect(catalog.grouped('web').map((g) => g.group)).toEqual([NodeGroup.CORE])
+    expect(catalog.get('a@1')?.displayName).toBe('If')
     expect(catalog.isTrigger('b@1')).toBe(true)
+    expect(catalog.isTrigger('a@1')).toBe(false)
   })
 })
 

@@ -1,7 +1,7 @@
 import type { ExecutionTracker, NodeRunView } from '@/core/execution/ExecutionTracker'
-import type { NodeId, NodeModel } from '@/core/workflow/model'
+import type { ConnectionModel, NodeId, NodeModel } from '@/core/workflow/model'
 import type { WorkflowDocument } from '@/core/workflow/WorkflowDocument'
-import type { CanvasEdge, CanvasEdgeData, CanvasModelFactory, CanvasNode, CanvasNodeData } from './canvasModel'
+import type { CanvasEdge, CanvasEdgeData, CanvasModelFactory, CanvasNode, CanvasNodeData, EdgeEnds } from './canvasModel'
 
 /** Canvas operations the projection needs; implemented by the Vue Flow store. */
 export interface CanvasPort {
@@ -39,9 +39,7 @@ export class CanvasProjection {
         this.canvas.removeNodes([node.id])
       }),
       events.on('nodeChanged', (node, previous) => this.onNodeChanged(node, previous)),
-      events.on('connectionAdded', (connection) =>
-        this.canvas.addEdges([this.factory.edge(connection, this.data.get(connection.source))]),
-      ),
+      events.on('connectionAdded', (connection) => this.canvas.addEdges([this.factory.edge(connection, this.endsOf(connection))])),
       events.on('connectionRemoved', (_, key) => this.canvas.removeEdges([key])),
     ]
   }
@@ -51,7 +49,7 @@ export class CanvasProjection {
     this.data.clear()
     const nodes = this.doc.nodes().map((node) => this.toCanvasNode(node))
     this.canvas.setNodes(nodes)
-    this.canvas.setEdges(this.doc.connections().map((c) => this.factory.edge(c, this.data.get(c.source))))
+    this.canvas.setEdges(this.doc.connections().map((c) => this.factory.edge(c, this.endsOf(c))))
   }
 
   dataOf(id: NodeId): CanvasNodeData | undefined {
@@ -60,6 +58,10 @@ export class CanvasProjection {
 
   dispose(): void {
     this.unsubscribe.forEach((off) => off())
+  }
+
+  private endsOf(connection: ConnectionModel): EdgeEnds {
+    return { source: this.data.get(connection.source), target: this.data.get(connection.target) }
   }
 
   private runOf(id: NodeId): NodeRunView | null {
@@ -93,9 +95,9 @@ export class CanvasProjection {
     this.data.set(node.id, data)
     this.canvas.updateNode(node.id, { data, position: { ...node.position } })
     if (oldData && !samePorts(oldData, data)) {
-      // Port labels and colors of outgoing edges follow the source node (e.g. Switch rules).
-      this.doc.outgoing(node.id).forEach((connection) => {
-        const edge = this.factory.edge(connection, data)
+      // Port labels and colors follow the node (e.g. Switch rules), and a removed port breaks its edges.
+      this.doc.touching(node.id).forEach((connection) => {
+        const edge = this.factory.edge(connection, this.endsOf(connection))
         this.canvas.updateEdgeData(edge.id, edge.data)
       })
     }
@@ -103,5 +105,6 @@ export class CanvasProjection {
 }
 
 const samePorts = (a: CanvasNodeData, b: CanvasNodeData): boolean =>
+  a.inputs.length === b.inputs.length &&
   a.outputs.length === b.outputs.length &&
   a.outputs.every((port, i) => port.label === b.outputs[i]!.label && port.role === b.outputs[i]!.role)

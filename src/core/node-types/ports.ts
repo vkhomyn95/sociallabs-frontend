@@ -70,6 +70,9 @@ const CONNECTION_TYPES: Readonly<Record<PortKind, ConnectionType>> = {
   [PortKind.AI_TOOL]: ConnectionType.AI_TOOL,
 }
 
+/** @returns the connection type that joins ports of a kind */
+export const connectionTypeOf = (kind: PortKind): ConnectionType => CONNECTION_TYPES[kind]
+
 /**
  * Connection type between two ports, as the backend validates it: items between main ports, and a sub-node
  * output only into an input of the same kind.

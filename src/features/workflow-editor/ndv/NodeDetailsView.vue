@@ -12,7 +12,7 @@ import {
   slbToast,
   type TabItem,
 } from '@sociallabs/frontend-components'
-import type { WorkflowEditorSession } from '@/core/editor/WorkflowEditorSession'
+import type { WorkflowView } from '@/core/editor/WorkflowView'
 import { NodeRunState, type ExecutionTracker, type NodeRunView } from '@/core/execution/ExecutionTracker'
 import { RunDataView } from '@/core/execution/RunDataView'
 import type { RunData } from '@/core/execution/types'
@@ -35,10 +35,11 @@ import { useOpenNode } from './useOpenNode'
 
 /**
  * Node details view: what the node received in the last run, its parameters and settings, and what it
- * emitted. Every change is a command on the session, so it is saved and undoable like canvas edits.
+ * emitted. Every change is a command of the view, so it is saved and undoable like canvas edits; a read-only
+ * view (an execution) shows the same panels without letting anything change.
  */
 const props = defineProps<{
-  session: WorkflowEditorSession
+  view: WorkflowView
   catalog: NodeTypeCatalog
   nodeId: NodeId
   runData: RunData
@@ -61,7 +62,9 @@ const TABS: TabItem[] = [
   { key: Tab.SETTINGS, label: 'Settings' },
 ]
 
-const doc = props.session.document
+const doc = props.view.document
+const commands = props.view.commands
+const readonly = commands === null
 const node = useOpenNode(doc, props.nodeId, () => emit('close'))
 const tab = ref<string>(Tab.PARAMETERS)
 
@@ -121,6 +124,11 @@ const inputEmptyText = computed(() =>
     : 'Execute the workflow to see the data this node receives',
 )
 
+const outputEmptyText = computed(() => {
+  if (runView.value?.state === NodeRunState.SKIPPED) return 'Skipped: no items reached this node'
+  return readonly ? 'This node did not run in this execution' : 'Execute the workflow to see the output'
+})
+
 // ─── Expressions ─────────────────────────────────────────────────────
 
 const completions = computed(() => new ExpressionCompletions(data.value.completionSample(props.nodeId)))
@@ -131,7 +139,7 @@ provideExpressionContext({
   preview: (template) =>
     executionApi.preview({
       template,
-      workflowId: props.session.workflowId,
+      workflowId: props.view.workflowId,
       itemIndex: 0,
       input: data.value.previewInput(props.nodeId),
       // Only nodes the template names are sent, to keep the request small.
@@ -164,15 +172,14 @@ function commitName(): void {
     name.value = current.name
     return
   }
-  props.session.update(props.nodeId, 'name', next)
+  commands?.update(props.nodeId, 'name', next)
 }
 
-const setParameters = (values: Record<string, unknown>) => props.session.update(props.nodeId, 'parameters', values)
-const setCredential = (id: number | null) => props.session.update(props.nodeId, 'credentialId', id)
-const setSettings = (settings: NodeSettings) => props.session.update(props.nodeId, 'settings', settings)
-const setDisabled = (disabled: boolean) => props.session.update(props.nodeId, 'disabled', disabled)
-const setNotes = (notes: string | null) => props.session.update(props.nodeId, 'notes', notes)
-
+const setParameters = (values: Record<string, unknown>) => commands?.update(props.nodeId, 'parameters', values)
+const setCredential = (id: number | null) => commands?.update(props.nodeId, 'credentialId', id)
+const setSettings = (settings: NodeSettings) => commands?.update(props.nodeId, 'settings', settings)
+const setDisabled = (disabled: boolean) => commands?.update(props.nodeId, 'disabled', disabled)
+const setNotes = (notes: string | null) => commands?.update(props.nodeId, 'notes', notes)
 
 // ─── Closing ─────────────────────────────────────────────────────────
 
@@ -197,9 +204,20 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         <div class="wf-ndv__icon" :style="{ background: presentation.color }">
           <SlbIcon :name="presentation.icon" :size="18" color="#fff" />
         </div>
-        <SlbInput v-model="name" size="sm" class="wf-ndv__name" aria-label="Node name" @blur="commitName" @keydown.enter="commitName" />
+        <SlbInput
+          v-model="name"
+          size="sm"
+          class="wf-ndv__name"
+          aria-label="Node name"
+          :disabled="readonly"
+          @blur="commitName"
+          @keydown.enter="commitName"
+        />
         <span class="wf-ndv__type">{{ descriptor?.displayName ?? node.type }}</span>
-        <SlbButton size="sm" icon-left="media_play" :loading="executing" :disabled="executing" @click="emit('execute')">
+        <span v-if="readonly" class="wf-ndv__readonly" title="Parameters of the execution's workflow; edit them in the editor">
+          <SlbIcon name="object_lock" :size="12" /> Read-only
+        </span>
+        <SlbButton v-else size="sm" icon-left="media_play" :loading="executing" :disabled="executing" @click="emit('execute')">
           Execute workflow
         </SlbButton>
         <button type="button" class="wf-ndv__close" title="Close (Esc)" @click="emit('close')">
@@ -219,37 +237,40 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
           <div class="wf-ndv__editor">
             <SlbTab v-model="tab" :tabs="TABS" />
             <div class="wf-ndv__form">
-              <template v-if="tab === Tab.PARAMETERS">
-                <SlbAlert v-if="!descriptor" variant="warning">Unknown node type {{ node.type }}@{{ node.typeVersion }}</SlbAlert>
-                <SlbAlert v-else-if="descriptor.status === NodeTypeStatus.PREVIEW" variant="info">
-                  This node is not runnable yet; executions stop at it.
-                </SlbAlert>
-                <CredentialField
-                  v-if="descriptor?.credentials.types.length"
-                  :types="descriptor.credentials.types"
-                  :required="descriptor.credentials.required"
-                  :model-value="node.credentialId"
-                  @update:model-value="setCredential"
+              <!-- Inert keeps a read-only form visible but out of reach of clicks and focus; the parent still scrolls. -->
+              <div class="wf-ndv__fields" :inert="readonly">
+                <template v-if="tab === Tab.PARAMETERS">
+                  <SlbAlert v-if="!descriptor" variant="warning">Unknown node type {{ node.type }}@{{ node.typeVersion }}</SlbAlert>
+                  <SlbAlert v-else-if="descriptor.status === NodeTypeStatus.PREVIEW" variant="info">
+                    This node is not runnable yet; executions stop at it.
+                  </SlbAlert>
+                  <CredentialField
+                    v-if="descriptor?.credentials.types.length"
+                    :types="descriptor.credentials.types"
+                    :required="descriptor.credentials.required"
+                    :model-value="node.credentialId"
+                    @update:model-value="setCredential"
+                  />
+                  <ParameterForm
+                    v-if="descriptor && hasSchema"
+                    :properties="descriptor.properties"
+                    :values="node.parameters"
+                    :type-key="descriptor.key"
+                    :issues="issues"
+                    @update:values="setParameters"
+                  />
+                  <p v-else-if="descriptor" class="wf-ndv__empty">This node has no parameters.</p>
+                </template>
+                <NodeSettingsForm
+                  v-else
+                  :settings="node.settings"
+                  :disabled="node.disabled"
+                  :notes="node.notes"
+                  @update:settings="setSettings"
+                  @update:disabled="setDisabled"
+                  @update:notes="setNotes"
                 />
-                <ParameterForm
-                  v-if="descriptor && hasSchema"
-                  :properties="descriptor.properties"
-                  :values="node.parameters"
-                  :type-key="descriptor.key"
-                  :issues="issues"
-                  @update:values="setParameters"
-                />
-                <p v-else-if="descriptor" class="wf-ndv__empty">This node has no parameters.</p>
-              </template>
-              <NodeSettingsForm
-                v-else
-                :settings="node.settings"
-                :disabled="node.disabled"
-                :notes="node.notes"
-                @update:settings="setSettings"
-                @update:disabled="setDisabled"
-                @update:notes="setNotes"
-              />
+              </div>
             </div>
           </div>
         </SlbResizablePanel>
@@ -261,7 +282,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
             :sources="outputSources"
             :running="running"
             :error="outputError"
-            :empty-text="runView?.state === NodeRunState.SKIPPED ? 'Skipped: no items reached this node' : 'Execute the workflow to see the output'"
+            :empty-text="outputEmptyText"
           />
         </SlbResizablePanel>
       </SlbResizable>
@@ -288,6 +309,17 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   background: var(--slb-color-surface, #fff);
   border-radius: var(--slb-radius-lg);
   box-shadow: var(--slb-shadow-lg, 0 20px 50px rgba(0, 0, 0, 0.25));
+}
+
+.wf-ndv__readonly {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: var(--slb-font-xs);
+  color: var(--slb-color-text-muted);
+  background: var(--slb-color-gray-100);
+  border-radius: var(--slb-radius-full);
 }
 
 .wf-ndv__header {
@@ -347,13 +379,16 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 }
 
 .wf-ndv__form {
-  display: flex;
   flex: 1;
-  flex-direction: column;
-  gap: 16px;
   min-height: 0;
   padding: 16px;
   overflow-y: auto;
+}
+
+.wf-ndv__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .wf-ndv__empty {

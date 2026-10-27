@@ -59,6 +59,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/features/workflow-editor/WorkflowEditorPage.vue'),
         meta: { title: 'Workflow', nav: NavSection.WORKFLOWS },
       },
+      {
+        path: 'workflows/:id/executions/:executionId?',
+        name: RouteName.EXECUTION_VIEW,
+        component: () => import('@/features/executions/ExecutionViewPage.vue'),
+        meta: { title: 'Executions', nav: NavSection.WORKFLOWS },
+      },
       // Links of the time both editors existed.
       { path: 'workflows/:id/editor', redirect: (to) => `/workflows/${to.params.id}` },
       { path: 'workflow', redirect: '/workflows' },
@@ -76,7 +82,7 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'workflows',
             name: RouteName.WORKFLOW_LIST,
-            component: () => import('@/views/workflow/WorkflowList.vue'),
+            component: () => import('@/features/workflows/WorkflowListPage.vue'),
             meta: { title: 'Workflows', nav: NavSection.WORKFLOWS },
           },
           {
@@ -88,7 +94,7 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'executions',
             name: RouteName.EXECUTION_LIST,
-            component: () => import('@/views/execution/ExecutionList.vue'),
+            component: () => import('@/features/executions/ExecutionListPage.vue'),
             meta: { title: 'Executions', nav: NavSection.EXECUTIONS },
           },
           {

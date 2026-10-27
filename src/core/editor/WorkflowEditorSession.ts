@@ -15,13 +15,44 @@ import {
 } from '@/core/workflow/commands'
 import type { HistoryOptions } from '@/core/workflow/commands/CommandHistory'
 import { uniqueNodeName, wouldCreateCycle } from '@/core/workflow/graph'
-import { ConnectionType, type ConnectionModel, type EditableNodeField, type NodeId, type NodeModel, type Position } from '@/core/workflow/model'
+import {
+  ConnectionType,
+  type ConnectionModel,
+  type EditableNodeField,
+  type NodeId,
+  type NodeModel,
+  type Parameters,
+  type Position,
+} from '@/core/workflow/model'
 import { WorkflowDocument, type WorkflowSnapshot } from '@/core/workflow/WorkflowDocument'
 
 export interface SessionOptions {
   history?: HistoryOptions
   sync?: DraftSyncOptions
   newId?: () => NodeId
+}
+
+/** Which way a new node is wired to the node it was added from. */
+export enum LinkDirection {
+  /** The existing node's output feeds the new node's first input (added after it). */
+  FROM_EXISTING = 'FROM_EXISTING',
+  /** The new node's first output goes into the existing node's input (added before it, or a sub-node). */
+  INTO_EXISTING = 'INTO_EXISTING',
+}
+
+/** A connection made together with a new node, in the same undo step. */
+export interface InsertLink {
+  readonly node: NodeId
+  /** Output of the existing node for FROM_EXISTING, its input for INTO_EXISTING. */
+  readonly port: number
+  readonly direction: LinkDirection
+  readonly type: ConnectionType
+}
+
+export interface InsertOptions {
+  /** Values over the type's defaults, e.g. the operation an action of the node creator stands for. */
+  readonly parameters?: Parameters
+  readonly link?: InsertLink
 }
 
 /** Why a connection was not made. */
@@ -31,6 +62,8 @@ export enum ConnectRejection {
   CYCLE = 'CYCLE',
   /** A sub-node output into a main input, or between different sub-node kinds. */
   PORT_KIND = 'PORT_KIND',
+  /** Not from an output into an input the nodes have, e.g. into a trigger, which has no input. */
+  NO_PORT = 'NO_PORT',
 }
 
 /**
@@ -66,24 +99,35 @@ export class WorkflowEditorSession {
   }
 
   /**
-   * Add a node of a type with the type's default parameter values.
+   * Add a node of a type, optionally with preset parameters and wired to an existing node, as one undo step.
    *
    * @returns the new node
    */
-  addNode(type: NodeTypeDescriptor, position: Position): NodeModel {
+  insertNode(type: NodeTypeDescriptor, position: Position, options: InsertOptions = {}): NodeModel {
     const node: NodeModel = {
       id: this.newId(),
       name: uniqueNodeName(this.document, type.displayName),
       type: type.name,
       typeVersion: type.version,
       position,
-      parameters: defaultParameters(type.properties),
+      parameters: { ...defaultParameters(type.properties), ...options.parameters },
       credentialId: null,
       disabled: false,
       notes: null,
       settings: null,
     }
-    this.execute(new AddNodesCommand([node]))
+    const add = new AddNodesCommand([node])
+    const link = options.link
+    if (!link || !this.document.node(link.node)) {
+      this.execute(add)
+      return node
+    }
+    // A brand-new node closes no cycle and duplicates no connection, so the link needs no checks.
+    const connection: ConnectionModel =
+      link.direction === LinkDirection.FROM_EXISTING
+        ? { source: link.node, sourceOutput: link.port, target: node.id, targetInput: 0, type: link.type }
+        : { source: node.id, sourceOutput: 0, target: link.node, targetInput: link.port, type: link.type }
+    this.execute(new CompositeCommand(`Add ${node.name}`, [add, new ConnectCommand(connection)]))
     return node
   }
 

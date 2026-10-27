@@ -109,3 +109,18 @@ describe('schemaOf', () => {
     expect(schema[2]!.children[0]!.children[0]!.path).toEqual(['tags', 0, 'v'])
   })
 })
+
+describe('ExecutionTracker without stored items', () => {
+  it('shows the states and counts of the node timeline', () => {
+    const tracker = new ExecutionTracker()
+    tracker.loadTimeline(7, [
+      { nodeId: 'a', status: NodeRunStatus.SUCCESS, startedAt: null, durationMs: 3, attempts: 1, itemsOut: 4, error: null },
+      { nodeId: 'b', status: NodeRunStatus.ERROR, startedAt: null, durationMs: 1, attempts: 2, itemsOut: 0, error: 'boom' },
+    ])
+
+    expect(tracker.executionId).toBe(7)
+    expect(tracker.running).toBe(false)
+    expect(tracker.view('a')).toEqual({ state: NodeRunState.SUCCESS, itemsOut: 4, error: null })
+    expect(tracker.view('b')).toEqual({ state: NodeRunState.ERROR, itemsOut: 0, error: 'boom' })
+  })
+})

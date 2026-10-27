@@ -1,6 +1,6 @@
 import { TypedEmitter } from '@/core/workflow/TypedEmitter'
 import type { NodeId } from '@/core/workflow/model'
-import { ExecutionEventType, ExecutionStatus, NodeRunStatus, type ExecutionEvent, type RunData } from './types'
+import { ExecutionEventType, ExecutionStatus, NodeRunStatus, type ExecutionDetail, type ExecutionEvent, type RunData } from './types'
 
 /** What the canvas shows on a node for the followed execution. */
 export enum NodeRunState {
@@ -97,6 +97,15 @@ export class ExecutionTracker {
         itemsOut: record.output.reduce((sum, port) => sum + port.length, 0),
         error: record.error,
       })
+    }
+    this.done = true
+  }
+
+  /** Show a stored execution that kept no items: states and counts from its node timeline. */
+  loadTimeline(executionId: number, nodes: ExecutionDetail['nodes']): void {
+    this.follow(executionId)
+    for (const run of nodes) {
+      this.set(run.nodeId, { state: FROM_RUN_STATUS[run.status], itemsOut: run.itemsOut, error: run.error })
     }
     this.done = true
   }

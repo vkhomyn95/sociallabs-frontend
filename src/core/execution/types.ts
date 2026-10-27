@@ -1,3 +1,5 @@
+import type { WorkflowConnectionDto, WorkflowNodeDto } from '@/core/workflow/dto'
+
 /** Execution history DTOs of `/api/v1/executions`; enums mirror the backend. */
 
 export enum ExecutionStatus {
@@ -47,12 +49,18 @@ export interface ExecutionEvent {
 export interface ExecutionSummary {
   id: number
   workflowId: number
+  /** Published version that ran, null for a run of the draft. */
+  workflowVersionId: number | null
   status: ExecutionStatus
   mode: ExecutionMode
   triggerNodeId: string | null
+  /** Execution this one re-ran, null otherwise. */
+  retryOfId: number | null
   startedAt: string
   finishedAt: string | null
   durationMs: number | null
+  /** Reached nodes, null while running. */
+  nodeCount: number | null
   errorNodeId: string | null
   errorMessage: string | null
 }
@@ -75,6 +83,26 @@ export interface ExecutionDetail {
     error: string | null
   }>
   dataAvailable: boolean
+}
+
+/** Where the graph of an execution comes from. */
+export enum ExecutionGraphSource {
+  /** The published version that ran: exactly the graph of the execution. */
+  VERSION = 'VERSION',
+  /** A draft run: drafts keep no history, so this is the draft as it is now and may have changed since. */
+  CURRENT_DRAFT = 'CURRENT_DRAFT',
+}
+
+/** `GET /executions/{id}/workflow`: the graph the execution ran on. */
+export interface ExecutionWorkflow {
+  executionId: number
+  workflowId: number
+  workflowName: string
+  source: ExecutionGraphSource
+  versionId: number | null
+  versionNo: number | null
+  nodes: WorkflowNodeDto[]
+  connections: WorkflowConnectionDto[]
 }
 
 export type ItemJson = Record<string, unknown>

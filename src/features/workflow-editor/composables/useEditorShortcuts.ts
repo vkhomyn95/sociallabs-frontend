@@ -5,6 +5,7 @@ export interface EditorShortcuts {
   redo(): void
   save(): void
   deleteSelection(): void
+  addNode(): void
 }
 
 const isTyping = (target: EventTarget | null): boolean =>
@@ -12,7 +13,8 @@ const isTyping = (target: EventTarget | null): boolean =>
 
 /**
  * Editor keyboard shortcuts: Ctrl/Cmd+Z undo, Ctrl/Cmd+Shift+Z or Ctrl+Y redo, Ctrl/Cmd+S save,
- * Delete/Backspace delete the selection. Ignored while typing in a field or when a dialog is open.
+ * Delete/Backspace delete the selection, Tab opens the node creator. Ignored while typing in a field or when a
+ * dialog is open.
  */
 export function useEditorShortcuts(shortcuts: EditorShortcuts): void {
   const onKeyDown = (event: KeyboardEvent) => {
@@ -24,6 +26,7 @@ export function useEditorShortcuts(shortcuts: EditorShortcuts): void {
       : mod && key === 'y' ? shortcuts.redo
       : mod && key === 's' ? shortcuts.save
       : !mod && (key === 'delete' || key === 'backspace') ? shortcuts.deleteSelection
+      : !mod && !event.shiftKey && key === 'tab' ? shortcuts.addNode
       : null
     if (!action) return
     event.preventDefault()

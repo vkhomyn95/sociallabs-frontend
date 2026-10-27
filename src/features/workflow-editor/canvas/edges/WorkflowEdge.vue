@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { BaseEdge, EdgeLabelRenderer, getBezierPath, type Position } from '@vue-flow/core'
+import { BaseEdge, EdgeLabelRenderer, type GraphNode, type Position } from '@vue-flow/core'
 import { SlbIcon } from '@sociallabs/frontend-components'
-import type { CanvasEdgeData } from '../canvasModel'
+import { floorOf, type CanvasEdgeData } from '../canvasModel'
+import { edgePath, EdgeShape } from './edgePath'
 
 const props = defineProps<{
   id: string
@@ -12,32 +13,45 @@ const props = defineProps<{
   targetY: number
   sourcePosition: Position
   targetPosition: Position
+  sourceNode: GraphNode
+  targetNode: GraphNode
   data: CanvasEdgeData
   selected?: boolean
+  /** Read-only canvas: connections cannot be removed. */
+  readonly?: boolean
 }>()
 
 const emit = defineEmits<{ remove: [id: string] }>()
 
-const path = computed(() => getBezierPath(props))
+// Sub-node attachments always curve straight up from the sub-node; data edges detour when they run back.
+const path = computed(() =>
+  edgePath(props, {
+    shape: props.data.subNode ? EdgeShape.BEZIER : EdgeShape.AUTO,
+    floorY: Math.max(floorOf(props.sourceNode), floorOf(props.targetNode)),
+  }),
+)
 </script>
 
 <template>
   <BaseEdge
-    :id="id"
-    :path="path[0]"
+    v-for="(segment, index) in path.segments"
+    :id="`${id}-${index}`"
+    :key="index"
+    :path="segment.path"
     class="wf-edge"
-    :class="{ 'wf-edge--selected': selected, 'wf-edge--sub-node': data.subNode }"
+    :class="{ 'wf-edge--selected': selected, 'wf-edge--sub-node': data.subNode, 'wf-edge--broken': data.broken }"
     :style="{ stroke: data.color }"
     :interaction-width="20"
   />
   <EdgeLabelRenderer>
     <div
       class="wf-edge__label nodrag nopan"
-      :class="{ 'wf-edge__label--selected': selected }"
-      :style="{ transform: `translate(-50%, -50%) translate(${path[1]}px, ${path[2]}px)` }"
+      :class="{ 'wf-edge__label--selected': selected || data.broken }"
+      :title="data.broken ? 'This connection joins ports the nodes do not have; remove it' : undefined"
+      :style="{ transform: `translate(-50%, -50%) translate(${path.labelX}px, ${path.labelY}px)` }"
     >
       <span v-if="data.label" class="wf-edge__text" :style="{ color: data.color }">{{ data.label }}</span>
-      <button type="button" class="wf-edge__remove" title="Remove connection" @click.stop="emit('remove', id)">
+      <button v-if="!readonly" type="button" class="wf-edge__remove" title="Remove connection" @click.stop="emit('remove', id)">
         <SlbIcon name="action_trash" :size="12" />
       </button>
     </div>
@@ -53,7 +67,8 @@ const path = computed(() => getBezierPath(props))
   stroke-width: 3;
 }
 
-.wf-edge--sub-node {
+.wf-edge--sub-node,
+.wf-edge--broken {
   stroke-dasharray: 6 4;
 }
 

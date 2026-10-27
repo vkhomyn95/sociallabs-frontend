@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { NodeGroup, NodeKind, NodeTypeStatus, PortKind, PropertyType, type NodeTypeDescriptor } from '@/core/node-types/descriptor'
 import type { DraftApi } from '@/core/sync/DraftApi'
 import type { DraftOp } from '@/core/sync/ops'
-import { connectionKey } from '@/core/workflow/model'
+import { ConnectionType, connectionKey } from '@/core/workflow/model'
 import { link, node } from '@/core/workflow/__tests__/fixtures'
-import { ConnectRejection, WorkflowEditorSession } from '../WorkflowEditorSession'
+import { ConnectRejection, LinkDirection, WorkflowEditorSession } from '../WorkflowEditorSession'
 
 const httpType: NodeTypeDescriptor = {
   key: 'http.request@1',
@@ -53,8 +53,8 @@ describe('WorkflowEditorSession', () => {
   })
 
   it('every change, undo included, reaches the server as operations', async () => {
-    const added = session.addNode(httpType, { x: 100, y: 0 })
-    session.addNode(httpType, { x: 200, y: 0 })
+    const added = session.insertNode(httpType, { x: 100, y: 0 })
+    session.insertNode(httpType, { x: 200, y: 0 })
     session.undo()
     await session.sync.flush()
 
@@ -62,7 +62,23 @@ describe('WorkflowEditorSession', () => {
     expect(saved).toHaveLength(1)
     expect(saved[0]!.map((op) => op.op)).toEqual(['addNode', 'addNode', 'removeNodes'])
     expect(session.document.node('n2')).toBeUndefined()
-    expect(session.addNode(httpType, { x: 0, y: 0 }).name).toBe('HTTP Request 2')
+    expect(session.insertNode(httpType, { x: 0, y: 0 }).name).toBe('HTTP Request 2')
+  })
+
+  it('adds a node with preset parameters, wired to the node it was added after, as one undo step', () => {
+    session.document.load({ nodes: [node('a')], connections: [] })
+    const added = session.insertNode(httpType, { x: 200, y: 0 }, {
+      parameters: { method: 'POST' },
+      link: { node: 'a', port: 0, direction: LinkDirection.FROM_EXISTING, type: ConnectionType.MAIN },
+    })
+
+    expect(added.parameters).toEqual({ method: 'POST' })
+    expect(session.document.incoming(added.id)).toEqual([
+      { source: 'a', sourceOutput: 0, target: added.id, targetInput: 0, type: ConnectionType.MAIN },
+    ])
+    session.undo()
+    expect(session.document.node(added.id)).toBeUndefined()
+    expect(session.document.connections()).toEqual([])
   })
 
   it('refuses duplicate, self and cyclic connections', () => {
