@@ -37,22 +37,80 @@ export interface AiMemoryConversationV1Params {
 
 /** Anthropic chat model (`ai.model.anthropic@1`) */
 export interface AiModelAnthropicV1Params {
-  /** Model */
+  /** Model: Model id, e.g. claude-sonnet-4-5 or claude-haiku-4-5 */
   model: string
-  /** Temperature */
-  temperature?: number
-  /** Max tokens */
-  maxTokens?: number
+  /** Options */
+  options?: {
+    /** Maximum number of tokens */
+    maxTokens?: number
+    /** Sampling temperature */
+    temperature?: number
+    /** Top P */
+    topP?: number
+    /** Top K */
+    topK?: number
+    /** Thinking budget (tokens): Turns on extended thinking; temperature, top P and top K are then not sent */
+    thinkingBudget?: number
+    /** Timeout (seconds) */
+    timeoutSeconds?: number
+    /** Max retries */
+    maxRetries?: number
+  }
+}
+
+/** Google Gemini chat model (`ai.model.gemini@1`) */
+export interface AiModelGeminiV1Params {
+  /** Model: Model id, e.g. gemini-2.5-flash or gemini-2.5-pro */
+  model: string
+  /** Options */
+  options?: {
+    /** Maximum number of tokens */
+    maxTokens?: number
+    /** Sampling temperature */
+    temperature?: number
+    /** Top P */
+    topP?: number
+    /** Top K */
+    topK?: number
+    /** Thinking budget (tokens): 0 turns thinking off where the model allows it, -1 lets the model decide */
+    thinkingBudget?: number
+    /** Safety settings */
+    safetySettings?: Array<{
+      /** Category */
+      category: 'HARASSMENT' | 'HATE_SPEECH' | 'SEXUALLY_EXPLICIT' | 'DANGEROUS_CONTENT' | 'CIVIC_INTEGRITY'
+      /** Threshold */
+      threshold: 'BLOCK_LOW_AND_ABOVE' | 'BLOCK_MEDIUM_AND_ABOVE' | 'BLOCK_ONLY_HIGH' | 'BLOCK_NONE' | 'OFF'
+    }>
+    /** Timeout (seconds) */
+    timeoutSeconds?: number
+    /** Max retries */
+    maxRetries?: number
+  }
 }
 
 /** OpenAI chat model (`ai.model.openai@1`) */
 export interface AiModelOpenaiV1Params {
-  /** Model */
+  /** Model: Model id, e.g. gpt-4o-mini, gpt-4.1 or o4-mini; any id of an OpenAI-compatible base URL */
   model: string
-  /** Temperature */
-  temperature?: number
-  /** Max tokens */
-  maxTokens?: number
+  /** Options */
+  options?: {
+    /** Maximum number of tokens */
+    maxTokens?: number
+    /** Sampling temperature */
+    temperature?: number
+    /** Top P */
+    topP?: number
+    /** Frequency penalty */
+    frequencyPenalty?: number
+    /** Presence penalty */
+    presencePenalty?: number
+    /** Reasoning effort: For reasoning models (o-series, GPT-5) */
+    reasoningEffort?: 'MINIMAL' | 'LOW' | 'MEDIUM' | 'HIGH'
+    /** Timeout (seconds) */
+    timeoutSeconds?: number
+    /** Max retries */
+    maxRetries?: number
+  }
 }
 
 /** HTTP tool (`ai.tool.http@1`) */
@@ -389,6 +447,7 @@ export interface NodeParamsMap {
   'ai.agent@1': AiAgentV1Params
   'ai.memory.conversation@1': AiMemoryConversationV1Params
   'ai.model.anthropic@1': AiModelAnthropicV1Params
+  'ai.model.gemini@1': AiModelGeminiV1Params
   'ai.model.openai@1': AiModelOpenaiV1Params
   'ai.tool.http@1': AiToolHttpV1Params
   'core.if@1': CoreIfV1Params

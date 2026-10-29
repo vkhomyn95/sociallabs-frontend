@@ -24,6 +24,7 @@ export enum CredentialType {
 
   OPENAI = 'OPENAI',
   ANTHROPIC = 'ANTHROPIC',
+  GEMINI = 'GEMINI',
 
   API_KEY = 'API_KEY',
   BASIC_AUTH = 'BASIC_AUTH',
@@ -38,6 +39,7 @@ export enum CredentialPlatform {
   INSTAGRAM = 'INSTAGRAM',
   OPENAI = 'OPENAI',
   ANTHROPIC = 'ANTHROPIC',
+  GEMINI = 'GEMINI',
   HTTP = 'HTTP',
 }
 
