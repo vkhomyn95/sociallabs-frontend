@@ -25,14 +25,36 @@ export interface AiAgentV1Params {
   continueOnFail?: boolean
 }
 
-/** Conversation memory (`ai.memory.conversation@1`) */
-export interface AiMemoryConversationV1Params {
-  /** Session key: Evaluated per item; messages with the same key share a conversation */
-  sessionKey?: string
+/** Database memory (`ai.memory.database@1`) */
+export interface AiMemoryDatabaseV1Params {
+  /** Session key: Evaluated per item; messages with the same key share a conversation, e.g. one per chat */
+  sessionKey: string
   /** Context window (messages) */
-  windowSize?: number
-  /** Storage */
-  storage?: 'DATABASE' | 'REDIS' | 'IN_PROCESS'
+  contextWindow?: number
+  /** Remember tool calls: Also keep tool calls and their results; otherwise only questions and answers are kept */
+  rememberToolCalls?: boolean
+}
+
+/** Redis memory (`ai.memory.redis@1`) */
+export interface AiMemoryRedisV1Params {
+  /** Session key: Evaluated per item; messages with the same key share a conversation, e.g. one per chat */
+  sessionKey: string
+  /** Context window (messages) */
+  contextWindow?: number
+  /** Remember tool calls: Also keep tool calls and their results; otherwise only questions and answers are kept */
+  rememberToolCalls?: boolean
+  /** Session time to live (seconds): A conversation expires this long after its last message; 0 keeps it forever */
+  sessionTtlSeconds?: number
+}
+
+/** Simple memory (`ai.memory.simple@1`) */
+export interface AiMemorySimpleV1Params {
+  /** Session key: Evaluated per item; messages with the same key share a conversation, e.g. one per chat */
+  sessionKey: string
+  /** Context window (messages) */
+  contextWindow?: number
+  /** Remember tool calls: Also keep tool calls and their results; otherwise only questions and answers are kept */
+  rememberToolCalls?: boolean
 }
 
 /** Anthropic chat model (`ai.model.anthropic@1`) */
@@ -445,7 +467,9 @@ export interface ViberAccountTriggerV1Params {
 /** Parameters of each schema-driven node type, by `name@version`. */
 export interface NodeParamsMap {
   'ai.agent@1': AiAgentV1Params
-  'ai.memory.conversation@1': AiMemoryConversationV1Params
+  'ai.memory.database@1': AiMemoryDatabaseV1Params
+  'ai.memory.redis@1': AiMemoryRedisV1Params
+  'ai.memory.simple@1': AiMemorySimpleV1Params
   'ai.model.anthropic@1': AiModelAnthropicV1Params
   'ai.model.gemini@1': AiModelGeminiV1Params
   'ai.model.openai@1': AiModelOpenaiV1Params

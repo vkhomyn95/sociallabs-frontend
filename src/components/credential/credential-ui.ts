@@ -21,6 +21,7 @@ export const PLATFORM_UI: Record<CredentialPlatform, PlatformUi> = {
   [CredentialPlatform.ANTHROPIC]: { label: 'Anthropic', icon: 'ai_sparkle', tone: 'orange' },
   [CredentialPlatform.GEMINI]: { label: 'Google Gemini', icon: 'brand_google', tone: 'blue' },
   [CredentialPlatform.HTTP]: { label: 'HTTP', icon: 'action_key', tone: 'gray-600' },
+  [CredentialPlatform.REDIS]: { label: 'Redis', icon: 'dev_database', tone: 'rose' },
 }
 
 export interface StatusUi {

@@ -29,6 +29,7 @@ export enum CredentialType {
   API_KEY = 'API_KEY',
   BASIC_AUTH = 'BASIC_AUTH',
   BEARER_TOKEN = 'BEARER_TOKEN',
+  REDIS = 'REDIS',
 }
 
 export enum CredentialPlatform {
@@ -41,6 +42,7 @@ export enum CredentialPlatform {
   ANTHROPIC = 'ANTHROPIC',
   GEMINI = 'GEMINI',
   HTTP = 'HTTP',
+  REDIS = 'REDIS',
 }
 
 export enum CredentialStatus {
