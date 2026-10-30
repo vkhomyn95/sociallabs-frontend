@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { OnError } from '@/core/workflow/model'
-import { NodeGroup, NodeKind, NodeTypeStatus, PortKind, type NodeTypeDescriptor } from '../descriptor'
+import { NodeGroup, NodeKind, NodeTypeStatus, PortKind, PropertyType, type NodeTypeDescriptor } from '../descriptor'
+import { property } from './descriptorFixtures'
 import { NodeTypeCatalog } from '../NodeTypeCatalog'
-import { outputPorts, PortRole } from '../ports'
+import { inputPorts, outputPorts, PortRole } from '../ports'
 
 const type = (changes: Partial<NodeTypeDescriptor>): NodeTypeDescriptor => ({
   key: 'core.if@1',
@@ -14,14 +15,33 @@ const type = (changes: Partial<NodeTypeDescriptor>): NodeTypeDescriptor => ({
   group: NodeGroup.LOGIC,
   icon: '',
   status: NodeTypeStatus.STABLE,
-  inputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN }],
+  inputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN, show: [] }],
   outputs: [
-    { name: 'true', displayName: 'true', kind: PortKind.MAIN },
-    { name: 'false', displayName: 'false', kind: PortKind.MAIN },
+    { name: 'true', displayName: 'true', kind: PortKind.MAIN, show: [] },
+    { name: 'false', displayName: 'false', kind: PortKind.MAIN, show: [] },
   ],
   credentials: { types: [], required: false },
   properties: [],
   ...changes,
+})
+
+describe('inputPorts', () => {
+  it('hides a port its parameters turn off and keeps the indexes of the others', () => {
+    const agent = type({
+      inputs: [
+        { name: 'main', displayName: '', kind: PortKind.MAIN, show: [] },
+        { name: 'model', displayName: 'Model', kind: PortKind.AI_MODEL, show: [] },
+        { name: 'fallback', displayName: 'Fallback model', kind: PortKind.AI_MODEL, show: [{ field: 'needsFallback', values: ['true'] }] },
+      ],
+      properties: [property('needsFallback', { type: PropertyType.BOOLEAN, defaultValue: false })],
+    })
+    expect(inputPorts(agent, { parameters: {} }).map((p) => p.label)).toEqual(['', 'Model'])
+    expect(inputPorts(agent, { parameters: { needsFallback: true } }).map((p) => [p.index, p.label])).toEqual([
+      [0, ''],
+      [1, 'Model'],
+      [2, 'Fallback model'],
+    ])
+  })
 })
 
 describe('outputPorts', () => {

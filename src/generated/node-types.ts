@@ -5,24 +5,39 @@ export type Expression = `${string}{{${string}}}${string}`
 
 /** AI Agent (`ai.agent@1`) */
 export interface AiAgentV1Params {
-  /** Prompt */
+  /** Prompt (user message) */
   prompt: string
-  /** System message */
-  systemPrompt?: string
   /** Put answer in field */
   outputField?: string
-  /** Output */
-  outputMode?: 'ANSWER_ONLY' | 'WITH_STEPS' | 'STRUCTURED'
-  /** Max model calls */
-  maxIterations?: number
-  /** Max tool calls */
-  maxToolCalls?: number
-  /** Max tokens */
-  maxTotalTokens?: number
-  /** Timeout (ms) */
-  timeoutMs?: number
-  /** Continue on fail */
-  continueOnFail?: boolean
+  /** Enable fallback model: Ask a second chat model when the first one fails */
+  needsFallback?: boolean
+  /** Options */
+  options?: {
+    /** System message */
+    systemMessage?: string
+    /** Max iterations: Model calls per item at most */
+    maxIterations?: number
+    /** Return intermediate steps: Add the model and tool calls and the tokens used to the item */
+    returnIntermediateSteps?: boolean
+    /** Answer format: JSON answers are put in the item as objects */
+    answerFormat?: 'TEXT' | 'JSON' | 'JSON_SCHEMA'
+    /** Answer JSON schema */
+    answerSchema?: string
+    /** Require a tool call first: The first model call must call one of the tools */
+    requireToolFirst?: boolean
+    /** Batch size: Items answered at the same time */
+    batchSize?: number
+    /** Delay between batches (ms) */
+    delayBetweenBatches?: number
+    /** Max tool calls */
+    maxToolCalls?: number
+    /** Max tokens per item */
+    maxTotalTokens?: number
+    /** Timeout per item (ms) */
+    timeoutMs?: number
+    /** Tool timeout (ms) */
+    toolTimeoutMs?: number
+  }
 }
 
 /** Database memory (`ai.memory.database@1`) */

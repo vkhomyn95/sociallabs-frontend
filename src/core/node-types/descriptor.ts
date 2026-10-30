@@ -45,6 +45,8 @@ export interface PortDescriptor {
   name: string
   displayName: string
   kind: PortKind
+  /** Conditions on top-level parameters for showing the port; empty for always. */
+  show: DisplayCondition[]
 }
 
 export interface PropertyOption {

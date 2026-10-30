@@ -31,7 +31,7 @@ const TYPES: NodeTypeDescriptor[] = [
     group: NodeGroup.AI,
     kind: NodeKind.SUPPLY,
     inputs: [],
-    outputs: [{ name: 'model', displayName: 'Model', kind: PortKind.AI_MODEL }],
+    outputs: [{ name: 'model', displayName: 'Model', kind: PortKind.AI_MODEL, show: [] }],
   }),
 ]
 

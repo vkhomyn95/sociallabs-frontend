@@ -1,5 +1,6 @@
 import { ConnectionType, OnError, type NodeModel } from '@/core/workflow/model'
 import { PortKind, type NodeTypeDescriptor } from './descriptor'
+import { conditionsHold } from './parameters'
 
 /** A port as the canvas draws it; `index` is what connections store. */
 export interface PortView {
@@ -15,9 +16,18 @@ export enum PortRole {
   ERROR = 'ERROR',
 }
 
-/** @returns input ports of a node of the type */
-export function inputPorts(descriptor: NodeTypeDescriptor): PortView[] {
-  return descriptor.inputs.map((port, index) => ({ index, label: port.displayName, kind: port.kind, role: PortRole.DEFAULT }))
+/**
+ * Input ports of a node, without those its parameters hide (the agent's fallback model input). Hidden ports keep
+ * their index, so connections never shift.
+ *
+ * @param descriptor node type
+ * @param node       node whose parameters decide which ports show
+ */
+export function inputPorts(descriptor: NodeTypeDescriptor, node: Pick<NodeModel, 'parameters'>): PortView[] {
+  return descriptor.inputs
+    .map((port, index) => ({ port, index }))
+    .filter(({ port }) => conditionsHold(port.show, node.parameters, descriptor.properties))
+    .map(({ port, index }) => ({ index, label: port.displayName, kind: port.kind, role: PortRole.DEFAULT }))
 }
 
 /**

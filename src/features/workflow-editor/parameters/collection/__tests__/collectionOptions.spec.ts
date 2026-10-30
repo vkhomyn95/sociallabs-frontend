@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { property } from '@/core/node-types/__tests__/descriptorFixtures'
-import { addableChildren, isRemovable, shownChildren } from '../collectionOptions'
+import { addableChildren, isRemovable, shownChildren, withAddedOption } from '../collectionOptions'
 
 const CHILDREN = [property('model', { required: true }), property('temperature'), property('topK'), property('timeout')]
 const names = (list: { name: string }[]) => list.map((p) => p.name)
@@ -15,5 +15,12 @@ describe('collection options', () => {
   it('lets only optional children be removed', () => {
     expect(isRemovable(CHILDREN[0]!)).toBe(false)
     expect(isRemovable(CHILDREN[1]!)).toBe(true)
+  })
+
+  it('an added option starts at its default and keeps a value already set', () => {
+    const iterations = property('maxIterations', { defaultValue: 10 })
+    expect(withAddedOption({}, iterations)).toEqual({ maxIterations: 10 })
+    expect(withAddedOption({ maxIterations: 3 }, iterations)).toEqual({ maxIterations: 3 })
+    expect(withAddedOption({ a: 1 }, property('note'))).toEqual({ a: 1 })
   })
 })

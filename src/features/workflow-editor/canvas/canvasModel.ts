@@ -95,7 +95,7 @@ export class CanvasModelFactory {
       descriptor,
       presentation: presentationOf(node.type, descriptor),
       // A type missing from the catalog keeps one main port each way, so its connections stay visible.
-      inputs: descriptor ? inputPorts(descriptor) : [FALLBACK_PORT],
+      inputs: descriptor ? inputPorts(descriptor, node) : [FALLBACK_PORT],
       outputs: descriptor ? outputPorts(descriptor, node) : [FALLBACK_PORT],
       trigger: descriptor?.kind === NodeKind.TRIGGER,
       supply: descriptor?.kind === NodeKind.SUPPLY,

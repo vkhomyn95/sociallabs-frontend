@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { SlbButton, SlbDropdown, type MenuItem } from '@sociallabs/frontend-components'
 import { isRecord } from '@/core/node-types/parameters'
 import ParameterForm from '../ParameterForm.vue'
-import { addableChildren, isRemovable, shownChildren } from '../collection/collectionOptions'
+import { addableChildren, isRemovable, shownChildren, withAddedOption } from '../collection/collectionOptions'
 import type { FieldEmits, FieldProps } from './fieldProps'
 
 /**
@@ -26,6 +26,8 @@ const set = (next: Record<string, unknown>) => emit('update:modelValue', Object.
 
 function add(item: MenuItem): void {
   added.value = new Set([...added.value, item.key])
+  const child = props.property.children.find((candidate) => candidate.name === item.key)
+  if (child) set(withAddedOption(values.value, child))
 }
 
 function remove(name: string): void {

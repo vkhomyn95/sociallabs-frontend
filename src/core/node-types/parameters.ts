@@ -10,17 +10,14 @@ export const childPath = (parent: FieldPath, name: string): FieldPath => (parent
 export const elementPath = (parent: FieldPath, index: number): FieldPath => `${parent}[${index}]`
 
 /**
- * Parameter values a new node or a new collection element starts with: the declared defaults, and nested
- * defaults of collections.
+ * Parameter values a new node or a new collection element starts with: the declared defaults. A collection
+ * ("Options") starts empty, as in n8n; an option gets its default when it is added.
  */
 export function defaultParameters(properties: readonly PropertyDescriptor[]): Record<string, unknown> {
   const values: Record<string, unknown> = {}
   for (const property of properties) {
     if (property.defaultValue !== undefined && property.defaultValue !== null) {
       values[property.name] = structuredClone(property.defaultValue)
-    } else if (property.type === PropertyType.COLLECTION) {
-      const nested = defaultParameters(property.children)
-      if (Object.keys(nested).length) values[property.name] = nested
     }
   }
   return values
@@ -42,13 +39,23 @@ export function effectiveValue(property: PropertyDescriptor, values: ParameterVa
  * @param siblings fields of that record, for the defaults of unset siblings
  */
 export function isVisible(property: PropertyDescriptor, values: ParameterValues, siblings: readonly PropertyDescriptor[]): boolean {
-  const matches = (condition: DisplayCondition): boolean => {
-    const sibling = siblings.find((p) => p.name === condition.field)
-    const value = sibling ? effectiveValue(sibling, values) : values[condition.field]
-    const texts = (Array.isArray(value) ? value : [value]).map((v) => String(v ?? false))
-    return texts.some((text) => condition.values.includes(text))
-  }
-  return property.show.every(matches) && !property.hide.some(matches)
+  return conditionsHold(property.show, values, siblings) && !property.hide.some((condition) => conditionHolds(condition, values, siblings))
+}
+
+/** Whether every condition holds for the values, unset fields counting with their defaults. */
+export function conditionsHold(
+  conditions: readonly DisplayCondition[],
+  values: ParameterValues,
+  properties: readonly PropertyDescriptor[],
+): boolean {
+  return conditions.every((condition) => conditionHolds(condition, values, properties))
+}
+
+function conditionHolds(condition: DisplayCondition, values: ParameterValues, properties: readonly PropertyDescriptor[]): boolean {
+  const property = properties.find((p) => p.name === condition.field)
+  const value = property ? effectiveValue(property, values) : values[condition.field]
+  const texts = (Array.isArray(value) ? value : [value]).map((v) => String(v ?? false))
+  return texts.some((text) => condition.values.includes(text))
 }
 
 /** Why a field value is not acceptable. */

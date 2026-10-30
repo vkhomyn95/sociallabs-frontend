@@ -26,11 +26,12 @@ describe('isVisible', () => {
 })
 
 describe('defaultParameters', () => {
-  it('copies declared defaults and nests collection defaults', () => {
+  it('copies declared defaults and leaves collections empty', () => {
     const list = property('events', { type: PropertyType.MULTI_OPTIONS, defaultValue: ['NEW_MESSAGE'] })
     const nested = property('options', { type: PropertyType.COLLECTION, children: [property('timeout', { type: PropertyType.NUMBER, defaultValue: 30 })] })
     const values = defaultParameters([list, nested, chatIds])
-    expect(values).toEqual({ events: ['NEW_MESSAGE'], options: { timeout: 30 } })
+    // Options start empty; an option gets its default when it is added.
+    expect(values).toEqual({ events: ['NEW_MESSAGE'] })
     expect(values.events).not.toBe(list.defaultValue)
   })
 })

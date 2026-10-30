@@ -12,7 +12,7 @@ import { CanvasProjection, type CanvasPort } from '../canvas/CanvasProjection'
 const switchType: NodeTypeDescriptor = {
   key: 'core.switch@1', name: 'core.switch', version: 1, kind: NodeKind.ACTION, displayName: 'Switch', description: '',
   group: NodeGroup.LOGIC, icon: '', status: NodeTypeStatus.STABLE,
-  inputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN }], outputs: [],
+  inputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN, show: [] }], outputs: [],
   dynamicOutputs: { parameter: 'rules', labelField: 'outputName', fallback: true },
   credentials: { types: [], required: false }, properties: [],
 }

@@ -18,5 +18,15 @@ export function addableChildren(children: readonly PropertyDescriptor[], shown: 
   return children.filter((child) => !names.has(child.name))
 }
 
+/**
+ * Values with an option just added: it starts at its default, as in n8n, so what the form shows is what is stored.
+ *
+ * @returns the values unchanged when the option has no default or a value already
+ */
+export function withAddedOption(values: Readonly<Record<string, unknown>>, child: PropertyDescriptor): Record<string, unknown> {
+  if (values[child.name] !== undefined || child.defaultValue === undefined || child.defaultValue === null) return { ...values }
+  return { ...values, [child.name]: structuredClone(child.defaultValue) }
+}
+
 /** Required children stay; optional ones can be taken out again. */
 export const isRemovable = (child: PropertyDescriptor): boolean => !child.required

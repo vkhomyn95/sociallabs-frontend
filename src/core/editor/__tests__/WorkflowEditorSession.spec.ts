@@ -16,8 +16,8 @@ const httpType: NodeTypeDescriptor = {
   group: NodeGroup.CORE,
   icon: '',
   status: NodeTypeStatus.STABLE,
-  inputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN }],
-  outputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN }],
+  inputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN, show: [] }],
+  outputs: [{ name: 'main', displayName: '', kind: PortKind.MAIN, show: [] }],
   credentials: { types: [], required: false },
   properties: [
     {
