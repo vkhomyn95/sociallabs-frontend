@@ -147,6 +147,12 @@ export interface AiToolHttpV1Params {
   timeout?: number
 }
 
+/** Think (`ai.tool.think@1`) */
+export interface AiToolThinkV1Params {
+  /** Tool description */
+  description?: string
+}
+
 /** If (`core.if@1`) */
 export interface CoreIfV1Params {
   /** Conditions */
@@ -474,6 +480,7 @@ export interface NodeParamsMap {
   'ai.model.gemini@1': AiModelGeminiV1Params
   'ai.model.openai@1': AiModelOpenaiV1Params
   'ai.tool.http@1': AiToolHttpV1Params
+  'ai.tool.think@1': AiToolThinkV1Params
   'core.if@1': CoreIfV1Params
   'core.schedule@1': CoreScheduleV1Params
   'core.switch@1': CoreSwitchV1Params
