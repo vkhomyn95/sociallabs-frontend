@@ -341,9 +341,9 @@ export interface HttpRequestV1Params {
 /** Telegram Account (`telegram.accountAction@2`) */
 export interface TelegramAccountActionV2Params {
   /** Resource */
-  resource: 'MESSAGE' | 'CHAT' | 'POST' | 'ACCOUNT'
+  resource: 'MESSAGE' | 'CHAT' | 'POST' | 'ACCOUNT' | 'SEARCH'
   /** Operation */
-  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'EDIT_TEXT' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'REACT' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'PRESS_BUTTON' | 'TRANSLATE' | 'GET_MESSAGE_LINK' | 'MARK_AS_READ' | 'SHOW_TYPING' | 'GET_MESSAGE' | 'GET_HISTORY' | 'GET_CHAT' | 'GET_CHATS' | 'JOIN_CHAT' | 'LEAVE_CHAT' | 'CHECK_ACCESS' | 'PUBLISH_POST' | 'EDIT_POST' | 'DELETE_POST' | 'GET_POSTS' | 'GET_COMMENTS' | 'COMMENT_ON_POST' | 'REPLY_TO_COMMENT' | 'DELETE_COMMENT' | 'GET_POST_STATS' | 'GET_ME' | 'GET_USER' | 'UPDATE_PROFILE' | 'GET_CONTACTS' | 'ADD_CONTACT' | 'BLOCK_USER' | 'UNBLOCK_USER'
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'EDIT_TEXT' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'REACT' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'PRESS_BUTTON' | 'TRANSLATE' | 'GET_MESSAGE_LINK' | 'MARK_AS_READ' | 'SHOW_TYPING' | 'GET_MESSAGE' | 'GET_HISTORY' | 'GET_CHAT' | 'GET_CHATS' | 'JOIN_CHAT' | 'LEAVE_CHAT' | 'CHECK_ACCESS' | 'PUBLISH_POST' | 'EDIT_POST' | 'DELETE_POST' | 'GET_POSTS' | 'GET_COMMENTS' | 'COMMENT_ON_POST' | 'REPLY_TO_COMMENT' | 'DELETE_COMMENT' | 'GET_POST_STATS' | 'GET_ME' | 'GET_USER' | 'UPDATE_PROFILE' | 'GET_CONTACTS' | 'ADD_CONTACT' | 'BLOCK_USER' | 'UNBLOCK_USER' | 'SEARCH_CHATS' | 'FIND_SIMILAR_CHANNELS' | 'GET_RECOMMENDED_CHANNELS' | 'SEARCH_POSTS_BY_TAG' | 'GET_CHAT_PROFILE' | 'PREVIEW_INVITE_LINK'
   /** Chat: From the list, or an id, @username, t.me link or phone number */
   chat?: string
   /** Text */
@@ -418,6 +418,28 @@ export interface TelegramAccountActionV2Params {
   firstName?: string
   /** Last name */
   lastName?: string
+  /** Query */
+  query?: string
+  /** Chat types */
+  chatTypes?: 'ANY' | 'CHANNELS' | 'GROUPS'
+  /** Min members: Chats with fewer members or subscribers are left out */
+  minMembers?: number | Expression
+  /** Skip chats I'm in */
+  excludeJoined?: boolean
+  /** Skip chat IDs: Chats the workflow already knows, e.g. from its database; left out before any request is made */
+  skipChatIds?: unknown | Expression
+  /** Include details: Description, comments group and slow mode: one more request per chat, reused for 10 minutes */
+  includeDetails?: boolean
+  /** Max chats: Most chats to return, after filtering */
+  maxChats?: number | Expression
+  /** Depth: 1 finds the channel's similar channels; 2 and 3 also theirs, one search per channel */
+  depth?: number | Expression
+  /** Hashtag: #hashtag or $cashtag; # is added when missing */
+  tag?: string
+  /** Continue from: The nextOffset of the last post a previous search returned; empty starts from the newest */
+  continueFrom?: string
+  /** Invite link */
+  inviteLink?: string
 }
 
 /** Telegram account trigger (`telegram.accountTrigger@1`) */
