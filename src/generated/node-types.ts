@@ -338,28 +338,6 @@ export interface HttpRequestV1Params {
   continueOnFail?: boolean
 }
 
-/** Telegram account (`telegram.accountAction@1`) */
-export interface TelegramAccountActionV1Params {
-  /** Operation */
-  operation?: 'SEND' | 'EDIT' | 'DELETE' | 'SEND_TYPING'
-  /** Chat ID */
-  chatId: string
-  /** Text */
-  text?: string
-  /** Message ID */
-  messageId?: string
-  /** Reply to message ID */
-  replyToMessageId?: string
-  /** Send silently */
-  disableNotification?: boolean
-  /** Delete for everyone */
-  revoke?: boolean
-  /** Action */
-  chatAction?: 'TYPING' | 'UPLOAD_PHOTO' | 'RECORD_VIDEO' | 'UPLOAD_VIDEO' | 'RECORD_VOICE' | 'UPLOAD_VOICE' | 'UPLOAD_DOCUMENT' | 'CHOOSE_STICKER' | 'FIND_LOCATION' | 'RECORD_VIDEO_NOTE' | 'UPLOAD_VIDEO_NOTE' | 'CANCEL'
-  /** Timeout (seconds) */
-  requestTimeout?: number
-}
-
 /** Telegram Account (`telegram.accountAction@2`) */
 export interface TelegramAccountActionV2Params {
   /** Resource */
@@ -583,7 +561,6 @@ export interface NodeParamsMap {
   'core.switch@1': CoreSwitchV1Params
   'core.webhook@1': CoreWebhookV1Params
   'http.request@1': HttpRequestV1Params
-  'telegram.accountAction@1': TelegramAccountActionV1Params
   'telegram.accountAction@2': TelegramAccountActionV2Params
   'telegram.accountTrigger@1': TelegramAccountTriggerV1Params
   'telegram.botAction@1': TelegramBotActionV1Params
