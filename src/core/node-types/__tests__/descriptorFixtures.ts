@@ -12,6 +12,7 @@ export const property = (name: string, changes: Partial<PropertyDescriptor> = {}
   children: [],
   show: [],
   hide: [],
+  loadOptions: false,
   ...changes,
 })
 

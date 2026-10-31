@@ -74,7 +74,7 @@ export interface AiMemorySimpleV1Params {
 
 /** Anthropic chat model (`ai.model.anthropic@1`) */
 export interface AiModelAnthropicV1Params {
-  /** Model: Model id, e.g. claude-sonnet-4-5 or claude-haiku-4-5 */
+  /** Model: One of the models the key can use, or any model id */
   model: string
   /** Options */
   options?: {
@@ -97,7 +97,7 @@ export interface AiModelAnthropicV1Params {
 
 /** Google Gemini chat model (`ai.model.gemini@1`) */
 export interface AiModelGeminiV1Params {
-  /** Model: Model id, e.g. gemini-2.5-flash or gemini-2.5-pro */
+  /** Model: One of the models the key can use, or any model id */
   model: string
   /** Options */
   options?: {
@@ -127,7 +127,7 @@ export interface AiModelGeminiV1Params {
 
 /** OpenAI chat model (`ai.model.openai@1`) */
 export interface AiModelOpenaiV1Params {
-  /** Model: Model id, e.g. gpt-4o-mini, gpt-4.1 or o4-mini; any id of an OpenAI-compatible base URL */
+  /** Model: One of the models the key can use, or any model id, e.g. of an OpenAI-compatible base URL */
   model: string
   /** Options */
   options?: {

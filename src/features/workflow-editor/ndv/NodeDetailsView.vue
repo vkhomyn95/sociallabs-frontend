@@ -24,8 +24,10 @@ import { validateParameters } from '@/core/node-types/parameters'
 import { outputPorts } from '@/core/node-types/ports'
 import { connectionKey, typeKeyOf, type NodeId, type NodeModel, type NodeSettings } from '@/core/workflow/model'
 import { executionApi } from '../api/executionApi'
+import { optionsLoader } from '../api/optionsApi'
 import CredentialField from '../credentials/CredentialField.vue'
 import { provideExpressionContext } from '../expression/expressionContext'
+import { provideOptionsContext } from '../parameters/options/optionsContext'
 import ParameterForm from '../parameters/ParameterForm.vue'
 import { presentationOf } from '../presentation'
 import RunDataPanel from '../run-data/RunDataPanel.vue'
@@ -129,9 +131,17 @@ const outputEmptyText = computed(() => {
   return readonly ? 'This node did not run in this execution' : 'Execute the workflow to see the output'
 })
 
-// ─── Expressions ─────────────────────────────────────────────────────
-
 const completions = computed(() => new ExpressionCompletions(data.value.completionSample(props.nodeId)))
+
+// ─── Loaded choices ──────────────────────────────────────────────────
+
+provideOptionsContext({
+  loader: optionsLoader,
+  credentialId: () => node.value?.credentialId ?? null,
+  parameters: () => node.value?.parameters ?? {},
+})
+
+// ─── Expressions ─────────────────────────────────────────────────────
 
 provideExpressionContext({
   completions: () => completions.value,

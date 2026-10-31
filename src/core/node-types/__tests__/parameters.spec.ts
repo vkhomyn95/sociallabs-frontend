@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { PropertyType } from '../descriptor'
-import { defaultParameters, IssueKind, isVisible, validateParameters } from '../parameters'
+import { defaultParameters, IssueKind, isVisible, schemaPath, validateParameters } from '../parameters'
 import { option, property } from './descriptorFixtures'
 
 const filterChats = property('filterChats', { type: PropertyType.BOOLEAN, expression: false })
@@ -56,5 +56,13 @@ describe('validateParameters', () => {
   it('reports nested fields of collection elements with their path', () => {
     const rules = property('rules', { type: PropertyType.FIXED_COLLECTION, children: [property('value', { required: true })] })
     expect(validateParameters([rules], { rules: [{ value: 'a' }, {}] }).map((i) => i.path)).toEqual(['rules[1].value'])
+  })
+})
+
+describe('schemaPath', () => {
+  it('drops element indexes, keeping the nesting', () => {
+    expect(schemaPath('model')).toBe('model')
+    expect(schemaPath('options.voice')).toBe('options.voice')
+    expect(schemaPath('speakers[3].voice')).toBe('speakers.voice')
   })
 })

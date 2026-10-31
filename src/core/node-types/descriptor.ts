@@ -73,6 +73,8 @@ export interface PropertyDescriptor {
   children: PropertyDescriptor[]
   show: DisplayCondition[]
   hide: DisplayCondition[]
+  /** Choices are loaded from the server while editing (e.g. the models of an API key); any text is still allowed. */
+  loadOptions: boolean
 }
 
 /** Outputs generated from a list parameter, one port per element plus an optional fallback port. */

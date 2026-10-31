@@ -8,6 +8,8 @@ export type FieldPath = string
 
 export const childPath = (parent: FieldPath, name: string): FieldPath => (parent ? `${parent}.${name}` : name)
 export const elementPath = (parent: FieldPath, index: number): FieldPath => `${parent}[${index}]`
+/** @returns the path of the property in the node type's schema: the field path without element indexes */
+export const schemaPath = (path: FieldPath): string => path.replace(/\[\d+]/g, '')
 
 /**
  * Parameter values a new node or a new collection element starts with: the declared defaults. A collection

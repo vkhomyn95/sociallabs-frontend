@@ -4,6 +4,7 @@ import BooleanField from './fields/BooleanField.vue'
 import CollectionField from './fields/CollectionField.vue'
 import FixedCollectionField from './fields/FixedCollectionField.vue'
 import JsonField from './fields/JsonField.vue'
+import LoadedOptionsField from './fields/LoadedOptionsField.vue'
 import MultiOptionsField from './fields/MultiOptionsField.vue'
 import NumberField from './fields/NumberField.vue'
 import OptionsField from './fields/OptionsField.vue'
@@ -30,9 +31,12 @@ function fieldRegistry(): Readonly<Record<PropertyType, Component>> {
   })
 }
 
-/** @returns the override of the node type for this field, or the generic field of its property type */
+/**
+ * @returns the override of the node type for this field, the loaded-choices field when the server offers choices,
+ * or the generic field of its property type
+ */
 export function resolveField(typeKey: string, property: PropertyDescriptor): Component {
-  return overrideFor(typeKey, property.name) ?? fieldRegistry()[property.type]
+  return overrideFor(typeKey, property.name) ?? (property.loadOptions ? LoadedOptionsField : fieldRegistry()[property.type])
 }
 
 /** Property types that switch to an expression input as a whole; strings take templates directly. */
