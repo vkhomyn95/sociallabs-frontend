@@ -53,6 +53,8 @@ export interface PropertyOption {
   value: string
   displayName: string
   description: string
+  /** Heading the option is listed under, empty for none; see `PropertyDescriptor.optionsFilteredBy`. */
+  group: string
 }
 
 export interface DisplayCondition {
@@ -75,6 +77,11 @@ export interface PropertyDescriptor {
   hide: DisplayCondition[]
   /** Choices are loaded from the server while editing (e.g. the models of an API key); any text is still allowed. */
   loadOptions: boolean
+  /**
+   * Sibling whose value selects the choices offered: only options whose `group` equals it, e.g. the operations of the
+   * chosen resource. Empty when every option is offered.
+   */
+  optionsFilteredBy: string
 }
 
 /** Outputs generated from a list parameter, one port per element plus an optional fallback port. */

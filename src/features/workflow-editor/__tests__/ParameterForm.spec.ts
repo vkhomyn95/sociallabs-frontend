@@ -8,6 +8,7 @@ import { option, property } from '@/core/node-types/__tests__/descriptorFixtures
 import { provideExpressionContext } from '../expression/expressionContext'
 import ExpressionInput from '../expression/ExpressionInput.vue'
 import ParameterForm from '../parameters/ParameterForm.vue'
+import OptionsField from '../parameters/fields/OptionsField.vue'
 
 const PROPERTIES = [
   property('events', { type: PropertyType.MULTI_OPTIONS, options: [option('NEW_MESSAGE'), option('REACTION')], defaultValue: ['NEW_MESSAGE'], expression: false }),
@@ -21,6 +22,17 @@ const mountForm = (values: Record<string, unknown> = {}, issues = new Map<string
   mount(ParameterForm, { props: { properties: PROPERTIES, values, typeKey: 'test.node@1', issues } })
 
 const labels = (wrapper: ReturnType<typeof mountForm>) => wrapper.findAll('.wf-param__label > span:first-child').map((l) => l.text())
+
+const OPERATION_SET = [
+  property('resource', { type: PropertyType.OPTIONS, expression: false, defaultValue: 'MESSAGE', options: [option('MESSAGE'), option('CHAT')] }),
+  property('operation', {
+    type: PropertyType.OPTIONS,
+    expression: false,
+    defaultValue: 'SEND_TEXT',
+    optionsFilteredBy: 'resource',
+    options: [option('SEND_TEXT', 'MESSAGE'), option('DELETE', 'MESSAGE'), option('LEAVE', 'CHAT')],
+  }),
+]
 
 describe('ParameterForm', () => {
   it('renders the visible fields of the descriptor', () => {
@@ -96,5 +108,14 @@ describe('ExpressionInput', () => {
     await textarea.trigger('keydown', { key: 'Enter' })
     expect(el.value).toBe('{{ $json.message }}')
     wrapper.unmount()
+  })
+
+  it('offers the operations of the chosen resource and selects the first one when the resource changes', async () => {
+    const wrapper = mount(ParameterForm, { props: { properties: OPERATION_SET, values: {}, typeKey: 'test.node@1' } })
+    const [resource, operation] = wrapper.findAllComponents(OptionsField)
+    expect(operation!.props('property').options.map((o: { value: string }) => o.value)).toEqual(['SEND_TEXT', 'DELETE'])
+
+    resource!.vm.$emit('update:modelValue', 'CHAT')
+    expect(wrapper.emitted('update:values')![0]).toEqual([{ resource: 'CHAT', operation: 'LEAVE' }])
   })
 })

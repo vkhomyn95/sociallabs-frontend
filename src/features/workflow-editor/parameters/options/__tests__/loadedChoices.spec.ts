@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { choiceHint, choiceOptions } from '../loadedChoices'
 
 const listed = [
-  { value: 'claude-x', displayName: 'Claude X', description: 'Released 2025-09-29' },
-  { value: 'gpt-y', displayName: 'gpt-y', description: '' },
+  { value: 'claude-x', displayName: 'Claude X', description: 'Released 2025-09-29', group: '' },
+  { value: 'gpt-y', displayName: 'gpt-y', description: '', group: '' },
 ]
 
 describe('choiceOptions', () => {
@@ -23,7 +23,7 @@ describe('choiceOptions', () => {
 describe('choiceHint', () => {
   it('describes the chosen value, or names its id when only the label is shown', () => {
     expect(choiceHint(listed, 'claude-x')).toBe('Released 2025-09-29')
-    expect(choiceHint([{ value: 'id-1', displayName: 'Model one', description: '' }], 'id-1')).toBe('id-1')
+    expect(choiceHint([{ value: 'id-1', displayName: 'Model one', description: '', group: '' }], 'id-1')).toBe('id-1')
     expect(choiceHint(listed, 'gpt-y')).toBeUndefined()
     expect(choiceHint(listed, 'other')).toBeUndefined()
   })

@@ -13,10 +13,11 @@ export const property = (name: string, changes: Partial<PropertyDescriptor> = {}
   show: [],
   hide: [],
   loadOptions: false,
+  optionsFilteredBy: '',
   ...changes,
 })
 
-export const option = (value: string) => ({ value, displayName: value, description: '' })
+export const option = (value: string, group = '') => ({ value, displayName: value, description: '', group })
 
 export const nodeType = (changes: Partial<NodeTypeDescriptor> = {}): NodeTypeDescriptor => ({
   key: 'test.node@1',

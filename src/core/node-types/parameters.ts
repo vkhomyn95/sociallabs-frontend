@@ -1,5 +1,5 @@
 import { isExpression } from '@/core/expression/template'
-import { PropertyType, type DisplayCondition, type PropertyDescriptor } from './descriptor'
+import { PropertyType, type DisplayCondition, type PropertyDescriptor, type PropertyOption } from './descriptor'
 
 export type ParameterValues = Readonly<Record<string, unknown>>
 
@@ -60,6 +60,44 @@ function conditionHolds(condition: DisplayCondition, values: ParameterValues, pr
   return texts.some((text) => condition.values.includes(text))
 }
 
+/**
+ * Choices a field offers for the current values: with `optionsFilteredBy`, only the options grouped under that
+ * sibling's value (the operations of the chosen resource); otherwise all of them.
+ *
+ * @param property field to offer choices for
+ * @param values   values of the record the field belongs to
+ * @param siblings fields of that record, for the default of an unset sibling
+ */
+export function offeredOptions(
+  property: PropertyDescriptor,
+  values: ParameterValues,
+  siblings: readonly PropertyDescriptor[],
+): readonly PropertyOption[] {
+  if (!property.optionsFilteredBy) return property.options
+  const filter = siblings.find((p) => p.name === property.optionsFilteredBy)
+  const selected = String((filter ? effectiveValue(filter, values) : values[property.optionsFilteredBy]) ?? '')
+  return property.options.filter((option) => option.group === selected)
+}
+
+/**
+ * Keeps choices that depend on a sibling valid after a change: a field whose value is no longer offered takes the
+ * first offered option, so choosing another resource selects its first operation.
+ *
+ * @returns the values, a new object only when a choice had to change
+ */
+export function reconcileChoices(properties: readonly PropertyDescriptor[], values: ParameterValues): ParameterValues {
+  let next = values
+  for (const property of properties) {
+    if (!property.optionsFilteredBy) continue
+    const offered = offeredOptions(property, next, properties)
+    const current = effectiveValue(property, next)
+    if (offered.length && !offered.some((option) => option.value === current)) {
+      next = { ...next, [property.name]: offered[0]!.value }
+    }
+  }
+  return next
+}
+
 /** Why a field value is not acceptable. */
 export enum IssueKind {
   REQUIRED = 'REQUIRED',
@@ -97,12 +135,12 @@ export function validateParameters(
       continue
     }
     if (isExpression(value)) continue
-    issues.push(...valueIssues(property, value, fieldPath))
+    issues.push(...valueIssues(property, offeredOptions(property, values, properties), value, fieldPath))
   }
   return issues
 }
 
-function valueIssues(property: PropertyDescriptor, value: unknown, path: FieldPath): FieldIssue[] {
+function valueIssues(property: PropertyDescriptor, offered: readonly PropertyOption[], value: unknown, path: FieldPath): FieldIssue[] {
   switch (property.type) {
     case PropertyType.NUMBER:
       return typeof value === 'number' && Number.isFinite(value)
@@ -110,7 +148,7 @@ function valueIssues(property: PropertyDescriptor, value: unknown, path: FieldPa
         : [{ path, kind: IssueKind.NOT_A_NUMBER, message: `${property.displayName} must be a number` }]
     case PropertyType.OPTIONS:
     case PropertyType.MULTI_OPTIONS: {
-      const known = new Set(property.options.map((o) => o.value))
+      const known = new Set(offered.map((o) => o.value))
       const unknown = (Array.isArray(value) ? value : [value]).filter((v) => !known.has(String(v)))
       return unknown.length
         ? [{ path, kind: IssueKind.UNKNOWN_OPTION, message: `Unknown ${property.displayName.toLowerCase()}: ${unknown.join(', ')}` }]

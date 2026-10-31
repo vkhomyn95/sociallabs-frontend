@@ -2,6 +2,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
+import type { PropertyOption } from '@/core/node-types/descriptor'
 import { property } from '@/core/node-types/__tests__/descriptorFixtures'
 import { OptionsLoader, type OptionsQuery } from '@/core/node-types/OptionsLoader'
 import { provideOptionsContext } from '../parameters/options/optionsContext'
@@ -9,7 +10,7 @@ import ParameterForm from '../parameters/ParameterForm.vue'
 
 const MODEL = property('model', { displayName: 'Model', required: true, expression: false, loadOptions: true })
 
-function mountWith(fetch: (query: OptionsQuery) => Promise<{ value: string; displayName: string; description: string }[]>) {
+function mountWith(fetch: (query: OptionsQuery) => Promise<PropertyOption[]>) {
   const credentialId = ref<number | null>(7)
   const Host = defineComponent({
     setup() {
@@ -22,7 +23,7 @@ function mountWith(fetch: (query: OptionsQuery) => Promise<{ value: string; disp
 
 describe('LoadedOptionsField', () => {
   it('loads the choices with the node credential and again when it changes', async () => {
-    const fetch = vi.fn(() => Promise.resolve([{ value: 'm-1', displayName: 'Model one', description: '' }]))
+    const fetch = vi.fn(() => Promise.resolve([{ value: 'm-1', displayName: 'Model one', description: '', group: '' }]))
     const { wrapper, credentialId } = mountWith(fetch)
     await flushPromises()
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { PropertyType } from '../descriptor'
-import { defaultParameters, IssueKind, isVisible, schemaPath, validateParameters } from '../parameters'
+import { defaultParameters, IssueKind, isVisible, offeredOptions, reconcileChoices, schemaPath, validateParameters } from '../parameters'
 import { option, property } from './descriptorFixtures'
 
 const filterChats = property('filterChats', { type: PropertyType.BOOLEAN, expression: false })
@@ -56,6 +56,48 @@ describe('validateParameters', () => {
   it('reports nested fields of collection elements with their path', () => {
     const rules = property('rules', { type: PropertyType.FIXED_COLLECTION, children: [property('value', { required: true })] })
     expect(validateParameters([rules], { rules: [{ value: 'a' }, {}] }).map((i) => i.path)).toEqual(['rules[1].value'])
+  })
+})
+
+const resource = property('resource', {
+  type: PropertyType.OPTIONS,
+  expression: false,
+  defaultValue: 'MESSAGE',
+  options: [option('MESSAGE'), option('CHAT')],
+})
+const operation = property('operation', {
+  type: PropertyType.OPTIONS,
+  expression: false,
+  defaultValue: 'SEND_TEXT',
+  optionsFilteredBy: 'resource',
+  options: [option('SEND_TEXT', 'MESSAGE'), option('DELETE', 'MESSAGE'), option('LEAVE', 'CHAT')],
+})
+const operationSet = [resource, operation]
+
+describe('offeredOptions', () => {
+  it('offers the options grouped under the sibling value, its default when unset', () => {
+    expect(offeredOptions(operation, {}, operationSet).map((o) => o.value)).toEqual(['SEND_TEXT', 'DELETE'])
+    expect(offeredOptions(operation, { resource: 'CHAT' }, operationSet).map((o) => o.value)).toEqual(['LEAVE'])
+    expect(offeredOptions(mode, {}, fields)).toBe(mode.options)
+  })
+})
+
+describe('reconcileChoices', () => {
+  it('selects the first offered option when the value is no longer offered', () => {
+    expect(reconcileChoices(operationSet, { resource: 'CHAT', operation: 'DELETE' })).toEqual({ resource: 'CHAT', operation: 'LEAVE' })
+  })
+
+  it('keeps the very same values when every choice is still offered', () => {
+    const values = { resource: 'MESSAGE', operation: 'DELETE' }
+    expect(reconcileChoices(operationSet, values)).toBe(values)
+  })
+})
+
+describe('validateParameters with filtered options', () => {
+  it('rejects an option of another group', () => {
+    expect(validateParameters(operationSet, { resource: 'CHAT', operation: 'SEND_TEXT' }).map((i) => i.kind)).toEqual([
+      IssueKind.UNKNOWN_OPTION,
+    ])
   })
 })
 

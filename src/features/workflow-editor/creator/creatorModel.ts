@@ -131,7 +131,10 @@ export function itemsOf(type: NodeTypeDescriptor): NodeItem[] {
       key: `${type.key}:${option.value}`,
       title: option.displayName,
       description: option.description || type.displayName,
-      parameters: { [OPERATION]: option.value },
+      // An operation of a resource comes with its resource, or the form would show another resource's operations.
+      parameters: operation.optionsFilteredBy
+        ? { [operation.optionsFilteredBy]: option.group, [OPERATION]: option.value }
+        : { [OPERATION]: option.value },
     }))
   }
   const events = type.kind === NodeKind.TRIGGER ? optionsOf(type, EVENTS, PropertyType.MULTI_OPTIONS) : undefined

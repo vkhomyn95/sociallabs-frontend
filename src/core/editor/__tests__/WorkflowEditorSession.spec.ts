@@ -22,7 +22,7 @@ const httpType: NodeTypeDescriptor = {
   properties: [
     {
       name: 'method', displayName: 'Method', description: '', placeholder: '', type: PropertyType.OPTIONS, required: true,
-      defaultValue: 'GET', expression: false, options: [], children: [], show: [], hide: [], loadOptions: false,
+      defaultValue: 'GET', expression: false, options: [], children: [], show: [], hide: [], loadOptions: false, optionsFilteredBy: '',
     },
   ],
 }

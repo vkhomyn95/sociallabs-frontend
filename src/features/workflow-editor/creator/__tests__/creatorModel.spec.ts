@@ -22,6 +22,21 @@ const TYPES: NodeTypeDescriptor[] = [
     group: NodeGroup.COMMUNICATION,
     properties: [property('operation', { type: PropertyType.OPTIONS, options: [option('Send message'), option('Edit message')] })],
   }),
+  nodeType({
+    key: 'telegram.accountAction@2',
+    name: 'telegram.accountAction',
+    version: 2,
+    displayName: 'Telegram account',
+    group: NodeGroup.COMMUNICATION,
+    properties: [
+      property('resource', { type: PropertyType.OPTIONS, options: [option('MESSAGE'), option('CHAT')] }),
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        optionsFilteredBy: 'resource',
+        options: [option('SEND_TEXT', 'MESSAGE'), option('LEAVE_CHAT', 'CHAT')],
+      }),
+    ],
+  }),
   nodeType({ key: 'core.if@1', name: 'core.if', displayName: 'IF', group: NodeGroup.LOGIC }),
   nodeType({ key: 'ai.agent@1', name: 'ai.agent', displayName: 'AI Agent', group: NodeGroup.AI }),
   nodeType({
@@ -69,10 +84,18 @@ describe('NodeCreatorModel', () => {
     const app = creator.open(creator.open(creator.root().sections[0]!.items[0] as CategoryItem).sections[0]!.items[0] as never)
     expect(titles(app)).toEqual([
       ['Triggers', ['On new message', 'On reaction']],
+      ['Telegram account', ['SEND_TEXT', 'LEAVE_CHAT']],
       ['Telegram bot action', ['Send message', 'Edit message']],
     ])
-    const send = app.sections[1]!.items[0]!
+    const send = app.sections[2]!.items[0]!
     expect(send.kind === CreatorItemKind.NODE && send.parameters).toEqual({ operation: 'Send message' })
+  })
+
+  it('presets the resource of an operation that belongs to one', () => {
+    const leave = model({ mode: InsertMode.FREE, position: at }, true)
+      .search('leave_chat')
+      .find((item) => item.key === 'telegram.accountAction@2:LEAVE_CHAT')
+    expect(leave?.parameters).toEqual({ resource: 'CHAT', operation: 'LEAVE_CHAT' })
   })
 
   it('offers no triggers after an output, and only matching sub-nodes for an agent input', () => {

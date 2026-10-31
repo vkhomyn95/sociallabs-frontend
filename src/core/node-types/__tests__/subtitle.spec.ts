@@ -14,8 +14,8 @@ describe('subtitleOf', () => {
         type: PropertyType.OPTIONS,
         defaultValue: 'SEND_MESSAGE',
         options: [
-          { value: 'SEND_MESSAGE', displayName: 'Send message', description: '' },
-          { value: 'EDIT_MESSAGE', displayName: 'Edit message', description: '' },
+          { value: 'SEND_MESSAGE', displayName: 'Send message', description: '', group: '' },
+          { value: 'EDIT_MESSAGE', displayName: 'Edit message', description: '', group: '' },
         ],
       }),
     ],
@@ -32,7 +32,7 @@ describe('subtitleOf', () => {
       properties: [
         property('events', {
           type: PropertyType.MULTI_OPTIONS,
-          options: ['New message', 'Edited', 'Reaction'].map((displayName, i) => ({ value: `E${i}`, displayName, description: '' })),
+          options: ['New message', 'Edited', 'Reaction'].map((displayName, i) => ({ value: `E${i}`, displayName, description: '', group: '' })),
         }),
       ],
     })
@@ -43,7 +43,7 @@ describe('subtitleOf', () => {
   it('shows method and URL of an HTTP request, as written', () => {
     const http = nodeType({
       name: 'http.request',
-      properties: [property('method', { type: PropertyType.OPTIONS, defaultValue: 'GET', options: [{ value: 'GET', displayName: 'GET', description: '' }] }), property('url')],
+      properties: [property('method', { type: PropertyType.OPTIONS, defaultValue: 'GET', options: [{ value: 'GET', displayName: 'GET', description: '', group: '' }] }), property('url')],
     })
     expect(subtitleOf(http, node(http.name, { url: '{{ $json.link }}' }))).toBe('GET: {{ $json.link }}')
   })

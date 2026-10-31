@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { OptionsLoader, type OptionsQuery } from '../OptionsLoader'
 
 const query = (credentialId: number | null): OptionsQuery => ({ typeKey: 'ai.model.openai@1', property: 'model', credentialId, parameters: {} })
-const choice = (value: string) => ({ value, displayName: value, description: '' })
+const choice = (value: string) => ({ value, displayName: value, description: '', group: '' })
 
 describe('OptionsLoader', () => {
   it('asks once per type, field and credential', async () => {

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { PropertyDescriptor } from '@/core/node-types/descriptor'
-import { childPath, effectiveValue, isVisible, type FieldPath } from '@/core/node-types/parameters'
+import { childPath, effectiveValue, isVisible, offeredOptions, reconcileChoices, type FieldPath } from '@/core/node-types/parameters'
 import ParameterField from './ParameterField.vue'
 
 /**
  * Form of a node's parameters generated from its property descriptors; nested collections render nested
- * forms. Every change emits the whole new record, never a mutation.
+ * forms. Every change emits the whole new record, never a mutation. Choices that depend on a sibling (the operations
+ * of the chosen resource) are narrowed here, so fields stay unaware of each other, and kept valid on every change.
  */
 const props = withDefaults(
   defineProps<{
@@ -21,13 +22,17 @@ const props = withDefaults(
 
 const emit = defineEmits<{ 'update:values': [values: Record<string, unknown>] }>()
 
-const visible = computed(() => props.properties.filter((p) => isVisible(p, props.values, props.properties)))
+const visible = computed(() =>
+  props.properties
+    .filter((p) => isVisible(p, props.values, props.properties))
+    .map((p) => (p.optionsFilteredBy ? { ...p, options: [...offeredOptions(p, props.values, props.properties)] } : p)),
+)
 
 function set(name: string, value: unknown): void {
   const next: Record<string, unknown> = { ...props.values }
   if (value === undefined) delete next[name]
   else next[name] = value
-  emit('update:values', next)
+  emit('update:values', { ...reconcileChoices(props.properties, next) })
 }
 </script>
 
