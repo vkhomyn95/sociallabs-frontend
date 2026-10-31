@@ -35,4 +35,18 @@ describe('generateNodeTypes', () => {
     expect(source).toContain(`  'test.node@1': TestNodeV1Params`)
     expect(source).not.toContain('LegacyNode')
   })
+
+  it('makes a required field optional when it is shown only under conditions, e.g. for some operations', () => {
+    const source = generateNodeTypes([
+      nodeType({
+        properties: [
+          property('operation', { type: PropertyType.OPTIONS, required: true, expression: false, options: [option('SEND'), option('GET_ME')] }),
+          property('chat', { required: true, show: [{ field: 'operation', values: ['SEND'] }] }),
+        ],
+      }),
+    ])
+
+    expect(source).toContain(`  operation: 'SEND' | 'GET_ME'`)
+    expect(source).toContain('  chat?: string')
+  })
 })

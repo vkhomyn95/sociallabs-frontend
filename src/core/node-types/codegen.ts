@@ -44,6 +44,10 @@ function valueType(property: PropertyDescriptor, indent: string): string {
   }
 }
 
+/** A required field shown only under conditions (another operation's field) may still be absent. */
+const isAlwaysPresent = (property: PropertyDescriptor): boolean =>
+  property.required && property.show.length === 0 && property.hide.length === 0
+
 function objectType(properties: readonly PropertyDescriptor[], indent: string): string {
   if (!properties.length) return 'Record<string, never>'
   const inner = `${indent}  `
@@ -52,7 +56,7 @@ function objectType(properties: readonly PropertyDescriptor[], indent: string): 
     // Strings already admit templates; other types take one in place of the value.
     const type = property.expression && property.type !== PropertyType.STRING ? `${base} | Expression` : base
     const doc = property.description ? `${inner}/** ${property.displayName}: ${property.description} */\n` : `${inner}/** ${property.displayName} */\n`
-    return `${doc}${inner}${propertyKey(property.name)}${property.required ? '' : '?'}: ${type}`
+    return `${doc}${inner}${propertyKey(property.name)}${isAlwaysPresent(property) ? '' : '?'}: ${type}`
   })
   return `{\n${lines.join('\n')}\n${indent}}`
 }

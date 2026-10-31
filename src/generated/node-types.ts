@@ -360,6 +360,88 @@ export interface TelegramAccountActionV1Params {
   requestTimeout?: number
 }
 
+/** Telegram Account (`telegram.accountAction@2`) */
+export interface TelegramAccountActionV2Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CHAT' | 'POST' | 'ACCOUNT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'EDIT_TEXT' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'REACT' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'PRESS_BUTTON' | 'TRANSLATE' | 'GET_MESSAGE_LINK' | 'MARK_AS_READ' | 'SHOW_TYPING' | 'GET_MESSAGE' | 'GET_HISTORY' | 'GET_CHAT' | 'GET_CHATS' | 'JOIN_CHAT' | 'LEAVE_CHAT' | 'CHECK_ACCESS' | 'PUBLISH_POST' | 'EDIT_POST' | 'DELETE_POST' | 'GET_POSTS' | 'GET_COMMENTS' | 'COMMENT_ON_POST' | 'REPLY_TO_COMMENT' | 'DELETE_COMMENT' | 'GET_POST_STATS' | 'GET_ME' | 'GET_USER' | 'UPDATE_PROFILE' | 'GET_CONTACTS' | 'ADD_CONTACT' | 'BLOCK_USER' | 'UNBLOCK_USER'
+  /** Chat: From the list, or an id, @username, t.me link or phone number */
+  chat?: string
+  /** Text */
+  text?: string
+  /** Text format */
+  format?: 'PLAIN' | 'MARKDOWN' | 'HTML'
+  /** Reply to message ID */
+  replyToMessageId?: number | Expression
+  /** Send silently */
+  silent?: boolean
+  /** Disable link preview */
+  disableLinkPreview?: boolean
+  /** Send at: Schedule the message: ISO date-time (2026-12-31T18:00:00Z) or epoch seconds */
+  sendAt?: string
+  /** Max Stars per message: Groups that charge more Stars per message are refused; 0 sends only for free */
+  maxStars?: number | Expression
+  /** Media type */
+  mediaType?: 'PHOTO' | 'VIDEO' | 'DOCUMENT' | 'VOICE' | 'AUDIO' | 'ANIMATION'
+  /** File: URL, Telegram file id, or a path in the allowed local directory */
+  file?: string
+  /** Caption */
+  caption?: string
+  /** Files: 2–10 files: URLs, Telegram file ids or local paths */
+  files?: unknown | Expression
+  /** Message ID */
+  messageId?: number | Expression
+  /** Message IDs: One id, or several separated by commas */
+  messageIds?: string
+  /** Delete for everyone */
+  forEveryone?: boolean
+  /** From chat: From the list, or an id, @username, t.me link or phone number */
+  fromChat?: string
+  /** Send as a copy: Without the forwarded-from header */
+  asCopy?: boolean
+  /** Emoji */
+  emoji?: string
+  /** Remove the reaction */
+  remove?: boolean
+  /** Button text: Text of the button, as shown */
+  buttonText?: string
+  /** To language: Two-letter language code */
+  toLanguage?: string
+  /** Action */
+  action?: 'TYPING' | 'UPLOAD_PHOTO' | 'RECORD_VIDEO' | 'UPLOAD_VIDEO' | 'RECORD_VOICE' | 'UPLOAD_VOICE' | 'UPLOAD_DOCUMENT' | 'CHOOSE_STICKER' | 'FIND_LOCATION' | 'RECORD_VIDEO_NOTE' | 'UPLOAD_VIDEO_NOTE' | 'CANCEL'
+  /** Limit: Most results to return, newest first */
+  limit?: number | Expression
+  /** List */
+  list?: 'MAIN' | 'ARCHIVE'
+  /** Channel: From the list, or an id, @username or t.me link of the channel */
+  channel?: string
+  /** Attachment: URL, Telegram file id, or a path in the allowed local directory */
+  attachment?: string
+  /** Post ID */
+  postId?: number | Expression
+  /** Join the comments group if needed */
+  joinIfNeeded?: boolean
+  /** Comment ID */
+  commentId?: number | Expression
+  /** User: User id, @username or phone number */
+  user?: string
+  /** New first name */
+  newFirstName?: string
+  /** New last name */
+  newLastName?: string
+  /** New bio */
+  newBio?: string
+  /** New username: Without @ */
+  newUsername?: string
+  /** Phone number */
+  phoneNumber?: string
+  /** First name */
+  firstName?: string
+  /** Last name */
+  lastName?: string
+}
+
 /** Telegram account trigger (`telegram.accountTrigger@1`) */
 export interface TelegramAccountTriggerV1Params {
   /** Events */
@@ -502,6 +584,7 @@ export interface NodeParamsMap {
   'core.webhook@1': CoreWebhookV1Params
   'http.request@1': HttpRequestV1Params
   'telegram.accountAction@1': TelegramAccountActionV1Params
+  'telegram.accountAction@2': TelegramAccountActionV2Params
   'telegram.accountTrigger@1': TelegramAccountTriggerV1Params
   'telegram.botAction@1': TelegramBotActionV1Params
   'telegram.botTrigger@1': TelegramBotTriggerV1Params
