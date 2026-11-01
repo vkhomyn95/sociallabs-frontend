@@ -442,26 +442,54 @@ export interface TelegramAccountActionV2Params {
   inviteLink?: string
 }
 
-/** Telegram account trigger (`telegram.accountTrigger@1`) */
-export interface TelegramAccountTriggerV1Params {
+/** Telegram Account Trigger (`telegram.accountTrigger@2`) */
+export interface TelegramAccountTriggerV2Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'POSTS' | 'CHATS' | 'ACCOUNT'
   /** Events */
-  events?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'REACTION' | 'NEW_CHAT' | 'CHAT_UPDATED' | 'CHAT_MEMBER_UPDATED' | 'USER_STATUS_CHANGED' | 'CALLBACK_QUERY' | 'INLINE_QUERY' | 'OTHER'>
-  /** Only selected chats */
-  filterChats?: boolean
-  /** Chat IDs: Comma-separated */
-  chatIds?: string
-  /** Only selected senders */
-  filterSenders?: boolean
-  /** Sender IDs: Comma-separated user ids */
-  senderIds?: string
-  /** Only private chats */
-  onlyPrivate?: boolean
-  /** Only groups */
-  onlyGroups?: boolean
-  /** Only channels */
-  onlyChannels?: boolean
-  /** Ignore own messages */
-  ignoreOwnMessages?: boolean
+  messageEvents?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'MESSAGES_DELETED' | 'REACTION_TO_MY_MESSAGE'>
+  /** Chats */
+  chatScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Chat IDs: Chat ids, e.g. from a Get my chats or Search step */
+  chatIds?: unknown | Expression
+  /** Chat types: Empty for any */
+  chatTypes?: Array<'PRIVATE' | 'BOT' | 'GROUP' | 'SUPERGROUP' | 'CHANNEL' | 'SECRET'>
+  /** Senders */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Sender IDs: User ids, or chat ids of channels and anonymous admins */
+  senderIds?: unknown | Expression
+  /** Ignore my own: So the workflow's own replies do not start it again */
+  ignoreMine?: boolean
+  /** Ignore bots */
+  ignoreBots?: boolean
+  /** Content types: Empty for any */
+  contentTypes?: Array<'TEXT' | 'PHOTO' | 'VIDEO' | 'DOCUMENT' | 'VOICE' | 'AUDIO' | 'VIDEO_NOTE' | 'ANIMATION' | 'STICKER' | 'LOCATION' | 'CONTACT' | 'POLL' | 'SERVICE' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Only mentions and replies to me */
+  onlyMentions?: boolean
+  /** Forwarded */
+  forwarded?: 'ANY' | 'ONLY' | 'EXCLUDE'
+  /** Skip older than (s): Messages Telegram delivers late, after a restart or a lost connection; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per chat every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the chat, sender, text and date instead of the whole message */
+  simplify?: boolean
+  /** Events */
+  postEvents?: Array<'NEW_POST' | 'POST_EDITED' | 'NEW_COMMENT'>
+  /** Channels */
+  channelScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Channel IDs: Channel ids; a comment counts as in the channel of its post */
+  channelIds?: unknown | Expression
+  /** Events */
+  chatEvents?: Array<'MY_ACCESS_CHANGED' | 'ADDED_TO_CHAT' | 'MEMBER_JOINED' | 'MEMBER_LEFT' | 'JOIN_REQUEST'>
+  /** Events */
+  accountEvents?: Array<'STATUS_CHANGED' | 'SERVICE_NOTIFICATION' | 'UNCONFIRMED_LOGIN'>
 }
 
 /** Telegram bot (`telegram.botAction@1`) */
@@ -584,7 +612,7 @@ export interface NodeParamsMap {
   'core.webhook@1': CoreWebhookV1Params
   'http.request@1': HttpRequestV1Params
   'telegram.accountAction@2': TelegramAccountActionV2Params
-  'telegram.accountTrigger@1': TelegramAccountTriggerV1Params
+  'telegram.accountTrigger@2': TelegramAccountTriggerV2Params
   'telegram.botAction@1': TelegramBotActionV1Params
   'telegram.botTrigger@1': TelegramBotTriggerV1Params
   'viber.accountAction@1': ViberAccountActionV1Params
