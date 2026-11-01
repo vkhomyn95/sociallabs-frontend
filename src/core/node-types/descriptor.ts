@@ -36,6 +36,8 @@ export enum PropertyType {
   BOOLEAN = 'BOOLEAN',
   OPTIONS = 'OPTIONS',
   MULTI_OPTIONS = 'MULTI_OPTIONS',
+  /** Several texts (ids, file references), edited as tags. */
+  STRING_LIST = 'STRING_LIST',
   COLLECTION = 'COLLECTION',
   FIXED_COLLECTION = 'FIXED_COLLECTION',
   JSON = 'JSON',

@@ -34,6 +34,8 @@ function valueType(property: PropertyDescriptor, indent: string): string {
       return property.options.length ? property.options.map((o) => literal(o.value)).join(' | ') : 'string'
     case PropertyType.MULTI_OPTIONS:
       return `Array<${property.options.length ? property.options.map((o) => literal(o.value)).join(' | ') : 'string'}>`
+    case PropertyType.STRING_LIST:
+      return 'string[]'
     case PropertyType.COLLECTION:
       return objectType(property.children, indent)
     case PropertyType.FIXED_COLLECTION:

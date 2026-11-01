@@ -19,6 +19,7 @@ describe('generateNodeTypes', () => {
           property('events', { type: PropertyType.MULTI_OPTIONS, options: [option('A')], expression: false }),
           property('rules', { type: PropertyType.FIXED_COLLECTION, expression: false, children: [property('value', { required: true })] }),
           property('body', { type: PropertyType.JSON, expression: false }),
+          property('chatIds', { type: PropertyType.STRING_LIST }),
           property('odd-name', { type: PropertyType.BOOLEAN, expression: false }),
         ],
       }),
@@ -31,6 +32,7 @@ describe('generateNodeTypes', () => {
     expect(source).toContain(`  events?: Array<'A'>`)
     expect(source).toContain('  rules?: Array<{\n    /** Value */\n    value: string\n  }>')
     expect(source).toContain('  body?: unknown')
+    expect(source).toContain('  chatIds?: string[] | Expression')
     expect(source).toContain(`  'odd-name'?: boolean`)
     expect(source).toContain(`  'test.node@1': TestNodeV1Params`)
     expect(source).not.toContain('LegacyNode')

@@ -8,7 +8,9 @@ import LoadedOptionsField from './fields/LoadedOptionsField.vue'
 import MultiOptionsField from './fields/MultiOptionsField.vue'
 import NumberField from './fields/NumberField.vue'
 import OptionsField from './fields/OptionsField.vue'
+import LoadedListField from './fields/LoadedListField.vue'
 import StringField from './fields/StringField.vue'
+import StringListField from './fields/StringListField.vue'
 import { overrideFor } from './overrides'
 
 let registry: Readonly<Record<PropertyType, Component>> | null = null
@@ -25,6 +27,7 @@ function fieldRegistry(): Readonly<Record<PropertyType, Component>> {
     [PropertyType.BOOLEAN]: BooleanField,
     [PropertyType.OPTIONS]: OptionsField,
     [PropertyType.MULTI_OPTIONS]: MultiOptionsField,
+    [PropertyType.STRING_LIST]: StringListField,
     [PropertyType.COLLECTION]: CollectionField,
     [PropertyType.FIXED_COLLECTION]: FixedCollectionField,
     [PropertyType.JSON]: JsonField,
@@ -36,7 +39,13 @@ function fieldRegistry(): Readonly<Record<PropertyType, Component>> {
  * or the generic field of its property type
  */
 export function resolveField(typeKey: string, property: PropertyDescriptor): Component {
-  return overrideFor(typeKey, property.name) ?? (property.loadOptions ? LoadedOptionsField : fieldRegistry()[property.type])
+  return overrideFor(typeKey, property.name) ?? (property.loadOptions ? loadedField(property) : fieldRegistry()[property.type])
+}
+
+/** A list of texts picks several loaded choices; a text picks one. */
+function loadedField(property: PropertyDescriptor): Component {
+  if (property.type === PropertyType.STRING_LIST) return LoadedListField
+  return LoadedOptionsField
 }
 
 /** Property types that switch to an expression input as a whole; strings take templates directly. */
@@ -45,5 +54,6 @@ export const EXPRESSION_TOGGLE_TYPES: ReadonlySet<PropertyType> = new Set([
   PropertyType.BOOLEAN,
   PropertyType.OPTIONS,
   PropertyType.MULTI_OPTIONS,
+  PropertyType.STRING_LIST,
   PropertyType.JSON,
 ])

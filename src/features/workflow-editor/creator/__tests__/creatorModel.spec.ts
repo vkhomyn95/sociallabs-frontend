@@ -79,15 +79,16 @@ describe('NodeCreatorModel', () => {
     ])
   })
 
-  it('opens an app with its triggers as events and its actions as operations, preset', () => {
+  it('opens an app with its triggers as events and its actions by resource, preset', () => {
     const creator = model({ mode: InsertMode.FREE, position: at }, true)
     const app = creator.open(creator.open(creator.root().sections[0]!.items[0] as CategoryItem).sections[0]!.items[0] as never)
     expect(titles(app)).toEqual([
       ['Triggers', ['On new message', 'On reaction']],
-      ['Telegram account', ['SEND_TEXT', 'LEAVE_CHAT']],
+      ['MESSAGE', ['SEND_TEXT']],
+      ['CHAT', ['LEAVE_CHAT']],
       ['Telegram bot action', ['Send message', 'Edit message']],
     ])
-    const send = app.sections[2]!.items[0]!
+    const send = app.sections[3]!.items[0]!
     expect(send.kind === CreatorItemKind.NODE && send.parameters).toEqual({ operation: 'Send message' })
   })
 
@@ -109,7 +110,7 @@ describe('NodeCreatorModel', () => {
 
   it('finds actions and nodes, title prefixes first', () => {
     const results = model({ mode: InsertMode.FREE, position: at }, true).search('mess')
-    expect(results.map((item) => item.title)).toEqual(['Edit message', 'On new message', 'Send message'])
+    expect(results.map((item) => item.title)).toEqual(['Edit message', 'On new message', 'Send message', 'SEND_TEXT'])
     expect(model({ mode: InsertMode.FREE, position: at }).search('telegram bot')[0]!.title).toBe('Telegram bot action')
   })
 })
@@ -120,5 +121,87 @@ describe('fits', () => {
     expect(fits(webhook!, { mode: InsertMode.AFTER, position: at, node: 'a', output: 0 })).toBe(false)
     expect(fits(webhook!, { mode: InsertMode.BEFORE, position: at, node: 'a', input: 0 })).toBe(true)
     expect(fits(action!, { mode: InsertMode.AFTER, position: at, node: 'a', output: 0 })).toBe(true)
+  })
+})
+
+const ACCOUNT_AND_BOT: NodeTypeDescriptor[] = [
+  nodeType({
+    key: 'telegram.accountTrigger@2',
+    name: 'telegram.accountTrigger',
+    version: 2,
+    displayName: 'Telegram Account Trigger',
+    group: NodeGroup.COMMUNICATION,
+    kind: NodeKind.TRIGGER,
+    inputs: [],
+    credentials: { types: ['TELEGRAM_ACCOUNT'], required: true },
+    properties: [
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        options: [{ ...option('MESSAGES'), displayName: 'Messages' }, { ...option('POSTS'), displayName: 'Posts & comments' }],
+      }),
+      property('messageEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['MESSAGES'] }],
+        options: [{ ...option('NEW_MESSAGE'), displayName: 'New message' }],
+      }),
+      property('postEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['POSTS'] }],
+        options: [{ ...option('NEW_POST'), displayName: 'New post' }, { ...option('NEW_COMMENT'), displayName: 'New comment' }],
+      }),
+    ],
+  }),
+  nodeType({
+    key: 'telegram.accountAction@2',
+    name: 'telegram.accountAction',
+    version: 2,
+    displayName: 'Telegram Account',
+    group: NodeGroup.COMMUNICATION,
+    credentials: { types: ['TELEGRAM_ACCOUNT'], required: true },
+    properties: [
+      property('resource', {
+        type: PropertyType.OPTIONS,
+        options: [{ ...option('MESSAGE'), displayName: 'Message' }, { ...option('SEARCH'), displayName: 'Search' }],
+      }),
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        optionsFilteredBy: 'resource',
+        options: [option('SEND_TEXT', 'MESSAGE'), option('SEARCH_CHATS', 'SEARCH')],
+      }),
+    ],
+  }),
+  nodeType({
+    key: 'telegram.botAction@1',
+    name: 'telegram.botAction',
+    displayName: 'Telegram bot action',
+    group: NodeGroup.COMMUNICATION,
+    credentials: { types: ['TELEGRAM_BOT'], required: true },
+    properties: [property('operation', { type: PropertyType.OPTIONS, options: [option('Send message')] })],
+  }),
+]
+
+describe('NodeCreatorModel with an app used as an account and as a bot', () => {
+  const creator = new NodeCreatorModel(ACCOUNT_AND_BOT, { fits: () => true, allowTriggers: true, hasTrigger: false })
+  const telegram = () => creator.open(creator.root().sections[0]!.items[0] as never)
+
+  it('offers the account and the bot first', () => {
+    expect(titles(telegram())).toEqual([['', ['Telegram Account', 'Telegram Bot']]])
+    expect(telegram().sections[0]!.items.map((item) => item.kind)).toEqual([CreatorItemKind.VARIANT, CreatorItemKind.VARIANT])
+  })
+
+  it('lists the account\'s trigger events by group, then its actions by resource', () => {
+    const account = creator.open(telegram().sections[0]!.items[0] as never)
+    expect(titles(account)).toEqual([
+      ['Triggers · Messages', ['On new message']],
+      ['Triggers · Posts & comments', ['On new post', 'On new comment']],
+      ['Message', ['SEND_TEXT']],
+      ['Search', ['SEARCH_CHATS']],
+    ])
+    const comment = account.sections[1]!.items[1]!
+    expect(comment.kind === CreatorItemKind.NODE && comment.parameters).toEqual({ operation: 'POSTS', postEvents: ['NEW_COMMENT'] })
+  })
+
+  it('finds a trigger event by its name', () => {
+    expect(creator.search('new comment').map((item) => item.key)).toContain('telegram.accountTrigger@2:POSTS:NEW_COMMENT')
   })
 })

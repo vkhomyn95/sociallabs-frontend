@@ -367,7 +367,7 @@ export interface TelegramAccountActionV2Params {
   /** Caption */
   caption?: string
   /** Files: 2–10 files: URLs, Telegram file ids or local paths */
-  files?: unknown | Expression
+  files?: string[] | Expression
   /** Message ID */
   messageId?: number | Expression
   /** Message IDs: One id, or several separated by commas */
@@ -427,7 +427,7 @@ export interface TelegramAccountActionV2Params {
   /** Skip chats I'm in */
   excludeJoined?: boolean
   /** Skip chat IDs: Chats the workflow already knows, e.g. from its database; left out before any request is made */
-  skipChatIds?: unknown | Expression
+  skipChatIds?: string[] | Expression
   /** Include details: Description, comments group and slow mode: one more request per chat, reused for 10 minutes */
   includeDetails?: boolean
   /** Max chats: Most chats to return, after filtering */
@@ -450,14 +450,14 @@ export interface TelegramAccountTriggerV2Params {
   messageEvents?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'MESSAGES_DELETED' | 'REACTION_TO_MY_MESSAGE'>
   /** Chats */
   chatScope?: 'ALL' | 'ONLY' | 'EXCEPT'
-  /** Chat IDs: Chat ids, e.g. from a Get my chats or Search step */
-  chatIds?: unknown | Expression
+  /** Chat IDs: From the list, or ids typed or returned by an expression */
+  chatIds?: string[] | Expression
   /** Chat types: Empty for any */
   chatTypes?: Array<'PRIVATE' | 'BOT' | 'GROUP' | 'SUPERGROUP' | 'CHANNEL' | 'SECRET'>
   /** Senders */
   senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
   /** Sender IDs: User ids, or chat ids of channels and anonymous admins */
-  senderIds?: unknown | Expression
+  senderIds?: string[] | Expression
   /** Ignore my own: So the workflow's own replies do not start it again */
   ignoreMine?: boolean
   /** Ignore bots */
@@ -484,8 +484,8 @@ export interface TelegramAccountTriggerV2Params {
   postEvents?: Array<'NEW_POST' | 'POST_EDITED' | 'NEW_COMMENT'>
   /** Channels */
   channelScope?: 'ALL' | 'ONLY' | 'EXCEPT'
-  /** Channel IDs: Channel ids; a comment counts as in the channel of its post */
-  channelIds?: unknown | Expression
+  /** Channel IDs: From the list, or ids; a comment counts as in the channel of its post */
+  channelIds?: string[] | Expression
   /** Events */
   chatEvents?: Array<'MY_ACCESS_CHANGED' | 'ADDED_TO_CHAT' | 'MEMBER_JOINED' | 'MEMBER_LEFT' | 'JOIN_REQUEST'>
   /** Events */

@@ -51,7 +51,7 @@ describe('LoadedOptionsField', () => {
     const { wrapper } = mountWith(() => Promise.resolve([]))
     await flushPromises()
 
-    await wrapper.findAll('.wf-loaded__mode button')[1]!.trigger('click')
+    await wrapper.findAll('.wf-choice-bar__mode button')[1]!.trigger('click')
     await wrapper.find('.wf-loaded input').setValue('my-model')
 
     expect(wrapper.findComponent(ParameterForm).emitted('update:values')!.at(-1)).toEqual([{ model: 'my-model' }])

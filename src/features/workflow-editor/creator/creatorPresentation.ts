@@ -17,6 +17,7 @@ export function lookOf(item: CreatorItem): NodePresentation {
     case CreatorItemKind.NODE:
       return presentationOf(item.type.name, item.type)
     case CreatorItemKind.APP:
+    case CreatorItemKind.VARIANT:
       // Presentations are keyed by the service prefix of type names.
       return presentationOf(item.service)
     case CreatorItemKind.CATEGORY:

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { choiceHint, choiceOptions } from '../loadedChoices'
+import { choiceHint, choiceListOptions, choiceOptions } from '../loadedChoices'
 
 const listed = [
   { value: 'claude-x', displayName: 'Claude X', description: 'Released 2025-09-29', group: '' },
@@ -26,5 +26,15 @@ describe('choiceHint', () => {
     expect(choiceHint([{ value: 'id-1', displayName: 'Model one', description: '', group: '' }], 'id-1')).toBe('id-1')
     expect(choiceHint(listed, 'gpt-y')).toBeUndefined()
     expect(choiceHint(listed, 'other')).toBeUndefined()
+  })
+})
+
+describe('choiceListOptions', () => {
+  it('lists unlisted values first and describes choices by their description', () => {
+    expect(choiceListOptions(listed, ['gpt-y', 'mine'])).toEqual([
+      { value: 'mine', label: 'mine', description: 'Not in the list' },
+      { value: 'claude-x', label: 'Claude X', description: 'Released 2025-09-29' },
+      { value: 'gpt-y', label: 'gpt-y', description: undefined },
+    ])
   })
 })

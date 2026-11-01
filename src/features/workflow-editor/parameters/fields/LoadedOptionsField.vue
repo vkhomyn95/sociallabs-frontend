@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { SlbIcon, SlbInput, SlbSelect } from '@sociallabs/frontend-components'
+import { SlbInput, SlbSelect } from '@sociallabs/frontend-components'
 import { choiceHint, choiceOptions } from '../options/loadedChoices'
 import { useLoadedOptions } from '../options/useLoadedOptions'
+import { ChoiceMode } from './choiceMode'
 import type { FieldEmits, FieldProps } from './fieldProps'
+import LoadedChoiceBar from './LoadedChoiceBar.vue'
 
 /**
  * Text field whose choices are loaded from the server, e.g. the models of the selected API key: picked from the
@@ -12,12 +14,7 @@ import type { FieldEmits, FieldProps } from './fieldProps'
 const props = defineProps<FieldProps<string>>()
 const emit = defineEmits<FieldEmits<string>>()
 
-enum Mode {
-  LIST = 'list',
-  ID = 'id',
-}
-
-const mode = ref(Mode.LIST)
+const mode = ref(ChoiceMode.LIST)
 const { options: choices, loading, error, hasCredential, reload } = useLoadedOptions(
   () => props.typeKey,
   () => props.path,
@@ -34,25 +31,10 @@ const set = (value: unknown) => emit('update:modelValue', value === null || valu
 
 <template>
   <div class="wf-loaded">
-    <div class="wf-loaded__bar">
-      <div class="wf-loaded__mode" role="group" aria-label="How to choose">
-        <button type="button" :class="{ active: mode === Mode.LIST }" @click="mode = Mode.LIST">From list</button>
-        <button type="button" :class="{ active: mode === Mode.ID }" @click="mode = Mode.ID">By ID</button>
-      </div>
-      <button
-        v-if="mode === Mode.LIST && hasCredential"
-        type="button"
-        class="wf-loaded__refresh"
-        :disabled="loading"
-        title="Reload the list"
-        @click="reload"
-      >
-        <SlbIcon name="action_refresh" :size="13" :class="{ spinning: loading }" />
-      </button>
-    </div>
+    <LoadedChoiceBar v-model:mode="mode" :can-reload="hasCredential" :loading="loading" @reload="reload" />
 
     <SlbSelect
-      v-if="mode === Mode.LIST"
+      v-if="mode === ChoiceMode.LIST"
       :model-value="modelValue ?? null"
       :options="options"
       :placeholder="placeholder"
@@ -80,55 +62,5 @@ const set = (value: unknown) => emit('update:modelValue', value === null || valu
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-.wf-loaded__bar {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.wf-loaded__mode {
-  display: inline-flex;
-  overflow: hidden;
-  border: 1px solid var(--slb-color-border);
-  border-radius: var(--slb-radius-sm);
-
-  button {
-    padding: 1px 8px;
-    font-size: 11px;
-    color: var(--slb-color-text-muted);
-    background: none;
-    border: 0;
-    cursor: pointer;
-
-    &.active {
-      color: var(--slb-color-primary);
-      background: var(--slb-color-primary-light, var(--slb-color-gray-100));
-    }
-  }
-}
-
-.wf-loaded__refresh {
-  display: inline-flex;
-  padding: 2px;
-  color: var(--slb-color-text-muted);
-  background: none;
-  border: 0;
-  cursor: pointer;
-
-  &:disabled {
-    cursor: default;
-  }
-
-  .spinning {
-    animation: wf-loaded-spin 0.8s linear infinite;
-  }
-}
-
-@keyframes wf-loaded-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

@@ -2,11 +2,12 @@
 import { computed } from 'vue'
 import { SlbSelect, type SelectOption } from '@sociallabs/frontend-components'
 import type { FieldEmits, FieldProps } from './fieldProps'
+import { selectOptionOf } from './selectOptions'
 
 const props = defineProps<FieldProps<string>>()
 const emit = defineEmits<FieldEmits<string>>()
 
-const options = computed<SelectOption[]>(() => props.property.options.map((o) => ({ value: o.value, label: o.displayName })))
+const options = computed<SelectOption[]>(() => props.property.options.map(selectOptionOf))
 const hint = computed(() => props.property.options.find((o) => o.value === props.modelValue)?.description || undefined)
 </script>
 
