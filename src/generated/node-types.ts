@@ -495,9 +495,9 @@ export interface TelegramAccountTriggerV2Params {
 /** Telegram Bot (`telegram.botAction@2`) */
 export interface TelegramBotActionV2Params {
   /** Resource */
-  resource: 'MESSAGE' | 'INTERACTION' | 'CHAT' | 'MEMBER' | 'FORUM_TOPIC' | 'BOT'
+  resource: 'MESSAGE' | 'INTERACTION' | 'CHAT' | 'MEMBER' | 'FORUM_TOPIC' | 'BOT' | 'PAYMENT'
   /** Operation */
-  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'SEND_LOCATION' | 'SEND_VENUE' | 'SEND_CONTACT' | 'SEND_POLL' | 'SEND_DICE' | 'EDIT_TEXT' | 'EDIT_CAPTION' | 'EDIT_MEDIA' | 'EDIT_KEYBOARD' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'REACT' | 'SHOW_TYPING' | 'STOP_POLL' | 'DOWNLOAD_FILE' | 'ANSWER_BUTTON_PRESS' | 'ANSWER_INLINE_QUERY' | 'EDIT_INLINE_TEXT' | 'GET_CHAT' | 'GET_ADMINISTRATORS' | 'GET_MEMBER_COUNT' | 'GET_MEMBER' | 'SET_TITLE' | 'SET_DESCRIPTION' | 'SET_PHOTO' | 'DELETE_PHOTO' | 'SET_PERMISSIONS' | 'CREATE_INVITE_LINK' | 'EDIT_INVITE_LINK' | 'REVOKE_INVITE_LINK' | 'EXPORT_INVITE_LINK' | 'APPROVE_JOIN_REQUEST' | 'DECLINE_JOIN_REQUEST' | 'LEAVE_CHAT' | 'BAN' | 'UNBAN' | 'RESTRICT' | 'PROMOTE' | 'SET_ADMIN_TITLE' | 'CREATE_TOPIC' | 'EDIT_TOPIC' | 'CLOSE_TOPIC' | 'REOPEN_TOPIC' | 'DELETE_TOPIC' | 'UNPIN_ALL_TOPIC_MESSAGES' | 'GET_ME' | 'SET_COMMANDS' | 'GET_COMMANDS' | 'DELETE_COMMANDS' | 'SET_NAME' | 'SET_BOT_DESCRIPTION' | 'SET_SHORT_DESCRIPTION' | 'SET_MENU_BUTTON'
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'SEND_LOCATION' | 'SEND_VENUE' | 'SEND_CONTACT' | 'SEND_POLL' | 'SEND_DICE' | 'EDIT_TEXT' | 'EDIT_CAPTION' | 'EDIT_MEDIA' | 'EDIT_KEYBOARD' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'REACT' | 'SHOW_TYPING' | 'STOP_POLL' | 'DOWNLOAD_FILE' | 'ANSWER_BUTTON_PRESS' | 'ANSWER_INLINE_QUERY' | 'EDIT_INLINE_TEXT' | 'GET_CHAT' | 'GET_ADMINISTRATORS' | 'GET_MEMBER_COUNT' | 'GET_MEMBER' | 'SET_TITLE' | 'SET_DESCRIPTION' | 'SET_PHOTO' | 'DELETE_PHOTO' | 'SET_PERMISSIONS' | 'CREATE_INVITE_LINK' | 'EDIT_INVITE_LINK' | 'REVOKE_INVITE_LINK' | 'EXPORT_INVITE_LINK' | 'APPROVE_JOIN_REQUEST' | 'DECLINE_JOIN_REQUEST' | 'LEAVE_CHAT' | 'BAN' | 'UNBAN' | 'RESTRICT' | 'PROMOTE' | 'SET_ADMIN_TITLE' | 'CREATE_TOPIC' | 'EDIT_TOPIC' | 'CLOSE_TOPIC' | 'REOPEN_TOPIC' | 'DELETE_TOPIC' | 'UNPIN_ALL_TOPIC_MESSAGES' | 'GET_ME' | 'SET_COMMANDS' | 'GET_COMMANDS' | 'DELETE_COMMANDS' | 'SET_NAME' | 'SET_BOT_DESCRIPTION' | 'SET_SHORT_DESCRIPTION' | 'SET_MENU_BUTTON' | 'SEND_INVOICE' | 'CREATE_INVOICE_LINK' | 'ANSWER_SHIPPING_QUERY' | 'ANSWER_PRE_CHECKOUT_QUERY' | 'REFUND_STAR_PAYMENT' | 'GET_STAR_TRANSACTIONS' | 'SEND_PAID_MEDIA'
   /** Chat: From the chats the bot has seen, a chat id or @channelusername */
   chat?: string
   /** Text */
@@ -515,7 +515,7 @@ export interface TelegramBotActionV2Params {
       /** Text */
       text?: string
       /** Action */
-      action?: 'CALLBACK' | 'URL' | 'SWITCH_INLINE' | 'SWITCH_INLINE_HERE' | 'COPY_TEXT'
+      action?: 'CALLBACK' | 'URL' | 'SWITCH_INLINE' | 'SWITCH_INLINE_HERE' | 'COPY_TEXT' | 'PAY'
       /** Value: Callback data, URL, inline query or text to copy */
       value?: string
       /** Start a new row */
@@ -777,12 +777,92 @@ export interface TelegramBotActionV2Params {
   menuButton?: 'COMMANDS' | 'DEFAULT'
   /** Chat: A private chat to set it for; empty for every chat */
   menuChat?: string
+  /** Product name: 1 to 32 characters */
+  invoiceTitle?: string
+  /** Description: 1 to 255 characters */
+  invoiceDescription?: string
+  /** Payload: Your order id, up to 128 bytes; never shown to the user, it comes back with every payment event */
+  invoicePayload?: string
+  /** Currency: XTR for Telegram Stars, or a code like UAH or USD with a payment provider */
+  currency?: string
+  /** Price: One part for Telegram Stars; with a provider also delivery, discounts */
+  prices?: Array<{
+    /** Label */
+    label?: string
+    /** Amount: In the smallest units: cents, kopiyky; whole stars for XTR */
+    amount?: number | Expression
+  }>
+  /** Photo URL */
+  photoUrl?: string
+  /** Checkout */
+  checkout?: {
+    /** Ask for the name */
+    needName?: boolean
+    /** Ask for the phone number */
+    needPhoneNumber?: boolean
+    /** Ask for the email */
+    needEmail?: boolean
+    /** Ask for a shipping address */
+    needShippingAddress?: boolean
+    /** Pass the phone number to the provider */
+    sendPhoneToProvider?: boolean
+    /** Pass the email to the provider */
+    sendEmailToProvider?: boolean
+    /** Price depends on the address: A shipping query follows; answer it with Answer shipping query */
+    flexible?: boolean
+    /** Largest tip: In the smallest units: cents, kopiyky; whole stars for XTR */
+    maxTipAmount?: number | Expression
+    /** Suggested tips: Up to four amounts, in the smallest units */
+    suggestedTips?: string[] | Expression
+  }
+  /** Monthly subscription: Telegram Stars only: the price is charged every 30 days */
+  subscription?: boolean
+  /** Can deliver */
+  deliverable?: boolean
+  /** Shipping options: Rows with the same option ID are price parts of one option */
+  shippingOptions?: Array<{
+    /** Option ID */
+    optionId?: string
+    /** Option name */
+    optionTitle?: string
+    /** Label: The option's name when empty */
+    label?: string
+    /** Amount: In the smallest units: cents, kopiyky; whole stars for XTR */
+    amount?: number | Expression
+  }>
+  /** Why not: Shown to the user, e.g. we do not deliver to your country */
+  shippingError?: string
+  /** Approve */
+  approve?: boolean
+  /** Why not: Shown to the user, e.g. this item has just sold out */
+  checkoutError?: string
+  /** Telegram charge ID: telegram_payment_charge_id of the payment */
+  chargeId?: string
+  /** Skip: Transactions to skip, for paging */
+  transactionOffset?: number | Expression
+  /** Limit: 1 to 100 */
+  transactionLimit?: number | Expression
+  /** Price (stars) */
+  starCount?: number | Expression
+  /** Media: 1 to 10 photos and videos */
+  paidMedia?: Array<{
+    /** Media type */
+    type?: 'PHOTO' | 'VIDEO'
+    /** File from */
+    fileSource?: 'URL_OR_ID' | 'BINARY'
+    /** File: A public URL, or the file_id of a file Telegram already has */
+    file?: string
+    /** Binary property: Property of the input item's files, e.g. data */
+    binaryProperty?: string
+  }>
+  /** Payload: Your id of the content; comes back with the Paid media purchased event */
+  paidMediaPayload?: string
 }
 
 /** Telegram Bot Trigger (`telegram.botTrigger@2`) */
 export interface TelegramBotTriggerV2Params {
   /** Trigger on */
-  operation: 'MESSAGES' | 'CHANNEL_POSTS' | 'INTERACTIONS' | 'MEMBERS'
+  operation: 'MESSAGES' | 'CHANNEL_POSTS' | 'INTERACTIONS' | 'MEMBERS' | 'PAYMENTS'
   /** Events */
   messageEvents?: Array<'NEW_MESSAGE' | 'COMMAND' | 'MESSAGE_EDITED' | 'REACTION' | 'REACTION_COUNT'>
   /** Commands: With or without the slash; empty for any. Narrows the Command event */
@@ -829,6 +909,16 @@ export interface TelegramBotTriggerV2Params {
   data?: string
   /** Events */
   memberEvents?: Array<'BOT_ADDED' | 'BOT_REMOVED' | 'BOT_BLOCKED' | 'BOT_UNBLOCKED' | 'BOT_STATUS_CHANGED' | 'MEMBER_JOINED' | 'MEMBER_LEFT' | 'MEMBER_CHANGED' | 'JOIN_REQUEST' | 'CHAT_BOOSTED' | 'BOOST_REMOVED'>
+  /** Events */
+  paymentEvents?: Array<'SHIPPING_QUERY' | 'PRE_CHECKOUT' | 'PAYMENT_SUCCEEDED' | 'PAYMENT_REFUNDED' | 'PAID_MEDIA_PURCHASED'>
+  /** Invoice payload */
+  payloadMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Payload: The payload the bot gave the invoice or paid media, matched as written */
+  payload?: string
+  /** Answer pre-checkout: Telegram waits only 10 seconds; the server answers at once unless the workflow does */
+  preCheckoutAnswer?: 'APPROVE' | 'REJECT' | 'WORKFLOW'
+  /** Message to the user: Why the order is declined; a general apology when empty */
+  rejectMessage?: string
 }
 
 /** Viber account (`viber.accountAction@1`) */
