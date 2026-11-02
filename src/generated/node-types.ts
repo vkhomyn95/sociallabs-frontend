@@ -543,20 +543,56 @@ export interface TelegramBotActionV1Params {
   requestTimeout?: number
 }
 
-/** Telegram bot trigger (`telegram.botTrigger@1`) */
-export interface TelegramBotTriggerV1Params {
-  /** Updates */
-  events?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'REACTION' | 'NEW_CHAT' | 'CHAT_UPDATED' | 'CHAT_MEMBER_UPDATED' | 'USER_STATUS_CHANGED' | 'CALLBACK_QUERY' | 'INLINE_QUERY' | 'OTHER'>
-  /** Only command: Leave empty for every message */
-  command?: string
-  /** Only selected chats */
-  filterChats?: boolean
-  /** Chat IDs: Comma-separated */
-  chatIds?: string
-  /** Only selected users */
-  filterUsers?: boolean
-  /** User IDs: Comma-separated */
-  userIds?: string
+/** Telegram Bot Trigger (`telegram.botTrigger@2`) */
+export interface TelegramBotTriggerV2Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'CHANNEL_POSTS' | 'INTERACTIONS' | 'MEMBERS'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'COMMAND' | 'MESSAGE_EDITED' | 'REACTION' | 'REACTION_COUNT'>
+  /** Commands: With or without the slash; empty for any. Narrows the Command event */
+  commands?: string[] | Expression
+  /** Chats */
+  chatScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Chat IDs: From the chats the bot has seen, or ids typed or returned by an expression */
+  chatIds?: string[] | Expression
+  /** Chat types: Empty for any */
+  chatTypes?: Array<'PRIVATE' | 'GROUP' | 'SUPERGROUP' | 'CHANNEL'>
+  /** Users */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** User IDs: User ids, or chat ids of channels and anonymous admins */
+  senderIds?: string[] | Expression
+  /** Ignore bots */
+  ignoreBots?: boolean
+  /** Only mentions of the bot and replies to it: For groups, where the bot sees every message once privacy mode is off */
+  onlyAddressed?: boolean
+  /** Content types: Empty for any */
+  contentTypes?: Array<'TEXT' | 'PHOTO' | 'VIDEO' | 'ANIMATION' | 'AUDIO' | 'VOICE' | 'VIDEO_NOTE' | 'DOCUMENT' | 'STICKER' | 'VENUE' | 'LOCATION' | 'CONTACT' | 'POLL' | 'DICE' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Skip older than (s): Messages Telegram kept while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per chat every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (chat, user, text, command) instead of Telegram's objects */
+  simplify?: boolean
+  /** Events */
+  postEvents?: Array<'NEW_POST' | 'POST_EDITED'>
+  /** Channels */
+  channelScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Channel IDs: From the channels the bot has seen, or ids */
+  channelIds?: string[] | Expression
+  /** Events */
+  interactionEvents?: Array<'BUTTON_PRESSED' | 'INLINE_QUERY' | 'INLINE_RESULT_CHOSEN' | 'POLL_ANSWER' | 'POLL_UPDATED'>
+  /** Button data */
+  dataMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Data: The callback data of the button, matched as written */
+  data?: string
+  /** Events */
+  memberEvents?: Array<'BOT_ADDED' | 'BOT_REMOVED' | 'BOT_BLOCKED' | 'BOT_UNBLOCKED' | 'BOT_STATUS_CHANGED' | 'MEMBER_JOINED' | 'MEMBER_LEFT' | 'MEMBER_CHANGED' | 'JOIN_REQUEST' | 'CHAT_BOOSTED' | 'BOOST_REMOVED'>
 }
 
 /** Viber account (`viber.accountAction@1`) */
@@ -614,7 +650,7 @@ export interface NodeParamsMap {
   'telegram.accountAction@2': TelegramAccountActionV2Params
   'telegram.accountTrigger@2': TelegramAccountTriggerV2Params
   'telegram.botAction@1': TelegramBotActionV1Params
-  'telegram.botTrigger@1': TelegramBotTriggerV1Params
+  'telegram.botTrigger@2': TelegramBotTriggerV2Params
   'viber.accountAction@1': ViberAccountActionV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
 }
