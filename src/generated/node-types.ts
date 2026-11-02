@@ -492,55 +492,178 @@ export interface TelegramAccountTriggerV2Params {
   accountEvents?: Array<'STATUS_CHANGED' | 'SERVICE_NOTIFICATION' | 'UNCONFIRMED_LOGIN'>
 }
 
-/** Telegram bot (`telegram.botAction@1`) */
-export interface TelegramBotActionV1Params {
+/** Telegram Bot (`telegram.botAction@2`) */
+export interface TelegramBotActionV2Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'INTERACTION'
   /** Operation */
-  operation?: 'SEND_MESSAGE' | 'SEND_PHOTO' | 'SEND_VIDEO' | 'SEND_DOCUMENT' | 'SEND_AUDIO' | 'SEND_VOICE' | 'SEND_ANIMATION' | 'SEND_STICKER' | 'SEND_LOCATION' | 'SEND_CONTACT' | 'SEND_POLL' | 'EDIT_TEXT' | 'DELETE_MESSAGE' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'FORWARD_MESSAGE'
-  /** Chat ID */
-  chatId: string
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'SEND_LOCATION' | 'SEND_VENUE' | 'SEND_CONTACT' | 'SEND_POLL' | 'SEND_DICE' | 'EDIT_TEXT' | 'EDIT_CAPTION' | 'EDIT_MEDIA' | 'EDIT_KEYBOARD' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'REACT' | 'SHOW_TYPING' | 'STOP_POLL' | 'DOWNLOAD_FILE' | 'ANSWER_BUTTON_PRESS' | 'ANSWER_INLINE_QUERY'
+  /** Chat: From the chats the bot has seen, a chat id or @channelusername */
+  chat?: string
   /** Text */
   text?: string
-  /** File (URL or file_id) */
+  /** Format */
+  format?: 'PLAIN' | 'HTML' | 'MARKDOWN_V2' | 'MARKDOWN'
+  /** Disable link preview */
+  disableLinkPreview?: boolean
+  /** Keyboard */
+  keyboard?: {
+    /** Type */
+    type?: 'NONE' | 'INLINE' | 'REPLY' | 'REMOVE' | 'FORCE_REPLY' | 'JSON'
+    /** Buttons */
+    inlineButtons?: Array<{
+      /** Text */
+      text?: string
+      /** Action */
+      action?: 'CALLBACK' | 'URL' | 'SWITCH_INLINE' | 'SWITCH_INLINE_HERE' | 'COPY_TEXT'
+      /** Value: Callback data, URL, inline query or text to copy */
+      value?: string
+      /** Start a new row */
+      newRow?: boolean
+    }>
+    /** Buttons */
+    replyButtons?: Array<{
+      /** Text */
+      text?: string
+      /** Sends */
+      request?: 'TEXT' | 'CONTACT' | 'LOCATION'
+      /** Start a new row */
+      newRow?: boolean
+    }>
+    /** Fit to buttons */
+    resize?: boolean
+    /** Hide after a press */
+    oneTime?: boolean
+    /** Input placeholder */
+    placeholder?: string
+    /** reply_markup */
+    json?: string
+  }
+  /** Options */
+  options?: {
+    /** Reply to message ID */
+    replyToMessageId?: number | Expression
+    /** Topic ID: Forum topic of a supergroup */
+    messageThreadId?: number | Expression
+    /** Send silently */
+    silent?: boolean
+    /** Protect content: Prevent forwarding and saving */
+    protectContent?: boolean
+  }
+  /** Media type */
+  mediaType?: 'PHOTO' | 'VIDEO' | 'ANIMATION' | 'AUDIO' | 'VOICE' | 'VIDEO_NOTE' | 'DOCUMENT' | 'STICKER'
+  /** File from */
+  fileSource?: 'URL_OR_ID' | 'BINARY'
+  /** File: A public URL, or the file_id of a file Telegram already has */
   file?: string
+  /** Binary property: Property of the input item's files, e.g. data */
+  binaryProperty?: string
   /** Caption */
   caption?: string
-  /** Format */
-  parseMode?: 'NONE' | 'HTML' | 'MARKDOWN_V2' | 'MARKDOWN'
-  /** Disable link preview */
-  disableWebPagePreview?: boolean
+  /** Media: 2 to 10 photos and videos, or files, or audio */
+  media?: Array<{
+    /** Media type */
+    mediaType?: 'PHOTO' | 'VIDEO' | 'ANIMATION' | 'AUDIO' | 'VOICE' | 'VIDEO_NOTE' | 'DOCUMENT' | 'STICKER'
+    /** File from */
+    fileSource?: 'URL_OR_ID' | 'BINARY'
+    /** File: A public URL, or the file_id of a file Telegram already has */
+    file?: string
+    /** Binary property: Property of the input item's files, e.g. data */
+    binaryProperty?: string
+    /** Caption */
+    caption?: string
+  }>
   /** Latitude */
-  latitude?: string
+  latitude?: number | Expression
   /** Longitude */
-  longitude?: string
+  longitude?: number | Expression
+  /** Title */
+  title?: string
+  /** Address */
+  address?: string
   /** Phone number */
   phoneNumber?: string
   /** First name */
   firstName?: string
+  /** Last name */
+  lastName?: string
   /** Question */
   question?: string
-  /** Options (one per line) */
-  pollOptions?: string
+  /** Answers: 2 to 10; an entry may hold several, one per line */
+  answers?: string[] | Expression
+  /** Type */
+  pollType?: 'REGULAR' | 'QUIZ'
+  /** Correct answer: Its position, counting from 0 */
+  correctAnswer?: number | Expression
+  /** Explanation: Shown after a wrong answer */
+  explanation?: string
+  /** Anonymous */
+  anonymous?: boolean
+  /** Several answers */
+  severalAnswers?: boolean
+  /** Emoji */
+  dice?: 'DICE' | 'DARTS' | 'BOWLING' | 'BASKETBALL' | 'FOOTBALL' | 'SLOT_MACHINE'
   /** Message ID */
-  messageId?: string
-  /** From chat ID */
-  fromChatId?: string
-  /** Reply to message ID */
-  replyToMessageId?: string
-  /** Buttons */
-  buttons?: Array<{
-    /** Text */
+  messageId?: number | Expression
+  /** Message IDs: Up to 100 at once in one request; more are sent in several */
+  messageIds?: string[] | Expression
+  /** From chat: From the chats the bot has seen, a chat id or @channelusername */
+  fromChat?: string
+  /** As a copy: Without the link to the original message */
+  copy?: boolean
+  /** Send silently */
+  silent?: boolean
+  /** All */
+  all?: boolean
+  /** Message ID: Empty for the latest pinned one */
+  pinnedMessageId?: number | Expression
+  /** Emoji: Empty removes the bot's reaction */
+  reaction?: string
+  /** Big animation */
+  big?: boolean
+  /** Action */
+  action?: 'TYPING' | 'UPLOAD_PHOTO' | 'RECORD_VIDEO' | 'UPLOAD_VIDEO' | 'RECORD_VOICE' | 'UPLOAD_VOICE' | 'UPLOAD_DOCUMENT' | 'CHOOSE_STICKER' | 'FIND_LOCATION' | 'RECORD_VIDEO_NOTE' | 'UPLOAD_VIDEO_NOTE'
+  /** File ID */
+  fileId?: string
+  /** Binary property: Property of the output item's files */
+  outputProperty?: string
+  /** Query ID */
+  queryId?: string
+  /** Text: Shown at the top of the chat; empty shows nothing */
+  notice?: string
+  /** As an alert */
+  showAlert?: boolean
+  /** URL: A t.me link that opens the bot with a parameter, or a game */
+  url?: string
+  /** Cache time (s) */
+  cacheTime?: number | Expression
+  /** Results */
+  results?: Array<{
+    /** Type */
+    type?: 'ARTICLE' | 'PHOTO' | 'GIF' | 'VIDEO' | 'DOCUMENT'
+    /** ID: Unique in the answer; its position when empty */
+    id?: string
+    /** Title */
+    title?: string
+    /** Description */
+    description?: string
+    /** Message text */
     text?: string
     /** URL */
     url?: string
-    /** Callback data */
-    callbackData?: string
+    /** Thumbnail URL */
+    thumbnailUrl?: string
+    /** Caption */
+    caption?: string
   }>
-  /** Send silently */
-  disableNotification?: boolean
-  /** Protect content: Prevent forwarding and saving */
-  protectContent?: boolean
-  /** Timeout (seconds) */
-  requestTimeout?: number
+  /** Results as JSON: An array of InlineQueryResult objects; used instead of the list when set */
+  resultsJson?: string
+  /** Cache time (s) */
+  resultsCacheTime?: number | Expression
+  /** Personal: Cache per user */
+  personal?: boolean
+  /** Next offset: Sent back with the next query to load more */
+  nextOffset?: string
 }
 
 /** Telegram Bot Trigger (`telegram.botTrigger@2`) */
@@ -649,7 +772,7 @@ export interface NodeParamsMap {
   'http.request@1': HttpRequestV1Params
   'telegram.accountAction@2': TelegramAccountActionV2Params
   'telegram.accountTrigger@2': TelegramAccountTriggerV2Params
-  'telegram.botAction@1': TelegramBotActionV1Params
+  'telegram.botAction@2': TelegramBotActionV2Params
   'telegram.botTrigger@2': TelegramBotTriggerV2Params
   'viber.accountAction@1': ViberAccountActionV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
