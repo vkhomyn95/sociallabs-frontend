@@ -495,9 +495,9 @@ export interface TelegramAccountTriggerV2Params {
 /** Telegram Bot (`telegram.botAction@2`) */
 export interface TelegramBotActionV2Params {
   /** Resource */
-  resource: 'MESSAGE' | 'INTERACTION'
+  resource: 'MESSAGE' | 'INTERACTION' | 'CHAT' | 'MEMBER' | 'FORUM_TOPIC' | 'BOT'
   /** Operation */
-  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'SEND_LOCATION' | 'SEND_VENUE' | 'SEND_CONTACT' | 'SEND_POLL' | 'SEND_DICE' | 'EDIT_TEXT' | 'EDIT_CAPTION' | 'EDIT_MEDIA' | 'EDIT_KEYBOARD' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'REACT' | 'SHOW_TYPING' | 'STOP_POLL' | 'DOWNLOAD_FILE' | 'ANSWER_BUTTON_PRESS' | 'ANSWER_INLINE_QUERY'
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_ALBUM' | 'SEND_LOCATION' | 'SEND_VENUE' | 'SEND_CONTACT' | 'SEND_POLL' | 'SEND_DICE' | 'EDIT_TEXT' | 'EDIT_CAPTION' | 'EDIT_MEDIA' | 'EDIT_KEYBOARD' | 'DELETE_MESSAGES' | 'FORWARD_MESSAGES' | 'PIN_MESSAGE' | 'UNPIN_MESSAGE' | 'REACT' | 'SHOW_TYPING' | 'STOP_POLL' | 'DOWNLOAD_FILE' | 'ANSWER_BUTTON_PRESS' | 'ANSWER_INLINE_QUERY' | 'EDIT_INLINE_TEXT' | 'GET_CHAT' | 'GET_ADMINISTRATORS' | 'GET_MEMBER_COUNT' | 'GET_MEMBER' | 'SET_TITLE' | 'SET_DESCRIPTION' | 'SET_PHOTO' | 'DELETE_PHOTO' | 'SET_PERMISSIONS' | 'CREATE_INVITE_LINK' | 'EDIT_INVITE_LINK' | 'REVOKE_INVITE_LINK' | 'EXPORT_INVITE_LINK' | 'APPROVE_JOIN_REQUEST' | 'DECLINE_JOIN_REQUEST' | 'LEAVE_CHAT' | 'BAN' | 'UNBAN' | 'RESTRICT' | 'PROMOTE' | 'SET_ADMIN_TITLE' | 'CREATE_TOPIC' | 'EDIT_TOPIC' | 'CLOSE_TOPIC' | 'REOPEN_TOPIC' | 'DELETE_TOPIC' | 'UNPIN_ALL_TOPIC_MESSAGES' | 'GET_ME' | 'SET_COMMANDS' | 'GET_COMMANDS' | 'DELETE_COMMANDS' | 'SET_NAME' | 'SET_BOT_DESCRIPTION' | 'SET_SHORT_DESCRIPTION' | 'SET_MENU_BUTTON'
   /** Chat: From the chats the bot has seen, a chat id or @channelusername */
   chat?: string
   /** Text */
@@ -664,6 +664,119 @@ export interface TelegramBotActionV2Params {
   personal?: boolean
   /** Next offset: Sent back with the next query to load more */
   nextOffset?: string
+  /** Inline message ID */
+  inlineMessageId?: string
+  /** User ID */
+  userId?: number | Expression
+  /** Description: Empty removes it */
+  chatDescription?: string
+  /** Binary property: Telegram takes a chat photo only as an uploaded file */
+  photoProperty?: string
+  /** Permissions */
+  permissions?: {
+    /** Send texts */
+    sendMessages?: boolean
+    /** Send photos */
+    sendPhotos?: boolean
+    /** Send videos */
+    sendVideos?: boolean
+    /** Send audio */
+    sendAudios?: boolean
+    /** Send files */
+    sendDocuments?: boolean
+    /** Send voice messages */
+    sendVoiceNotes?: boolean
+    /** Send video messages */
+    sendVideoNotes?: boolean
+    /** Send polls */
+    sendPolls?: boolean
+    /** Send stickers and GIFs: Also games and inline results */
+    sendOther?: boolean
+    /** Add link previews */
+    addLinkPreviews?: boolean
+    /** Change chat info */
+    changeInfo?: boolean
+    /** Invite users */
+    inviteUsers?: boolean
+    /** Pin messages */
+    pinMessages?: boolean
+    /** Manage topics */
+    manageTopics?: boolean
+  }
+  /** Link name: Only admins see it */
+  linkName?: string
+  /** Expires: Unix time or a date like 2026-12-31T18:00:00Z; empty for ever */
+  expireDate?: string
+  /** Member limit: 1 to 99999; empty for none */
+  memberLimit?: number | Expression
+  /** Admins approve joins: Members join by request, which the Join request trigger reports */
+  joinRequest?: boolean
+  /** Invite link */
+  inviteLink?: string
+  /** Until: Unix time or a date like 2026-12-31T18:00:00Z; empty for ever */
+  untilDate?: string
+  /** Delete their messages */
+  revokeMessages?: boolean
+  /** Only if banned: Otherwise a member is removed from the chat too */
+  onlyIfBanned?: boolean
+  /** Rights */
+  rights?: {
+    /** Manage the chat */
+    manageChat?: boolean
+    /** Delete messages */
+    deleteMessages?: boolean
+    /** Restrict members */
+    restrictMembers?: boolean
+    /** Invite users */
+    inviteUsers?: boolean
+    /** Pin messages */
+    pinMessages?: boolean
+    /** Change chat info */
+    changeInfo?: boolean
+    /** Manage video chats */
+    manageVideoChats?: boolean
+    /** Manage topics */
+    manageTopics?: boolean
+    /** Add administrators */
+    promoteMembers?: boolean
+    /** Post and edit in a channel */
+    postMessages?: boolean
+    /** Stay anonymous */
+    anonymous?: boolean
+  }
+  /** Title: Up to 16 characters, shown next to their name */
+  customTitle?: string
+  /** Name */
+  name?: string
+  /** Icon color */
+  color?: 'BLUE' | 'YELLOW' | 'VIOLET' | 'GREEN' | 'ROSE' | 'RED'
+  /** Topic ID */
+  topicId?: number | Expression
+  /** Commands */
+  commands?: Array<{
+    /** Command */
+    command?: string
+    /** Description */
+    description?: string
+  }>
+  /** For */
+  scope?: 'DEFAULT' | 'ALL_PRIVATE_CHATS' | 'ALL_GROUP_CHATS' | 'ALL_CHAT_ADMINISTRATORS' | 'CHAT' | 'CHAT_ADMINISTRATORS' | 'CHAT_MEMBER'
+  /** Chat: The chat the scope is about */
+  scopeChat?: string
+  /** User ID in the chat */
+  scopeUserId?: number | Expression
+  /** Language: Two letters, e.g. uk; empty for users of every language */
+  languageCode?: string
+  /** Name: Empty removes the name for this language */
+  botName?: string
+  /** Description: Shown in an empty chat with the bot; up to 512 characters */
+  botDescription?: string
+  /** Short description: Shown on the bot's profile; up to 120 characters */
+  shortDescription?: string
+  /** Shows */
+  menuButton?: 'COMMANDS' | 'DEFAULT'
+  /** Chat: A private chat to set it for; empty for every chat */
+  menuChat?: string
 }
 
 /** Telegram Bot Trigger (`telegram.botTrigger@2`) */
