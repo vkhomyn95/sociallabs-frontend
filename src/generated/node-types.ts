@@ -957,6 +957,122 @@ export interface ViberAccountTriggerV1Params {
   ignoreOwnMessages?: boolean
 }
 
+/** Viber Bot (`viber.botAction@1`) */
+export interface ViberBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'BROADCAST' | 'USER' | 'BOT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_PICTURE' | 'SEND_VIDEO' | 'SEND_FILE' | 'SEND_CONTACT' | 'SEND_LOCATION' | 'SEND_URL' | 'SEND_STICKER' | 'SEND_RICH_MEDIA' | 'BROADCAST_TEXT' | 'BROADCAST_PICTURE' | 'BROADCAST_VIDEO' | 'BROADCAST_FILE' | 'BROADCAST_URL' | 'BROADCAST_RICH_MEDIA' | 'GET_USER_DETAILS' | 'GET_ONLINE' | 'GET_ACCOUNT_INFO'
+  /** User: From the users the bot has seen, or a user id; they must be subscribed */
+  receiver?: string
+  /** Text: Up to 7000 characters */
+  text?: string
+  /** Keyboard */
+  keyboard?: {
+    /** Type */
+    type?: 'NONE' | 'BUTTONS' | 'JSON'
+    /** Buttons */
+    buttons?: Array<{
+      /** Text */
+      text?: string
+      /** Action */
+      action?: 'REPLY' | 'OPEN_URL' | 'LOCATION_PICKER' | 'SHARE_PHONE' | 'NONE'
+      /** Value: Sent back as the user's message, or the URL to open; the text when empty */
+      value?: string
+      /** Width (columns) */
+      columns?: number
+      /** Height (rows) */
+      rows?: number
+      /** Background color */
+      background?: string
+      /** Image URL */
+      image?: string
+      /** Silent: The press is not shown as a message in the chat */
+      silent?: boolean
+    }>
+    /** Full height */
+    defaultHeight?: boolean
+    /** Input field */
+    inputField?: 'REGULAR' | 'MINIMIZED' | 'HIDDEN'
+    /** Background color */
+    background?: string
+    /** keyboard */
+    json?: string
+  }
+  /** Options */
+  options?: {
+    /** Sender name: Up to 28 characters; the credential's when empty */
+    senderName?: string
+    /** Sender avatar URL */
+    senderAvatar?: string
+    /** Tracking data: Comes back with the user's reply, for the trigger to match */
+    trackingData?: string
+    /** Minimum API version */
+    minApiVersion?: number | Expression
+  }
+  /** URL: A public address Viber downloads the file from */
+  media?: string
+  /** Description */
+  description?: string
+  /** Thumbnail URL: JPEG up to 100 KB */
+  thumbnail?: string
+  /** Size (bytes): Viber needs the size of the file */
+  size?: number | Expression
+  /** Duration (s) */
+  duration?: number | Expression
+  /** File name */
+  fileName?: string
+  /** Contact name */
+  contactName?: string
+  /** Phone number */
+  phoneNumber?: string
+  /** Latitude */
+  latitude?: number | Expression
+  /** Longitude */
+  longitude?: number | Expression
+  /** Link */
+  link?: string
+  /** Sticker ID */
+  stickerId?: number | Expression
+  /** Build from */
+  richFrom?: 'FORM' | 'JSON'
+  /** Columns */
+  richColumns?: number
+  /** Rows */
+  richRows?: number
+  /** Background color */
+  richBackground?: string
+  /** Buttons */
+  richButtons?: Array<{
+    /** Text */
+    text?: string
+    /** Action */
+    action?: 'REPLY' | 'OPEN_URL' | 'LOCATION_PICKER' | 'SHARE_PHONE' | 'NONE'
+    /** Value: Sent back as the user's message, or the URL to open; the text when empty */
+    value?: string
+    /** Width (columns) */
+    columns?: number
+    /** Height (rows) */
+    rows?: number
+    /** Background color */
+    background?: string
+    /** Image URL */
+    image?: string
+    /** Silent: The press is not shown as a message in the chat */
+    silent?: boolean
+  }>
+  /** rich_media */
+  richMediaJson?: string
+  /** Text for old Viber: Shown where rich media is not supported */
+  altText?: string
+  /** Users: Subscribed users, from the list or ids; sent in batches of 300 */
+  receivers?: string[] | Expression
+  /** User ID: From the users the bot has seen, or a user id; they must be subscribed */
+  userId?: string
+  /** User IDs: Up to 100 per request; more are asked in turns */
+  userIds?: string[] | Expression
+}
+
 /** Viber Bot Trigger (`viber.botTrigger@1`) */
 export interface ViberBotTriggerV1Params {
   /** Trigger on */
@@ -1023,6 +1139,7 @@ export interface NodeParamsMap {
   'telegram.botTrigger@2': TelegramBotTriggerV2Params
   'viber.accountAction@1': ViberAccountActionV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
+  'viber.botAction@1': ViberBotActionV1Params
   'viber.botTrigger@1': ViberBotTriggerV1Params
 }
 
