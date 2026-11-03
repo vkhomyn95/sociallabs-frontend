@@ -171,12 +171,61 @@ const ACCOUNT_AND_BOT: NodeTypeDescriptor[] = [
     ],
   }),
   nodeType({
-    key: 'telegram.botAction@1',
+    key: 'telegram.botTrigger@2',
+    name: 'telegram.botTrigger',
+    version: 2,
+    displayName: 'Telegram Bot Trigger',
+    group: NodeGroup.COMMUNICATION,
+    kind: NodeKind.TRIGGER,
+    inputs: [],
+    credentials: { types: ['TELEGRAM_BOT'], required: true },
+    properties: [
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        options: [
+          { ...option('MESSAGES'), displayName: 'Messages' },
+          { ...option('INTERACTIONS'), displayName: 'Interactions' },
+          { ...option('PAYMENTS'), displayName: 'Payments' },
+        ],
+      }),
+      property('messageEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['MESSAGES'] }],
+        options: [{ ...option('COMMAND'), displayName: 'Command' }],
+      }),
+      property('interactionEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['INTERACTIONS'] }],
+        options: [{ ...option('BUTTON_PRESSED'), displayName: 'Button pressed' }],
+      }),
+      property('paymentEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['PAYMENTS'] }],
+        options: [{ ...option('PRE_CHECKOUT'), displayName: 'Pre-checkout query' }],
+      }),
+    ],
+  }),
+  nodeType({
+    key: 'telegram.botAction@2',
     name: 'telegram.botAction',
-    displayName: 'Telegram bot action',
+    version: 2,
+    displayName: 'Telegram Bot',
     group: NodeGroup.COMMUNICATION,
     credentials: { types: ['TELEGRAM_BOT'], required: true },
-    properties: [property('operation', { type: PropertyType.OPTIONS, options: [option('Send message')] })],
+    properties: [
+      property('resource', {
+        type: PropertyType.OPTIONS,
+        options: [{ ...option('MESSAGE'), displayName: 'Message' }, { ...option('PAYMENT'), displayName: 'Payment' }],
+      }),
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        optionsFilteredBy: 'resource',
+        options: [
+          { ...option('SEND_TEXT', 'MESSAGE'), displayName: 'Send a text message' },
+          { ...option('SEND_INVOICE', 'PAYMENT'), displayName: 'Send an invoice' },
+        ],
+      }),
+    ],
   }),
 ]
 
@@ -203,5 +252,18 @@ describe('NodeCreatorModel with an app used as an account and as a bot', () => {
 
   it('finds a trigger event by its name', () => {
     expect(creator.search('new comment').map((item) => item.key)).toContain('telegram.accountTrigger@2:POSTS:NEW_COMMENT')
+  })
+
+  it('lists the bot\'s trigger events by group, then its actions by resource, preset', () => {
+    const bot = creator.open(telegram().sections[0]!.items[1] as never)
+    expect(titles(bot)).toEqual([
+      ['Triggers · Messages', ['On command']],
+      ['Triggers · Interactions', ['On button pressed']],
+      ['Triggers · Payments', ['On pre-checkout query']],
+      ['Message', ['Send a text message']],
+      ['Payment', ['Send an invoice']],
+    ])
+    const invoice = bot.sections[4]!.items[0]!
+    expect(invoice.kind === CreatorItemKind.NODE && invoice.parameters).toEqual({ resource: 'PAYMENT', operation: 'SEND_INVOICE' })
   })
 })
