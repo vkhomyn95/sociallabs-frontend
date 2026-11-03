@@ -957,6 +957,50 @@ export interface ViberAccountTriggerV1Params {
   ignoreOwnMessages?: boolean
 }
 
+/** Viber Bot Trigger (`viber.botTrigger@1`) */
+export interface ViberBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'SUBSCRIPTIONS' | 'DELIVERY'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE'>
+  /** Users */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** User IDs: From the users the bot has seen, or ids typed or returned by an expression */
+  userIds?: string[] | Expression
+  /** Countries: Two-letter codes such as UA; empty for any. Users Viber tells no country of pass */
+  countries?: string[] | Expression
+  /** Content types: Empty for any */
+  contentTypes?: Array<'TEXT' | 'PICTURE' | 'VIDEO' | 'FILE' | 'STICKER' | 'CONTACT' | 'URL' | 'LOCATION'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Tracking data */
+  trackingMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Tracking data value: The state the bot's last message set, matched as written */
+  tracking?: string
+  /** Skip older than (s): Messages Viber retried while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per user every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (user, type, text) instead of Viber's objects */
+  simplify?: boolean
+  /** Events */
+  subscriptionEvents?: Array<'CONVERSATION_STARTED' | 'SUBSCRIBED' | 'UNSUBSCRIBED'>
+  /** Send a welcome message: Viber takes it only right away, so the server answers before the workflow runs */
+  sendWelcome?: boolean
+  /** Welcome text */
+  welcomeText?: string
+  /** Welcome keyboard: A Viber keyboard object as JSON; empty for none */
+  welcomeKeyboard?: string
+  /** Welcome tracking data: State the user's reply carries back, e.g. start */
+  welcomeTrackingData?: string
+  /** Events */
+  deliveryEvents?: Array<'DELIVERED' | 'SEEN' | 'FAILED'>
+}
+
 /** Parameters of each schema-driven node type, by `name@version`. */
 export interface NodeParamsMap {
   'ai.agent@1': AiAgentV1Params
@@ -979,6 +1023,7 @@ export interface NodeParamsMap {
   'telegram.botTrigger@2': TelegramBotTriggerV2Params
   'viber.accountAction@1': ViberAccountActionV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
+  'viber.botTrigger@1': ViberBotTriggerV1Params
 }
 
 export type SchemaNodeTypeKey = keyof NodeParamsMap
