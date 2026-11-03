@@ -6,7 +6,8 @@ import { childPath, effectiveValue, isRecord } from '@/core/node-types/parameter
 import ParameterForm from '../../ParameterForm.vue'
 import type { FieldEmits, FieldProps } from '../../fields/fieldProps'
 import { useOptionsContext } from '../../options/optionsContext'
-import ButtonGridEditor from './ButtonGridEditor.vue'
+import KeyboardBuilder from '../keyboard-common/KeyboardBuilder.vue'
+import KeyboardPreview from './KeyboardPreview.vue'
 import { INLINE_BUTTONS, REPLY_BUTTONS } from './buttonKinds'
 import { KeyboardField, KeyboardType, type InlineButton, type ReplyButton } from './keyboard.types'
 import { isKeyboardType, keyboardTypesFor } from './keyboardTypes'
@@ -77,7 +78,7 @@ function setButtons(list: KeyboardField, buttons: readonly unknown[]): void {
       An edited message or an invoice takes only inline buttons; pick Inline buttons, JSON or None.
     </SlbAlert>
 
-    <ButtonGridEditor
+    <KeyboardBuilder
       v-if="type === KeyboardType.INLINE"
       :buttons="inlineButtons"
       :kind="INLINE_BUTTONS"
@@ -86,8 +87,19 @@ function setButtons(list: KeyboardField, buttons: readonly unknown[]): void {
       :issues="issues"
       :type-key="typeKey"
       @update:buttons="setButtons(KeyboardField.INLINE_BUTTONS, $event)"
-    />
-    <ButtonGridEditor
+    >
+      <template #preview="preview">
+        <KeyboardPreview
+          :buttons="inlineButtons"
+          :kind="INLINE_BUTTONS"
+          :selected="preview.selected"
+          :has-issue="preview.hasIssue"
+          @select="preview.select"
+          @add="preview.add"
+        />
+      </template>
+    </KeyboardBuilder>
+    <KeyboardBuilder
       v-else-if="type === KeyboardType.REPLY"
       :buttons="replyButtons"
       :kind="REPLY_BUTTONS"
@@ -96,7 +108,18 @@ function setButtons(list: KeyboardField, buttons: readonly unknown[]): void {
       :issues="issues"
       :type-key="typeKey"
       @update:buttons="setButtons(KeyboardField.REPLY_BUTTONS, $event)"
-    />
+    >
+      <template #preview="preview">
+        <KeyboardPreview
+          :buttons="replyButtons"
+          :kind="REPLY_BUTTONS"
+          :selected="preview.selected"
+          :has-issue="preview.hasIssue"
+          @select="preview.select"
+          @add="preview.add"
+        />
+      </template>
+    </KeyboardBuilder>
 
     <ParameterForm :properties="settings" :values="values" :path="path" :issues="issues" :type-key="typeKey" @update:values="set" />
   </div>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { SlbBadge, SlbIcon } from '@sociallabs/frontend-components'
-import { BOT_STATUS_UI, DELIVERY_UI, formatMoment } from './telegramBot.ui'
+import { formatMoment } from '../bot-common/botPanel'
+import { BOT_STATUS_UI, DELIVERY_UI } from './telegramBot.ui'
 import type { TelegramBotStatus } from './telegramBot.types'
 
 /** Whether the bot receives updates now, how, and since when. */

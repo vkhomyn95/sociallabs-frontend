@@ -1,16 +1,18 @@
-<script setup lang="ts">
-import { COUNTERS } from './telegramBot.ui'
-import type { BotCounters } from './telegramBot.types'
+<script setup lang="ts" generic="K extends string">
+import type { CounterItem } from './botPanel'
 
-/** Updates the running bot has received, handled and lost since it started. */
-defineProps<{ counters: BotCounters }>()
+/** What the running bot has received, handled and lost since it started. */
+defineProps<{
+  counters: Readonly<Record<K, number>>
+  items: readonly CounterItem<K>[]
+}>()
 </script>
 
 <template>
   <dl class="slb-bot-counters">
-    <div v-for="counter in COUNTERS" :key="counter.key" class="slb-bot-counters__item">
-      <dt>{{ counter.label }}</dt>
-      <dd>{{ counters[counter.key].toLocaleString() }}</dd>
+    <div v-for="item in items" :key="item.key" class="slb-bot-counters__item">
+      <dt>{{ item.label }}</dt>
+      <dd>{{ counters[item.key].toLocaleString() }}</dd>
     </div>
   </dl>
 </template>

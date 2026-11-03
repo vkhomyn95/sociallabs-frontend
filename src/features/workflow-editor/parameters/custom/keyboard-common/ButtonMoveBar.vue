@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { SlbButton, type SlbIconName } from '@sociallabs/frontend-components'
-import { MoveDirection } from './buttonGrid'
+import { MOVE_DIRECTIONS, MoveDirection } from './keyboardLayout'
 
-/** Moves the selected button around the grid, or removes it. */
+/** Moves the picked button around the keyboard, or removes it. */
 defineProps<{ movable: Readonly<Record<MoveDirection, boolean>> }>()
 const emit = defineEmits<{ move: [direction: MoveDirection]; remove: [] }>()
 
@@ -12,14 +12,12 @@ const MOVES: Readonly<Record<MoveDirection, { icon: SlbIconName; label: string }
   [MoveDirection.UP]: { icon: 'arrow_up', label: 'Move to the row above' },
   [MoveDirection.DOWN]: { icon: 'arrow_down', label: 'Move to the row below' },
 }
-
-const DIRECTIONS = Object.values(MoveDirection)
 </script>
 
 <template>
   <div class="wf-kb-moves">
     <SlbButton
-      v-for="direction in DIRECTIONS"
+      v-for="direction in MOVE_DIRECTIONS"
       :key="direction"
       variant="ghost"
       size="sm"

@@ -1,6 +1,8 @@
 import type { Component } from 'vue'
 import type { NodeParamsMap, SchemaNodeTypeKey } from '@/generated/node-types'
 import TelegramKeyboardField from './custom/telegram-keyboard/KeyboardField.vue'
+import RichMediaButtonsField from './custom/viber-keyboard/RichMediaButtonsField.vue'
+import ViberKeyboardField from './custom/viber-keyboard/ViberKeyboardField.vue'
 
 /**
  * Custom editors for single fields of a node type, the escape hatch for parameters a generic field cannot
@@ -17,6 +19,7 @@ let overrides: FieldOverrides | null = null
 function fieldOverrides(): FieldOverrides {
   return (overrides ??= {
     'telegram.botAction@2': { keyboard: TelegramKeyboardField },
+    'viber.botAction@1': { keyboard: ViberKeyboardField, richButtons: RichMediaButtonsField },
   })
 }
 

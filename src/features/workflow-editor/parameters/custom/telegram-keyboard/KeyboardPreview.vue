@@ -1,28 +1,30 @@
 <script setup lang="ts" generic="B extends RowButton & { text?: string }">
+import { computed } from 'vue'
 import { SlbIcon } from '@sociallabs/frontend-components'
+import { NEW_ROW, type AddTarget } from '../keyboard-common/keyboardLayout'
 import { KeyboardType } from './keyboard.types'
-import { samePosition, type ButtonGrid, type GridPosition, type RowButton } from './buttonGrid'
-import type { ButtonKind } from './buttonKinds'
+import { ButtonGrid, type GridPosition, type RowButton } from './buttonGrid'
+import type { TelegramButtonKind } from './buttonKinds'
 
 /**
  * The keyboard as Telegram lays it out: inline buttons under a message, or a reply keyboard in place of the user's.
  * Buttons are picked for editing here; "+" adds one to a row, "Add row" a row below.
  */
-defineProps<{
-  grid: ButtonGrid<B>
-  kind: ButtonKind<B>
-  selected: GridPosition | null
-  hasIssue: (position: GridPosition) => boolean
+const props = defineProps<{
+  buttons: readonly B[]
+  kind: TelegramButtonKind<B>
+  /** Index of the picked button in the flat list. */
+  selected: number | null
+  hasIssue: (index: number) => boolean
 }>()
 
 const emit = defineEmits<{
-  select: [position: GridPosition]
-  append: [row: number]
-  appendRow: []
+  select: [index: number]
+  add: [target: AddTarget]
 }>()
 
-const isSelected = (selected: GridPosition | null, position: GridPosition): boolean =>
-  selected !== null && samePosition(selected, position)
+const grid = computed(() => ButtonGrid.fromButtons(props.buttons))
+const indexOf = (row: number, column: number): number => grid.value.indexOf({ row, column } satisfies GridPosition)
 </script>
 
 <template>
@@ -36,10 +38,10 @@ const isSelected = (selected: GridPosition | null, position: GridPosition): bool
         type="button"
         class="wf-kb-preview__button"
         :class="{
-          'is-selected': isSelected(selected, { row: rowIndex, column }),
-          'is-invalid': hasIssue({ row: rowIndex, column }),
+          'is-selected': selected === indexOf(rowIndex, column),
+          'is-invalid': hasIssue(indexOf(rowIndex, column)),
         }"
-        @click="emit('select', { row: rowIndex, column })"
+        @click="emit('select', indexOf(rowIndex, column))"
       >
         <SlbIcon v-if="kind.icon(button)" :name="kind.icon(button)!" :size="12" />
         <span class="wf-kb-preview__text">{{ button.text || 'Untitled' }}</span>
@@ -50,13 +52,13 @@ const isSelected = (selected: GridPosition | null, position: GridPosition): bool
         class="wf-kb-preview__add"
         title="Add a button to this row"
         aria-label="Add a button to this row"
-        @click="emit('append', rowIndex)"
+        @click="emit('add', rowIndex)"
       >
         <SlbIcon name="action_plus" :size="12" />
       </button>
     </div>
 
-    <button type="button" class="wf-kb-preview__add-row" @click="emit('appendRow')">
+    <button type="button" class="wf-kb-preview__add-row" @click="emit('add', NEW_ROW)">
       <SlbIcon name="action_plus" :size="12" />
       {{ grid.isEmpty ? 'Add a button' : 'Add row' }}
     </button>

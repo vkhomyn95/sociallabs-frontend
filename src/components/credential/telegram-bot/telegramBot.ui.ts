@@ -1,14 +1,8 @@
-import type { BadgeColor, SlbIconName } from '@sociallabs/frontend-components'
+import type { SlbIconName } from '@sociallabs/frontend-components'
+import type { BotStatusUi, CounterItem } from '../bot-common/botPanel'
 import { BotDelivery, BotStatus, type BotCounters, type BotFacts } from './telegramBot.types'
 
 // Presentation of the bot's delivery. Records make a missing enum member a compile error.
-
-export interface BotStatusUi {
-  readonly label: string
-  readonly color: BadgeColor
-  /** What it means for the user, shown when the server gives no message of its own. */
-  readonly hint: string
-}
 
 export const BOT_STATUS_UI: Readonly<Record<BotStatus, BotStatusUi>> = {
   [BotStatus.STARTING]: { label: 'Starting', color: 'sky', hint: 'Delivery is being set up' },
@@ -39,7 +33,7 @@ export const CAPABILITIES: readonly { readonly key: CapabilityKey; readonly labe
 ]
 
 /** Counters in the order shown. */
-export const COUNTERS: readonly { readonly key: keyof BotCounters; readonly label: string }[] = [
+export const COUNTERS: readonly CounterItem<keyof BotCounters>[] = [
   { key: 'received', label: 'Received' },
   { key: 'handled', label: 'Handled' },
   { key: 'pending', label: 'Queued' },
@@ -47,8 +41,3 @@ export const COUNTERS: readonly { readonly key: keyof BotCounters; readonly labe
   { key: 'dropped', label: 'Dropped' },
   { key: 'ignored', label: 'Ignored' },
 ]
-
-/** @returns a date and time in the user's locale, a dash for none */
-export function formatMoment(iso: string | null | undefined): string {
-  return iso ? new Date(iso).toLocaleString() : '—'
-}

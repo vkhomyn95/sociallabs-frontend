@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { SlbAlert, SlbButton, slbToast } from '@sociallabs/frontend-components'
+import { SlbAlert } from '@sociallabs/frontend-components'
+import CopyableUrl from '../bot-common/CopyableUrl.vue'
+import { formatMoment } from '../bot-common/botPanel'
 import { BotDelivery, type BotWebhook } from './telegramBot.types'
-import { formatMoment } from './telegramBot.ui'
 
 /**
  * The webhook as Telegram reports it: its address, updates waiting there and the last failed delivery. A webhook on a
@@ -17,16 +18,6 @@ const props = defineProps<{
 
 const isSet = computed(() => !!props.webhook?.url)
 const strayWebhook = computed(() => props.delivery === BotDelivery.POLLING && isSet.value)
-
-async function copyUrl(): Promise<void> {
-  if (!props.webhook?.url) return
-  try {
-    await navigator.clipboard.writeText(props.webhook.url)
-    slbToast.success('Webhook address copied')
-  } catch {
-    slbToast.error('Could not copy the address')
-  }
-}
 </script>
 
 <template>
@@ -36,17 +27,8 @@ async function copyUrl(): Promise<void> {
     <template v-else-if="webhook">
       <div class="slb-bot-webhook__row">
         <span class="slb-bot-webhook__label">Webhook</span>
-        <code v-if="isSet" class="slb-bot-webhook__url" :title="webhook.url">{{ webhook.url }}</code>
+        <CopyableUrl v-if="isSet" :url="webhook.url" name="Webhook address" />
         <span v-else class="slb-bot-webhook__none">Not set</span>
-        <SlbButton
-          v-if="isSet"
-          variant="ghost"
-          size="sm"
-          icon-only
-          icon-left="action_copy"
-          aria-label="Copy the webhook address"
-          @click="copyUrl"
-        />
       </div>
       <div class="slb-bot-webhook__row">
         <span class="slb-bot-webhook__label">Waiting in Telegram</span>
@@ -80,13 +62,6 @@ async function copyUrl(): Promise<void> {
   &__label {
     flex: 0 0 150px;
     color: var(--slb-color-text-muted);
-  }
-
-  &__url {
-    overflow: hidden;
-    font-size: var(--slb-font-xs);
-    white-space: nowrap;
-    text-overflow: ellipsis;
   }
 
   &__none {

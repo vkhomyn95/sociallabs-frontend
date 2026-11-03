@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { ButtonGrid, MAX_BUTTONS_PER_ROW, MoveDirection } from '../buttonGrid'
+import { MoveDirection } from '../../keyboard-common/keyboardLayout'
+import { ButtonGrid, MAX_BUTTONS_PER_ROW } from '../buttonGrid'
 
 interface Button {
   text: string

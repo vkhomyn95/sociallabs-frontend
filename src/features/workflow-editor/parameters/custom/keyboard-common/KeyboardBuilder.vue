@@ -1,13 +1,14 @@
-<script setup lang="ts" generic="B extends RowButton & { text?: string }">
+<script setup lang="ts" generic="B">
 import type { PropertyDescriptor } from '@/core/node-types/descriptor'
 import { elementPath, type FieldPath } from '@/core/node-types/parameters'
 import ButtonEditor from './ButtonEditor.vue'
-import KeyboardPreview from './KeyboardPreview.vue'
-import type { GridPosition, RowButton } from './buttonGrid'
-import type { ButtonKind } from './buttonKinds'
-import { useButtonGrid } from './useButtonGrid'
+import type { AddTarget, ButtonKind } from './keyboardLayout'
+import { useKeyboardEditor } from './useKeyboardEditor'
 
-/** One keyboard's buttons: the preview to arrange them and the editor of the one picked. */
+/**
+ * One keyboard's buttons: the messenger's preview, given as the `preview` slot, to pick and add buttons, and the editor
+ * of the picked one. The slot gets the pick, a check for buttons with issues, and `select` / `add` to call.
+ */
 const props = defineProps<{
   buttons: readonly B[]
   kind: ButtonKind<B>
@@ -21,56 +22,57 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'update:buttons': [buttons: B[]] }>()
 
-const state = useButtonGrid(
+defineSlots<{
+  preview(props: {
+    selected: number | null
+    hasIssue: (index: number) => boolean
+    select: (index: number) => void
+    add: (target: AddTarget) => void
+  }): unknown
+}>()
+
+const state = useKeyboardEditor(
   () => props.buttons,
-  props.kind,
+  () => props.kind,
   (buttons) => emit('update:buttons', buttons),
 )
-const { grid, selected, selectedButton, selectedIndex, movable } = state
+const { selected, selectedButton, movable } = state
 
 /** Whether a button has a validation issue, so the preview can flag it while another one is open. */
-function hasIssue(position: GridPosition): boolean {
-  const prefix = elementPath(props.path, grid.value.indexOf(position))
+function hasIssue(index: number): boolean {
+  const prefix = elementPath(props.path, index)
   return [...props.issues.keys()].some((key) => key === prefix || key.startsWith(`${prefix}.`))
 }
 </script>
 
 <template>
-  <div class="wf-kb-grid">
-    <KeyboardPreview
-      :grid="grid"
-      :kind="kind"
-      :selected="selected"
-      :has-issue="hasIssue"
-      @select="state.select"
-      @append="state.append"
-      @append-row="state.appendRow"
-    />
+  <div class="wf-kb-builder">
+    <slot name="preview" :selected="selected" :has-issue="hasIssue" :select="state.select" :add="state.add" />
     <ButtonEditor
-      v-if="selectedButton"
+      v-if="selectedButton !== null && selected !== null"
       :button="selectedButton"
       :kind="kind"
       :declared="declared"
       :movable="movable"
-      :path="elementPath(path, selectedIndex)"
+      :path="elementPath(path, selected)"
       :issues="issues"
       :type-key="typeKey"
       @update="state.update"
       @move="state.move"
       @remove="state.remove"
     />
-    <p v-else-if="!grid.isEmpty" class="wf-kb-grid__hint">Pick a button to edit it</p>
+    <p v-else-if="buttons.length" class="wf-kb-builder__hint">Pick a button to edit it</p>
   </div>
 </template>
 
 <style scoped lang="scss">
-.wf-kb-grid {
+.wf-kb-builder {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.wf-kb-grid__hint {
+.wf-kb-builder__hint {
   margin: 0;
   font-size: var(--slb-font-xs);
   color: var(--slb-color-text-muted);

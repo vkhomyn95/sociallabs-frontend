@@ -267,3 +267,99 @@ describe('NodeCreatorModel with an app used as an account and as a bot', () => {
     expect(invoice.kind === CreatorItemKind.NODE && invoice.parameters).toEqual({ resource: 'PAYMENT', operation: 'SEND_INVOICE' })
   })
 })
+
+const VIBER: NodeTypeDescriptor[] = [
+  nodeType({
+    key: 'viber.accountAction@1',
+    name: 'viber.accountAction',
+    displayName: 'Viber Account',
+    group: NodeGroup.COMMUNICATION,
+    credentials: { types: ['VIBER_ACCOUNT'], required: true },
+    properties: [property('operation', { type: PropertyType.OPTIONS, options: [{ ...option('SEND_TEXT'), displayName: 'Send a text message' }] })],
+  }),
+  nodeType({
+    key: 'viber.botTrigger@1',
+    name: 'viber.botTrigger',
+    displayName: 'Viber Bot Trigger',
+    group: NodeGroup.COMMUNICATION,
+    kind: NodeKind.TRIGGER,
+    inputs: [],
+    credentials: { types: ['VIBER_BOT'], required: true },
+    properties: [
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        options: [
+          { ...option('MESSAGES'), displayName: 'Messages' },
+          { ...option('SUBSCRIPTIONS'), displayName: 'Subscriptions' },
+          { ...option('DELIVERY'), displayName: 'Delivery' },
+        ],
+      }),
+      property('messageEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['MESSAGES'] }],
+        options: [{ ...option('NEW_MESSAGE'), displayName: 'New message' }],
+      }),
+      property('subscriptionEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['SUBSCRIPTIONS'] }],
+        options: [
+          { ...option('CONVERSATION_STARTED'), displayName: 'Conversation started' },
+          { ...option('SUBSCRIBED'), displayName: 'Subscribed' },
+        ],
+      }),
+      property('deliveryEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['DELIVERY'] }],
+        options: [{ ...option('SEEN'), displayName: 'Seen' }],
+      }),
+    ],
+  }),
+  nodeType({
+    key: 'viber.botAction@1',
+    name: 'viber.botAction',
+    displayName: 'Viber Bot',
+    group: NodeGroup.COMMUNICATION,
+    credentials: { types: ['VIBER_BOT'], required: true },
+    properties: [
+      property('resource', {
+        type: PropertyType.OPTIONS,
+        options: [{ ...option('MESSAGE'), displayName: 'Message' }, { ...option('BROADCAST'), displayName: 'Broadcast' }],
+      }),
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        optionsFilteredBy: 'resource',
+        options: [
+          { ...option('SEND_RICH_MEDIA', 'MESSAGE'), displayName: 'Send a rich media carousel' },
+          { ...option('BROADCAST_TEXT', 'BROADCAST'), displayName: 'Broadcast a text message' },
+        ],
+      }),
+    ],
+  }),
+]
+
+describe('NodeCreatorModel with the Viber bot', () => {
+  const creator = new NodeCreatorModel(VIBER, { fits: () => true, allowTriggers: true, hasTrigger: false })
+  const viber = () => creator.open(creator.root().sections[0]!.items[0] as never)
+
+  it('offers the account and the bot', () => {
+    expect(titles(viber())).toEqual([['', ['Viber Account', 'Viber Bot']]])
+  })
+
+  it('lists the bot\'s trigger events by group, then its actions by resource, preset', () => {
+    const bot = creator.open(viber().sections[0]!.items[1] as never)
+    expect(titles(bot)).toEqual([
+      ['Triggers · Messages', ['On new message']],
+      ['Triggers · Subscriptions', ['On conversation started', 'On subscribed']],
+      ['Triggers · Delivery', ['On seen']],
+      ['Message', ['Send a rich media carousel']],
+      ['Broadcast', ['Broadcast a text message']],
+    ])
+    const started = bot.sections[1]!.items[0]!
+    expect(started.kind === CreatorItemKind.NODE && started.parameters).toEqual({
+      operation: 'SUBSCRIPTIONS',
+      subscriptionEvents: ['CONVERSATION_STARTED'],
+    })
+    const broadcast = bot.sections[4]!.items[0]!
+    expect(broadcast.kind === CreatorItemKind.NODE && broadcast.parameters).toEqual({ resource: 'BROADCAST', operation: 'BROADCAST_TEXT' })
+  })
+})

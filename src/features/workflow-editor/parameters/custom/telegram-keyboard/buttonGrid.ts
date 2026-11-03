@@ -1,3 +1,5 @@
+import { MoveDirection } from '../keyboard-common/keyboardLayout'
+
 /** A button of a keyboard sent as one flat list: `newRow` starts a new row, as the bot node expects. */
 export interface RowButton {
   newRow?: boolean
@@ -8,13 +10,6 @@ export interface GridPosition {
   readonly column: number
 }
 
-export enum MoveDirection {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-  UP = 'UP',
-  DOWN = 'DOWN',
-}
-
 /** Telegram shows at most this many buttons in a row. */
 export const MAX_BUTTONS_PER_ROW = 8
 
@@ -23,8 +18,6 @@ export interface GridChange<B extends RowButton> {
   readonly grid: ButtonGrid<B>
   readonly position: GridPosition | null
 }
-
-export const samePosition = (a: GridPosition, b: GridPosition): boolean => a.row === b.row && a.column === b.column
 
 /**
  * Buttons as rows, for editing; immutable, every change returns a new grid. `toButtons()` turns it back into the flat
@@ -63,6 +56,16 @@ export class ButtonGrid<B extends RowButton> {
   indexOf(position: GridPosition): number {
     const before = this.rows.slice(0, position.row).reduce((count, row) => count + row.length, 0)
     return before + position.column
+  }
+
+  /** @returns where the button at an index of the flat list is, null past its end */
+  positionOf(index: number): GridPosition | null {
+    let before = 0
+    for (const [row, buttons] of this.rows.entries()) {
+      if (index < before + buttons.length) return { row, column: index - before }
+      before += buttons.length
+    }
+    return null
   }
 
   canAppendTo(row: number): boolean {

@@ -1,13 +1,12 @@
-<script setup lang="ts" generic="B extends RowButton">
+<script setup lang="ts" generic="B">
 import { computed } from 'vue'
 import type { PropertyDescriptor } from '@/core/node-types/descriptor'
 import type { FieldPath } from '@/core/node-types/parameters'
 import ParameterForm from '../../ParameterForm.vue'
 import ButtonMoveBar from './ButtonMoveBar.vue'
-import type { MoveDirection, RowButton } from './buttonGrid'
-import type { ButtonKind } from './buttonKinds'
+import type { ButtonKind, MoveDirection } from './keyboardLayout'
 
-/** The fields of the selected button, as the node declares them and as its kind adjusts them. */
+/** The fields of the picked button, as the node declares them and as its kind adjusts them. */
 const props = defineProps<{
   button: B
   kind: ButtonKind<B>

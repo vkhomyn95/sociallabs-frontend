@@ -1,6 +1,7 @@
 import type { SlbIconName } from '@sociallabs/frontend-components'
 import type { PropertyDescriptor } from '@/core/node-types/descriptor'
-import type { RowButton } from './buttonGrid'
+import type { ButtonKind } from '../keyboard-common/keyboardLayout'
+import { RowLayout } from './rowLayout'
 import {
   ButtonField,
   InlineAction,
@@ -49,16 +50,12 @@ const REPLY_REQUEST_ICONS: Readonly<Record<ReplyRequest, SlbIconName | null>> = 
 }
 
 /**
- * What differs between inline and reply buttons: the list they are kept in, how a new one starts, how it shows in
- * the preview, and which of its declared fields the editor offers.
+ * Inline or reply buttons: besides what every button kind tells the builder, the keyboard type they belong to and the
+ * list they are kept in. Fields leave `newRow` out, since the rows of the preview set it.
  */
-export interface ButtonKind<B extends RowButton> {
+export interface TelegramButtonKind<B> extends ButtonKind<B> {
   readonly keyboardType: KeyboardType.INLINE | KeyboardType.REPLY
   readonly list: KeyboardField.INLINE_BUTTONS | KeyboardField.REPLY_BUTTONS
-  readonly newButton: (index: number) => B
-  readonly icon: (button: B) => SlbIconName | null
-  /** The declared fields to edit for this button, without `newRow` (the grid sets it). */
-  readonly fields: (declared: readonly PropertyDescriptor[], button: B) => PropertyDescriptor[]
 }
 
 const withoutRowFlag = (declared: readonly PropertyDescriptor[]): PropertyDescriptor[] =>
@@ -68,7 +65,8 @@ const actionOf = (button: InlineButton): InlineAction => (button.action as Inlin
 
 const requestOf = (button: ReplyButton): ReplyRequest => (button.request as ReplyRequest | undefined) ?? ReplyRequest.TEXT
 
-export const INLINE_BUTTONS: ButtonKind<InlineButton> = {
+export const INLINE_BUTTONS: TelegramButtonKind<InlineButton> = {
+  layout: new RowLayout<InlineButton>(),
   keyboardType: KeyboardType.INLINE,
   list: KeyboardField.INLINE_BUTTONS,
   newButton: (index) => ({ text: `Button ${index}`, action: InlineAction.CALLBACK }),
@@ -83,7 +81,8 @@ export const INLINE_BUTTONS: ButtonKind<InlineButton> = {
   },
 }
 
-export const REPLY_BUTTONS: ButtonKind<ReplyButton> = {
+export const REPLY_BUTTONS: TelegramButtonKind<ReplyButton> = {
+  layout: new RowLayout<ReplyButton>(),
   keyboardType: KeyboardType.REPLY,
   list: KeyboardField.REPLY_BUTTONS,
   newButton: (index) => ({ text: `Button ${index}`, request: ReplyRequest.TEXT }),
