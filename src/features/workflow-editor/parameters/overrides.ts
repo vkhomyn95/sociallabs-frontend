@@ -3,6 +3,8 @@ import type { NodeParamsMap, SchemaNodeTypeKey } from '@/generated/node-types'
 import TelegramKeyboardField from './custom/telegram-keyboard/KeyboardField.vue'
 import RichMediaButtonsField from './custom/viber-keyboard/RichMediaButtonsField.vue'
 import ViberKeyboardField from './custom/viber-keyboard/ViberKeyboardField.vue'
+import ListSectionsField from './custom/whatsapp-interactive/ListSectionsField.vue'
+import ReplyButtonsField from './custom/whatsapp-interactive/ReplyButtonsField.vue'
 
 /**
  * Custom editors for single fields of a node type, the escape hatch for parameters a generic field cannot
@@ -20,6 +22,7 @@ function fieldOverrides(): FieldOverrides {
   return (overrides ??= {
     'telegram.botAction@2': { keyboard: TelegramKeyboardField },
     'viber.botAction@1': { keyboard: ViberKeyboardField, richButtons: RichMediaButtonsField },
+    'whatsapp.botAction@1': { buttons: ReplyButtonsField, sections: ListSectionsField },
   })
 }
 

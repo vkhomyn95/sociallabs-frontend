@@ -15,3 +15,10 @@ describe('resolveField', () => {
     expect(resolveField('viber.botAction@1', property('text'))).toBe(StringField)
   })
 })
+
+describe('resolveField for the WhatsApp Business number', () => {
+  it('picks a user and a template from the lists the server loads', () => {
+    expect(resolveField('whatsapp.botAction@1', property('to', { loadOptions: true }))).toBe(LoadedOptionsField)
+    expect(resolveField('whatsapp.botAction@1', property('template', { loadOptions: true }))).toBe(LoadedOptionsField)
+  })
+})

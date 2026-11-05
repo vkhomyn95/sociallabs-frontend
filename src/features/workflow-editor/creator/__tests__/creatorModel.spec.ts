@@ -363,3 +363,86 @@ describe('NodeCreatorModel with the Viber bot', () => {
     expect(broadcast.kind === CreatorItemKind.NODE && broadcast.parameters).toEqual({ resource: 'BROADCAST', operation: 'BROADCAST_TEXT' })
   })
 })
+
+const WHATSAPP: NodeTypeDescriptor[] = [
+  nodeType({
+    key: 'whatsapp.botTrigger@1',
+    name: 'whatsapp.botTrigger',
+    displayName: 'WhatsApp Business Trigger',
+    group: NodeGroup.COMMUNICATION,
+    kind: NodeKind.TRIGGER,
+    inputs: [],
+    credentials: { types: ['WHATSAPP_BOT'], required: true },
+    properties: [
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        options: [
+          { ...option('MESSAGES'), displayName: 'Messages' },
+          { ...option('DELIVERY'), displayName: 'Delivery' },
+          { ...option('ACCOUNT'), displayName: 'Templates & account' },
+        ],
+      }),
+      property('messageEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['MESSAGES'] }],
+        options: [
+          { ...option('NEW_MESSAGE'), displayName: 'New message' },
+          { ...option('INTERACTIVE_REPLY'), displayName: 'Button or list reply' },
+        ],
+      }),
+      property('deliveryEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['DELIVERY'] }],
+        options: [{ ...option('FAILED'), displayName: 'Failed' }],
+      }),
+      property('accountEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['ACCOUNT'] }],
+        options: [{ ...option('TEMPLATE_STATUS'), displayName: 'Template status' }],
+      }),
+    ],
+  }),
+  nodeType({
+    key: 'whatsapp.botAction@1',
+    name: 'whatsapp.botAction',
+    displayName: 'WhatsApp Business',
+    group: NodeGroup.COMMUNICATION,
+    credentials: { types: ['WHATSAPP_BOT'], required: true },
+    properties: [
+      property('resource', {
+        type: PropertyType.OPTIONS,
+        options: [{ ...option('MESSAGE'), displayName: 'Message' }, { ...option('TEMPLATE'), displayName: 'Template' }],
+      }),
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        optionsFilteredBy: 'resource',
+        options: [
+          { ...option('SEND_REPLY_BUTTONS', 'MESSAGE'), displayName: 'Send reply buttons' },
+          { ...option('SEND_TEMPLATE', 'TEMPLATE'), displayName: 'Send a template' },
+        ],
+      }),
+    ],
+  }),
+]
+
+describe('NodeCreatorModel with the WhatsApp Business number', () => {
+  const creator = new NodeCreatorModel(WHATSAPP, { fits: () => true, allowTriggers: true, hasTrigger: false })
+
+  it('lists the number\'s trigger events by group, then its actions by resource, preset', () => {
+    const whatsapp = creator.open(creator.root().sections[0]!.items[0] as never)
+    expect(titles(whatsapp)).toEqual([
+      ['Triggers · Messages', ['On new message', 'On button or list reply']],
+      ['Triggers · Delivery', ['On failed']],
+      ['Triggers · Templates & account', ['On template status']],
+      ['Message', ['Send reply buttons']],
+      ['Template', ['Send a template']],
+    ])
+    const reply = whatsapp.sections[0]!.items[1]!
+    expect(reply.kind === CreatorItemKind.NODE && reply.parameters).toEqual({
+      operation: 'MESSAGES',
+      messageEvents: ['INTERACTIVE_REPLY'],
+    })
+    const template = whatsapp.sections[4]!.items[0]!
+    expect(template.kind === CreatorItemKind.NODE && template.parameters).toEqual({ resource: 'TEMPLATE', operation: 'SEND_TEMPLATE' })
+  })
+})
