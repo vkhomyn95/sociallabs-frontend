@@ -1117,6 +1117,230 @@ export interface ViberBotTriggerV1Params {
   deliveryEvents?: Array<'DELIVERED' | 'SEEN' | 'FAILED'>
 }
 
+/** WhatsApp Business (`whatsapp.botAction@1`) */
+export interface WhatsappBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'TEMPLATE' | 'MEDIA' | 'BUSINESS' | 'CONTACT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_IMAGE' | 'SEND_VIDEO' | 'SEND_AUDIO' | 'SEND_DOCUMENT' | 'SEND_STICKER' | 'SEND_LOCATION' | 'SEND_CONTACTS' | 'SEND_REPLY_BUTTONS' | 'SEND_LIST' | 'SEND_CTA_LINK' | 'SEND_REACTION' | 'MARK_AS_READ' | 'SEND_TEMPLATE' | 'LIST_TEMPLATES' | 'GET_TEMPLATE' | 'CREATE_TEMPLATE' | 'DELETE_TEMPLATE' | 'UPLOAD' | 'GET_URL' | 'DOWNLOAD' | 'DELETE' | 'GET_PHONE_NUMBER' | 'GET_PROFILE' | 'UPDATE_PROFILE' | 'GET_WINDOW'
+  /** To: From the users the number heard from, or a phone number in international form */
+  to?: string
+  /** Text: Up to 4096 characters */
+  text?: string
+  /** Preview the first link */
+  previewUrl?: boolean
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the user's message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Outside the 24 h window */
+    outsideWindow?: 'FAIL' | 'SEND_ANYWAY'
+  }
+  /** File */
+  fileSource?: 'URL_OR_ID' | 'BINARY'
+  /** URL or media ID: A public HTTPS address, or the media ID of an uploaded file */
+  file?: string
+  /** Input file property: The property of the input item's file, uploaded first */
+  binaryProperty?: string
+  /** Caption */
+  caption?: string
+  /** File name: Shown to the user; its extension picks the icon */
+  fileName?: string
+  /** Latitude */
+  latitude?: number | Expression
+  /** Longitude */
+  longitude?: number | Expression
+  /** Place name */
+  name?: string
+  /** Address */
+  address?: string
+  /** Contacts */
+  contacts?: Array<{
+    /** Name */
+    name: string
+    /** Phone numbers */
+    phones: string[] | Expression
+  }>
+  /** Text: Up to 1024 characters */
+  body?: string
+  /** Footer */
+  footer?: string
+  /** Buttons: One to three; a press starts the trigger's Button or list reply with the ID */
+  buttons?: Array<{
+    /** ID: Comes back with the press, e.g. yes */
+    id: string
+    /** Title: Up to 20 characters */
+    title: string
+  }>
+  /** Header */
+  header?: string
+  /** List button text: Opens the list, up to 20 characters */
+  buttonText?: string
+  /** Sections: Up to ten rows in all */
+  sections?: Array<{
+    /** Title: Up to 24 characters; needed with several sections */
+    title?: string
+    /** Rows */
+    rows: Array<{
+      /** ID: Comes back with the pick */
+      id: string
+      /** Title: Up to 24 characters */
+      title: string
+      /** Description: Up to 72 characters */
+      description?: string
+    }>
+  }>
+  /** Button text */
+  displayText?: string
+  /** URL */
+  url?: string
+  /** Message ID: The wamid of the message */
+  messageId?: string
+  /** Emoji: Empty takes the reaction back */
+  emoji?: string
+  /** Show typing: The user sees the business typing until the next message or 25 seconds */
+  typing?: boolean
+  /** Template: The template's name; every language of it is listed once */
+  template?: string
+  /** Language: The code of the template's language, e.g. en_US or uk */
+  language?: string
+  /** Header: The kind of the template's header, when it has a variable */
+  headerType?: 'NONE' | 'TEXT' | 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'LOCATION'
+  /** Header text */
+  headerText?: string
+  /** Header variable name: Only for named variables */
+  headerVariable?: string
+  /** Header file */
+  headerFileSource?: 'URL_OR_ID' | 'BINARY'
+  /** Header URL or media ID: A public HTTPS address, or the media ID of an uploaded file */
+  headerFile?: string
+  /** Header file property: The property of the input item's file, uploaded first */
+  headerBinaryProperty?: string
+  /** Header file name: Shown to the user; its extension picks the icon */
+  headerFileName?: string
+  /** Header latitude */
+  headerLatitude?: number | Expression
+  /** Header longitude */
+  headerLongitude?: number | Expression
+  /** Header place name */
+  headerPlaceName?: string
+  /** Header address */
+  headerAddress?: string
+  /** Body variables: In order, {{1}} first; or by name */
+  bodyValues?: Array<{
+    /** Variable name: Only for named variables, e.g. first_name */
+    name?: string
+    /** Value */
+    value: string
+  }>
+  /** Button variables: For quick replies, dynamic URLs, codes and flows */
+  buttonValues?: Array<{
+    /** Button index: The first button is 0 */
+    index: number | Expression
+    /** Button type */
+    type: 'QUICK_REPLY' | 'URL' | 'COPY_CODE' | 'FLOW'
+    /** Value: A quick reply's payload comes back with the press */
+    value?: string
+  }>
+  /** Name contains */
+  nameContains?: string
+  /** Approved only */
+  approvedOnly?: boolean | Expression
+  /** Limit */
+  limit?: number | Expression
+  /** Template ID */
+  templateId?: string
+  /** Name: Lowercase letters, digits and underscores */
+  templateName?: string
+  /** Category */
+  category?: 'MARKETING' | 'UTILITY'
+  /** Variables */
+  variableFormat?: 'POSITIONAL' | 'NAMED'
+  /** Header */
+  headerFormat?: 'NONE' | 'TEXT' | 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'LOCATION'
+  /** Header content: Up to 60 characters, at most one variable; taken as written, so {{1}} is the template's */
+  headerContent?: string
+  /** Header example: An example of the header's variable */
+  headerExample?: string
+  /** Header example file property: The property of the input item's example file. Needs the App ID in the credential */
+  headerExampleProperty?: string
+  /** Body: Up to 1024 characters with variables {{1}}, {{2}} or {{first_name}}; taken as written, so they are the template's, not expressions */
+  bodyText?: string
+  /** Body examples: One per variable, in the order they appear */
+  bodyExamples?: string[] | Expression
+  /** Buttons: Up to ten; quick replies first */
+  templateButtons?: Array<{
+    /** Type */
+    type: 'QUICK_REPLY' | 'URL' | 'PHONE_NUMBER' | 'COPY_CODE'
+    /** Text: Up to 25 characters */
+    text?: string
+    /** URL: May end with {{1}}, filled when sending; taken as written */
+    url?: string
+    /** Example: A whole example address of a dynamic URL, or an example code */
+    example?: string
+    /** Phone number */
+    phoneNumber?: string
+  }>
+  /** Input file property */
+  uploadProperty?: string
+  /** Media ID */
+  mediaId?: string
+  /** Output file property */
+  outputProperty?: string
+  /** About: The line under the name, up to 139 characters */
+  about?: string
+  /** Description */
+  description?: string
+  /** Email */
+  email?: string
+  /** Websites: Up to two */
+  websites?: string[] | Expression
+  /** Industry */
+  vertical?: 'APPAREL' | 'AUTO' | 'BEAUTY' | 'EDU' | 'ENTERTAIN' | 'EVENT_PLAN' | 'FINANCE' | 'GOVT' | 'GROCERY' | 'HEALTH' | 'HOTEL' | 'NONPROFIT' | 'PROF_SERVICES' | 'RESTAURANT' | 'RETAIL' | 'TRAVEL' | 'OTHER' | 'NOT_A_BIZ'
+  /** Profile picture property: The property of the input item's new picture (JPEG or PNG, at least 192×192); empty keeps the picture. Needs the App ID in the credential */
+  pictureProperty?: string
+  /** User: From the users the number heard from, or a phone number in international form */
+  user?: string
+}
+
+/** WhatsApp Business Trigger (`whatsapp.botTrigger@1`) */
+export interface WhatsappBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'DELIVERY' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'INTERACTIVE_REPLY' | 'REACTION' | 'MARKETING_PREFERENCE'>
+  /** Users */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Phone numbers: From the users the number heard from, or numbers typed in international form */
+  userIds?: string[] | Expression
+  /** Content types: Empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'STICKER' | 'LOCATION' | 'CONTACTS' | 'INTERACTIVE_REPLY' | 'REACTION' | 'ORDER' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a caption or a pressed button's title counts as text */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Button or row IDs: Only presses of these reply buttons or list rows; empty for any */
+  replyIds?: string[]
+  /** Only replies to the number's messages: Messages that quote one of the number's messages, and button presses */
+  repliesOnly?: boolean
+  /** Only from ads: Messages of users who came from a Click-to-WhatsApp ad or post */
+  fromAdsOnly?: boolean
+  /** Skip older than (s): Messages Meta retried while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per user every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (user, type, text) instead of every field Meta sent */
+  simplify?: boolean
+  /** Events */
+  deliveryEvents?: Array<'SENT' | 'DELIVERED' | 'READ' | 'FAILED'>
+  /** Events */
+  accountEvents?: Array<'TEMPLATE_STATUS' | 'TEMPLATE_QUALITY' | 'TEMPLATE_CATEGORY' | 'PHONE_QUALITY' | 'PHONE_NAME' | 'ACCOUNT_UPDATE'>
+  /** Template names: Template events of these templates only; empty for any */
+  templateNames?: string[]
+}
+
 /** Parameters of each schema-driven node type, by `name@version`. */
 export interface NodeParamsMap {
   'ai.agent@1': AiAgentV1Params
@@ -1141,6 +1365,8 @@ export interface NodeParamsMap {
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
   'viber.botAction@1': ViberBotActionV1Params
   'viber.botTrigger@1': ViberBotTriggerV1Params
+  'whatsapp.botAction@1': WhatsappBotActionV1Params
+  'whatsapp.botTrigger@1': WhatsappBotTriggerV1Params
 }
 
 export type SchemaNodeTypeKey = keyof NodeParamsMap
