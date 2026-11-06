@@ -18,3 +18,12 @@ export const QR_INSTRUCTIONS: Partial<Record<CredentialPlatform, string[]>> = {
     'Point your phone at this screen',
   ],
 }
+
+/** Where to enter a pairing code on each platform; platforms without code linking are omitted. */
+export const PAIRING_CODE_INSTRUCTIONS: Partial<Record<CredentialPlatform, string[]>> = {
+  [CredentialPlatform.WHATSAPP]: [
+    'Open WhatsApp on your phone',
+    'Go to Settings → Linked devices → Link a device',
+    'Tap “Link with phone number instead” and enter the code',
+  ],
+}

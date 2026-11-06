@@ -6,6 +6,7 @@ export enum ConnectView {
   PARAMS = 'params',
   WAITING = 'waiting',
   QR = 'qr',
+  PAIRING_CODE = 'pairing-code',
   INPUT = 'input',
   SUCCESS = 'success',
   ERROR = 'error',
@@ -16,6 +17,7 @@ export type ConnectState =
   | { view: ConnectView.PARAMS }
   | { view: ConnectView.WAITING; message: string }
   | { view: ConnectView.QR; value: string; format: QrFormat; instructions: string[] }
+  | { view: ConnectView.PAIRING_CODE; code: string; message: string; instructions: string[] }
   | { view: ConnectView.INPUT; input: ConnectInput; message: string; hint?: string; error?: string }
   | { view: ConnectView.SUCCESS; credential: Credential }
   | { view: ConnectView.ERROR; message: string }

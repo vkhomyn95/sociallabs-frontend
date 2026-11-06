@@ -446,3 +446,79 @@ describe('NodeCreatorModel with the WhatsApp Business number', () => {
     expect(template.kind === CreatorItemKind.NODE && template.parameters).toEqual({ resource: 'TEMPLATE', operation: 'SEND_TEMPLATE' })
   })
 })
+
+const WHATSAPP_ACCOUNT: NodeTypeDescriptor[] = [
+  nodeType({
+    key: 'whatsapp.accountTrigger@1',
+    name: 'whatsapp.accountTrigger',
+    displayName: 'WhatsApp Account Trigger',
+    group: NodeGroup.COMMUNICATION,
+    kind: NodeKind.TRIGGER,
+    inputs: [],
+    credentials: { types: ['WHATSAPP_ACCOUNT'], required: true },
+    properties: [
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        options: [
+          { ...option('MESSAGES'), displayName: 'Messages' },
+          { ...option('GROUPS'), displayName: 'Groups' },
+        ],
+      }),
+      property('messageEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['MESSAGES'] }],
+        options: [
+          { ...option('NEW_MESSAGE'), displayName: 'New message' },
+          { ...option('REACTION'), displayName: 'Reaction' },
+        ],
+      }),
+      property('groupEvents', {
+        type: PropertyType.MULTI_OPTIONS,
+        show: [{ field: 'operation', values: ['GROUPS'] }],
+        options: [{ ...option('ADDED_TO_GROUP'), displayName: 'Added to a group' }],
+      }),
+    ],
+  }),
+  nodeType({
+    key: 'whatsapp.accountAction@1',
+    name: 'whatsapp.accountAction',
+    displayName: 'WhatsApp Account',
+    group: NodeGroup.COMMUNICATION,
+    credentials: { types: ['WHATSAPP_ACCOUNT'], required: true },
+    properties: [
+      property('resource', {
+        type: PropertyType.OPTIONS,
+        options: [{ ...option('MESSAGE'), displayName: 'Message' }, { ...option('GROUP'), displayName: 'Group' }],
+      }),
+      property('operation', {
+        type: PropertyType.OPTIONS,
+        optionsFilteredBy: 'resource',
+        options: [
+          { ...option('SEND_TEXT', 'MESSAGE'), displayName: 'Send a text message' },
+          { ...option('ADD_MEMBERS', 'GROUP'), displayName: 'Add members' },
+        ],
+      }),
+    ],
+  }),
+]
+
+describe('NodeCreatorModel with a linked WhatsApp account', () => {
+  const creator = new NodeCreatorModel(WHATSAPP_ACCOUNT, { fits: () => true, allowTriggers: true, hasTrigger: false })
+
+  it('lists the account\'s trigger events by group, then its actions by resource, preset', () => {
+    const account = creator.open(creator.root().sections[0]!.items[0] as never)
+    expect(titles(account)).toEqual([
+      ['Triggers · Messages', ['On new message', 'On reaction']],
+      ['Triggers · Groups', ['On added to a group']],
+      ['Message', ['Send a text message']],
+      ['Group', ['Add members']],
+    ])
+    const added = account.sections[1]!.items[0]!
+    expect(added.kind === CreatorItemKind.NODE && added.parameters).toEqual({
+      operation: 'GROUPS',
+      groupEvents: ['ADDED_TO_GROUP'],
+    })
+    const add = account.sections[3]!.items[0]!
+    expect(add.kind === CreatorItemKind.NODE && add.parameters).toEqual({ resource: 'GROUP', operation: 'ADD_MEMBERS' })
+  })
+})

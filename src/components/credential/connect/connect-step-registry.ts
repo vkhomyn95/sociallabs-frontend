@@ -15,6 +15,11 @@ export const CONNECT_STEP_REGISTRY: Record<Exclude<ConnectView, ConnectView.PARA
       import('./ConnectQrStep.vue')
     ),
 
+  [ConnectView.PAIRING_CODE]:
+    defineAsyncComponent(() =>
+      import('./ConnectPairingCodeStep.vue')
+    ),
+
   [ConnectView.INPUT]:
     defineAsyncComponent(() =>
       import('./ConnectInputStep.vue')

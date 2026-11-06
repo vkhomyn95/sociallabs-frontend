@@ -1,0 +1,61 @@
+// @vitest-environment happy-dom
+import { describe, expect, it, vi } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { defineComponent, h } from 'vue'
+import {
+  ConnectEventType,
+  CredentialKind,
+  CredentialPlatform,
+  CredentialService,
+  CredentialType,
+  SetupMode,
+  type ConnectEvent,
+  type CredentialTypeDescriptor,
+} from '@/stores/credential'
+import { ConnectView } from '../connect.types'
+import { useAccountConnect } from '../useAccountConnect'
+
+vi.mock('@/stores/credential/service', () => ({
+  CredentialService: { startConnect: vi.fn(), subscribeConnect: vi.fn(), cancelConnect: vi.fn() },
+}))
+
+const WHATSAPP: CredentialTypeDescriptor = {
+  type: CredentialType.WHATSAPP_ACCOUNT,
+  kind: CredentialKind.ACCOUNT,
+  platform: CredentialPlatform.WHATSAPP,
+  displayName: 'WhatsApp account',
+  description: '',
+  setupMode: SetupMode.INTERACTIVE,
+  available: true,
+  testable: true,
+  fields: [],
+}
+
+describe('useAccountConnect', () => {
+  it('shows a pairing code with where to enter it, and the QR code again when one comes', async () => {
+    let emit: (event: ConnectEvent) => void = () => undefined
+    vi.mocked(CredentialService.startConnect).mockResolvedValue('session-1')
+    vi.mocked(CredentialService.subscribeConnect).mockImplementation((_, onEvent) => {
+      emit = onEvent
+      return () => undefined
+    })
+    let flow!: ReturnType<typeof useAccountConnect>
+    mount(defineComponent({
+      setup() {
+        flow = useAccountConnect(WHATSAPP, () => undefined)
+        return () => h('div')
+      },
+    }))
+
+    await flow.start('', { method: 'PAIRING_CODE', phoneNumber: '+380501234567' })
+    await flushPromises()
+    emit({ type: ConnectEventType.PAIRING_CODE, message: 'Enter the code', payload: { code: 'ABCDEFGH' } })
+    const pairing = flow.state.value
+    emit({ type: ConnectEventType.STATUS, message: 'Still waiting', payload: {} })
+
+    expect(pairing.view).toBe(ConnectView.PAIRING_CODE)
+    expect(pairing.view === ConnectView.PAIRING_CODE && pairing.code).toBe('ABCDEFGH')
+    expect(pairing.view === ConnectView.PAIRING_CODE && pairing.instructions.join(' ')).toContain('phone number instead')
+    expect(flow.state.value.view).toBe(ConnectView.PAIRING_CODE)
+  })
+})

@@ -178,6 +178,8 @@ export interface CredentialUpdateRequest {
 export enum ConnectEventType {
   STATUS = 'STATUS',
   QR_CODE = 'QR_CODE',
+  /** A code the user enters on their phone (WhatsApp's "Link with phone number instead"). */
+  PAIRING_CODE = 'PAIRING_CODE',
   INPUT_REQUIRED = 'INPUT_REQUIRED',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
@@ -205,6 +207,7 @@ interface ConnectEventBase<T extends ConnectEventType, P> {
 export type ConnectEvent =
   | ConnectEventBase<ConnectEventType.STATUS, Record<string, never>>
   | ConnectEventBase<ConnectEventType.QR_CODE, { value: string; format: QrFormat }>
+  | ConnectEventBase<ConnectEventType.PAIRING_CODE, { code: string }>
   | ConnectEventBase<ConnectEventType.INPUT_REQUIRED, { input: ConnectInput; hint?: string; timeout?: number; error?: string }>
   | ConnectEventBase<ConnectEventType.SUCCESS, { credential: Credential }>
   | ConnectEventBase<ConnectEventType.ERROR, Record<string, never>>

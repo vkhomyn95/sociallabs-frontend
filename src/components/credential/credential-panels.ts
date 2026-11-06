@@ -2,6 +2,7 @@ import type { Component } from 'vue'
 import { CredentialType } from '@/stores/credential/types'
 import TelegramBotPanel from './telegram-bot/TelegramBotPanel.vue'
 import ViberBotPanel from './viber-bot/ViberBotPanel.vue'
+import WhatsAppAccountPanel from './whatsapp-account/WhatsAppAccountPanel.vue'
 import WhatsAppBotPanel from './whatsapp-bot/WhatsAppBotPanel.vue'
 
 /**
@@ -11,7 +12,7 @@ import WhatsAppBotPanel from './whatsapp-bot/WhatsAppBotPanel.vue'
 export const CREDENTIAL_PANELS: Readonly<Record<CredentialType, Component | null>> = {
   [CredentialType.TELEGRAM_ACCOUNT]: null,
   [CredentialType.VIBER_ACCOUNT]: null,
-  [CredentialType.WHATSAPP_ACCOUNT]: null,
+  [CredentialType.WHATSAPP_ACCOUNT]: WhatsAppAccountPanel,
   [CredentialType.TELEGRAM_BOT]: TelegramBotPanel,
   [CredentialType.VIBER_BOT]: ViberBotPanel,
   [CredentialType.WHATSAPP_BOT]: WhatsAppBotPanel,

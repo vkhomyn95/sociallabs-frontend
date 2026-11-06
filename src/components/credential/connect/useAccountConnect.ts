@@ -2,7 +2,7 @@ import { computed, onBeforeUnmount, shallowRef } from 'vue'
 import { CredentialService, ConnectEventType } from '@/stores/credential'
 import type { ConnectEvent, ConnectInput, Credential, CredentialTypeDescriptor, FormValues } from '@/stores/credential'
 import { toApiError } from '../credential-ui'
-import { QR_INSTRUCTIONS } from './connect-instructions'
+import { PAIRING_CODE_INSTRUCTIONS, QR_INSTRUCTIONS } from './connect-instructions'
 import { ConnectView } from './connect.types'
 import type { ConnectState } from './connect.types'
 
@@ -26,7 +26,7 @@ export function useAccountConnect(descriptor: CredentialTypeDescriptor, onConnec
   function handle(event: ConnectEvent): void {
     switch (event.type) {
       case ConnectEventType.STATUS:
-        // Keep the QR / input screen while the backend reports background progress.
+        // Keep the QR / code / input screen while the backend reports background progress.
         if (state.value.view === ConnectView.WAITING || state.value.view === ConnectView.PARAMS) {
           state.value = { view: ConnectView.WAITING, message: event.message }
         }
@@ -37,6 +37,14 @@ export function useAccountConnect(descriptor: CredentialTypeDescriptor, onConnec
           value: event.payload.value,
           format: event.payload.format,
           instructions: QR_INSTRUCTIONS[descriptor.platform] ?? [],
+        }
+        break
+      case ConnectEventType.PAIRING_CODE:
+        state.value = {
+          view: ConnectView.PAIRING_CODE,
+          code: event.payload.code,
+          message: event.message,
+          instructions: PAIRING_CODE_INSTRUCTIONS[descriptor.platform] ?? [],
         }
         break
       case ConnectEventType.INPUT_REQUIRED:
