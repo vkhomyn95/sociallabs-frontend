@@ -78,3 +78,81 @@ export interface WhatsAppBotStatusResponse {
   webhook?: WhatsAppBotWebhook | null
   accountError?: string | null
 }
+
+// Mirrors of the backend's template enums (integrations/whatsapp/bot/api/model/template) and
+// WhatsAppTemplateStructureResponse.
+
+/** What a template's header shows. */
+export enum TemplateHeaderFormat {
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  VIDEO = 'VIDEO',
+  DOCUMENT = 'DOCUMENT',
+  LOCATION = 'LOCATION',
+}
+
+/** The kinds of buttons a template may have. */
+export enum TemplateButtonType {
+  QUICK_REPLY = 'QUICK_REPLY',
+  URL = 'URL',
+  PHONE_NUMBER = 'PHONE_NUMBER',
+  COPY_CODE = 'COPY_CODE',
+  OTP = 'OTP',
+  FLOW = 'FLOW',
+}
+
+/** The kinds of values a template button is sent with; also the button types of the node's "Button variables". */
+export enum TemplateButtonKind {
+  QUICK_REPLY = 'QUICK_REPLY',
+  URL = 'URL',
+  COPY_CODE = 'COPY_CODE',
+  FLOW = 'FLOW',
+}
+
+/** How a template's variables are written: {{1}} filled in order, or {{first_name}} filled by name. */
+export enum TemplateParameterFormat {
+  POSITIONAL = 'POSITIONAL',
+  NAMED = 'NAMED',
+}
+
+export interface TemplateHeaderStructure {
+  format: TemplateHeaderFormat
+  text?: string
+  /** The name of the text's variable ("1" for {{1}}); absent when it has none. */
+  variable?: string
+  /** Whether a value is sent for it: media and locations always, a text only with a variable. */
+  needsValue: boolean
+}
+
+export interface TemplateButtonStructure {
+  /** The button's position, from 0. */
+  index: number
+  type: TemplateButtonType
+  text?: string
+  url?: string
+  /** The kind of value it is sent with; absent when it takes none. */
+  valueKind?: TemplateButtonKind
+  valueRequired: boolean
+}
+
+/** One language of a template. */
+export interface TemplateLanguageStructure {
+  id?: string
+  language: string
+  status?: string
+  approved: boolean
+  category?: string
+  parameterFormat: TemplateParameterFormat
+  header?: TemplateHeaderStructure
+  body: { text?: string; variables: string[] }
+  footer?: string
+  buttons: TemplateButtonStructure[]
+}
+
+export interface WhatsAppTemplateStructureResponse {
+  name: string
+  /** Empty when the business account has no template of that name. */
+  languages: TemplateLanguageStructure[]
+  /** Why Meta could not be asked. */
+  error?: string
+}

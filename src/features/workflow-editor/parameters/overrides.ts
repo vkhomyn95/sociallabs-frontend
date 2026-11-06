@@ -5,6 +5,10 @@ import RichMediaButtonsField from './custom/viber-keyboard/RichMediaButtonsField
 import ViberKeyboardField from './custom/viber-keyboard/ViberKeyboardField.vue'
 import ListSectionsField from './custom/whatsapp-interactive/ListSectionsField.vue'
 import ReplyButtonsField from './custom/whatsapp-interactive/ReplyButtonsField.vue'
+import TemplateBodyValuesField from './custom/whatsapp-template/TemplateBodyValuesField.vue'
+import TemplateButtonValuesField from './custom/whatsapp-template/TemplateButtonValuesField.vue'
+import TemplateHeaderTypeField from './custom/whatsapp-template/TemplateHeaderTypeField.vue'
+import TemplateHeaderVariableField from './custom/whatsapp-template/TemplateHeaderVariableField.vue'
 
 /**
  * Custom editors for single fields of a node type, the escape hatch for parameters a generic field cannot
@@ -22,7 +26,14 @@ function fieldOverrides(): FieldOverrides {
   return (overrides ??= {
     'telegram.botAction@2': { keyboard: TelegramKeyboardField },
     'viber.botAction@1': { keyboard: ViberKeyboardField, richButtons: RichMediaButtonsField },
-    'whatsapp.botAction@1': { buttons: ReplyButtonsField, sections: ListSectionsField },
+    'whatsapp.botAction@1': {
+      buttons: ReplyButtonsField,
+      sections: ListSectionsField,
+      headerType: TemplateHeaderTypeField,
+      headerVariable: TemplateHeaderVariableField,
+      bodyValues: TemplateBodyValuesField,
+      buttonValues: TemplateButtonValuesField,
+    },
   })
 }
 
