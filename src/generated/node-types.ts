@@ -1117,6 +1117,151 @@ export interface ViberBotTriggerV1Params {
   deliveryEvents?: Array<'DELIVERED' | 'SEEN' | 'FAILED'>
 }
 
+/** WhatsApp Account (`whatsapp.accountAction@1`) */
+export interface WhatsappAccountActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CHAT' | 'GROUP' | 'CONTACT' | 'CHANNEL' | 'ACCOUNT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_FILE' | 'SEND_LOCATION' | 'SEND_CONTACT' | 'SEND_POLL' | 'REACT' | 'EDIT' | 'DELETE' | 'FORWARD' | 'MARK_AS_READ' | 'SHOW_TYPING' | 'DOWNLOAD_FILE' | 'GET_CHATS' | 'GET_MESSAGES' | 'ARCHIVE' | 'UNARCHIVE' | 'MUTE' | 'UNMUTE' | 'PIN' | 'UNPIN' | 'CREATE' | 'GET' | 'ADD_MEMBERS' | 'REMOVE_MEMBERS' | 'PROMOTE' | 'DEMOTE' | 'GET_INVITE_LINK' | 'REVOKE_INVITE_LINK' | 'PREVIEW_INVITE' | 'JOIN' | 'LEAVE' | 'UPDATE' | 'GET_JOIN_REQUESTS' | 'APPROVE_JOIN_REQUESTS' | 'REJECT_JOIN_REQUESTS' | 'CHECK_NUMBERS' | 'GET_PROFILE' | 'BLOCK' | 'UNBLOCK' | 'GET_BUSINESS_PROFILE' | 'FOLLOW' | 'UNFOLLOW' | 'GET_POSTS' | 'GET_ME' | 'UPDATE_PROFILE'
+  /** Chat: A phone number in international form, a JID, or a group invite link */
+  chat?: string
+  /** Text */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Quoted message is mine */
+    replyToFromMe?: boolean | Expression
+    /** Quoted message's sender: In a group, who sent it; e.g. {{ $json.senderJid }} */
+    replyToSender?: string
+  }
+  /** Kind */
+  kind?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'VOICE' | 'DOCUMENT' | 'STICKER'
+  /** Input file property: The property of the input item's file */
+  binaryProperty?: string
+  /** Caption */
+  caption?: string
+  /** File name: Shown in the chat; the input file's name when empty */
+  fileName?: string
+  /** Latitude */
+  latitude?: number | Expression
+  /** Longitude */
+  longitude?: number | Expression
+  /** Place name */
+  placeName?: string
+  /** Address */
+  address?: string
+  /** Contact name */
+  contactName?: string
+  /** Phone numbers: In international form */
+  contactPhones?: string[] | Expression
+  /** Question */
+  question?: string
+  /** Answers: Two to twelve */
+  pollOptions?: string[] | Expression
+  /** Allow several answers */
+  multipleAnswers?: boolean | Expression
+  /** Message ID: The message's id, e.g. from the trigger */
+  messageId?: string
+  /** Sent by the account: Whether the account sent the message; WhatsApp addresses a message with it */
+  fromMe?: boolean | Expression
+  /** Sender: Who sent the message in a group; empty in a private chat or for the account's own */
+  sender?: string
+  /** Emoji: Empty takes the reaction back */
+  emoji?: string
+  /** For everyone: Deletes it for everyone; someone else's message only as a group admin */
+  forEveryone?: boolean | Expression
+  /** Forward to: The chat the message goes to */
+  to?: string
+  /** Typing: Shows "typing…" until the next message, or stops showing it */
+  typing?: boolean | Expression
+  /** Output file property */
+  outputProperty?: string
+  /** Limit */
+  limit?: number | Expression
+  /** Include archived chats */
+  includeArchived?: boolean | Expression
+  /** Hours */
+  hours?: number | Expression
+  /** Name */
+  subject?: string
+  /** Members: Phone numbers in international form or JIDs */
+  members?: string[] | Expression
+  /** Group: The group's JID (…@g.us) or its invite link */
+  group?: string
+  /** Invite link: chat.whatsapp.com/… or its code */
+  invite?: string
+  /** New name: Kept when empty */
+  newSubject?: string
+  /** New description: Kept when empty */
+  newDescription?: string
+  /** Remove the description */
+  clearDescription?: boolean | Expression
+  /** Applicants: Who asked to join: phone numbers or JIDs */
+  applicants?: string[] | Expression
+  /** Phone numbers: In international form; each check is paced, since mass checks get accounts banned */
+  numbers?: string[] | Expression
+  /** Contact: A phone number in international form or a JID */
+  contact?: string
+  /** Channel: The channel's JID (…@newsletter) */
+  channel?: string
+  /** Name: Kept when empty */
+  name?: string
+  /** About: Kept when empty */
+  about?: string
+}
+
+/** WhatsApp Account Trigger (`whatsapp.accountTrigger@1`) */
+export interface WhatsappAccountTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'RECEIPTS' | 'GROUPS' | 'CALLS' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'REACTION'>
+  /** Chat types: Empty for any */
+  chatTypes?: Array<'PRIVATE' | 'GROUP' | 'CHANNEL' | 'BROADCAST'>
+  /** Chats */
+  chatScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Chat list: JIDs from the picker, or phone numbers in international form */
+  chats?: string[]
+  /** Senders */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Sender list: JIDs or phone numbers in international form */
+  senders?: string[]
+  /** Ignore my own: What the account itself sent or did, from this or another of its devices; keeps a reply from starting the workflow again */
+  ignoreMine?: boolean
+  /** Content types: Empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'STICKER' | 'LOCATION' | 'CONTACTS' | 'INTERACTIVE_REPLY' | 'REACTION' | 'ORDER' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a caption counts */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Only mentioning me: Messages that @mention the account */
+  mentionsMeOnly?: boolean
+  /** Only replies to my messages */
+  repliesToMeOnly?: boolean
+  /** Skip forwarded */
+  skipForwarded?: boolean
+  /** Skip older than (s): Messages sent longer ago, e.g. the backlog after a long stop; 0 handles all */
+  maxAgeSeconds?: number
+  /** Skip the backlog: What arrived while the account was disconnected, delivered on reconnecting */
+  skipOffline?: boolean
+  /** One run per chat every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (chat, sender, message id, text) */
+  simplify?: boolean
+  /** Events */
+  receiptEvents?: Array<'DELIVERED' | 'READ' | 'PLAYED'>
+  /** Events */
+  groupEvents?: Array<'ADDED_TO_GROUP' | 'MEMBERS_CHANGED' | 'GROUP_INFO_CHANGED' | 'JOIN_REQUEST'>
+  /** Skip calls missed while away */
+  skipMissed?: boolean
+  /** Events */
+  statusEvents?: Array<'ACCOUNT_STATUS' | 'INTEGRITY_CHALLENGE'>
+}
+
 /** WhatsApp Business (`whatsapp.botAction@1`) */
 export interface WhatsappBotActionV1Params {
   /** Resource */
@@ -1365,6 +1510,8 @@ export interface NodeParamsMap {
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
   'viber.botAction@1': ViberBotActionV1Params
   'viber.botTrigger@1': ViberBotTriggerV1Params
+  'whatsapp.accountAction@1': WhatsappAccountActionV1Params
+  'whatsapp.accountTrigger@1': WhatsappAccountTriggerV1Params
   'whatsapp.botAction@1': WhatsappBotActionV1Params
   'whatsapp.botTrigger@1': WhatsappBotTriggerV1Params
 }
