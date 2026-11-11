@@ -338,6 +338,252 @@ export interface HttpRequestV1Params {
   continueOnFail?: boolean
 }
 
+/** Instagram Account (`instagram.accountAction@1`) */
+export interface InstagramAccountActionV1Params {
+  /** Resource */
+  resource: 'DIRECT' | 'THREAD' | 'USER' | 'MEDIA' | 'PUBLISH' | 'ACCOUNT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_PHOTO' | 'SEND_VIDEO' | 'SEND_VOICE' | 'SHARE_POST' | 'SHARE_PROFILE' | 'SHARE_STORY' | 'REACT' | 'UNSEND' | 'MARK_SEEN' | 'MARK_UNREAD' | 'GET_THREADS' | 'GET_MESSAGES' | 'GET_PENDING_REQUESTS' | 'APPROVE_REQUEST' | 'DECLINE_REQUEST' | 'DOWNLOAD_MEDIA' | 'CREATE_GROUP' | 'RENAME_GROUP' | 'ADD_MEMBERS' | 'REMOVE_MEMBERS' | 'LEAVE_THREAD' | 'MUTE_THREAD' | 'UNMUTE_THREAD' | 'HIDE_THREAD' | 'GET_PROFILE' | 'SEARCH_USERS' | 'FOLLOW' | 'UNFOLLOW' | 'BLOCK' | 'UNBLOCK' | 'REMOVE_FOLLOWER' | 'GET_FOLLOWERS' | 'GET_FOLLOWING' | 'GET_FOLLOW_REQUESTS' | 'APPROVE_FOLLOW_REQUEST' | 'IGNORE_FOLLOW_REQUEST' | 'GET_POST' | 'LIKE' | 'UNLIKE' | 'GET_LIKERS' | 'COMMENT' | 'GET_COMMENTS' | 'DELETE_COMMENT' | 'LIKE_COMMENT' | 'UNLIKE_COMMENT' | 'PUBLISH_PHOTO' | 'PUBLISH_VIDEO' | 'PUBLISH_STORY_PHOTO' | 'PUBLISH_STORY_VIDEO' | 'GET_MY_PROFILE' | 'UPDATE_PROFILE'
+  /** Thread: The thread's id, e.g. from the trigger */
+  thread?: string
+  /** Recipients: Usernames, profile links or user ids; used when no thread is given */
+  recipients?: string[] | Expression
+  /** Text */
+  text?: string
+  /** Reply to message ID: Quotes a message in the thread; empty for none */
+  replyToItemId?: string
+  /** Input file property: The property of the input item's file */
+  binaryProperty?: string
+  /** Width: In pixels */
+  width?: number | Expression
+  /** Height: In pixels */
+  height?: number | Expression
+  /** Duration (ms) */
+  durationMs?: number | Expression
+  /** Post: A post link, shortcode or media id */
+  post?: string
+  /** User: A username, profile link or user id */
+  user?: string
+  /** Story media ID */
+  storyMediaId?: string
+  /** Message ID: The message's id within the thread */
+  itemId?: string
+  /** Emoji: Empty takes the reaction back */
+  emoji?: string
+  /** Limit */
+  limit?: number | Expression
+  /** Media URL: The media's URL, e.g. from a received message */
+  url?: string
+  /** Output file property */
+  outputProperty?: string
+  /** Members: Usernames, profile links or user ids */
+  members?: string[] | Expression
+  /** Title */
+  title?: string
+  /** Query */
+  query?: string
+  /** Next-page cursor: From a previous page's nextCursor; empty for the first page */
+  cursor?: string
+  /** Reply to comment ID: The comment this one replies to; empty for a top-level comment */
+  replyToCommentId?: number | Expression
+  /** Comment ID */
+  commentId?: number | Expression
+  /** Caption */
+  caption?: string
+  /** Cover image property: A JPEG cover frame for the video; empty for none */
+  coverProperty?: string
+  /** Name: Empty keeps the current value */
+  fullName?: string
+  /** Bio: Empty keeps the current value */
+  biography?: string
+  /** Link: Empty keeps the current value */
+  externalUrl?: string
+}
+
+/** Instagram Account Trigger (`instagram.accountTrigger@1`) */
+export interface InstagramAccountTriggerV1Params {
+  /** Trigger on */
+  operation: 'DIRECT' | 'ACTIVITY' | 'ACCOUNT'
+  /** Events */
+  directEvents?: Array<'NEW_MESSAGE' | 'MESSAGE_REQUEST' | 'REACTION' | 'MESSAGE_UNSENT'>
+  /** Thread types: Any when nothing is chosen */
+  threadTypes?: Array<'PERSONAL' | 'GROUP'>
+  /** Threads */
+  threadScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which threads: Thread ids */
+  threads?: string[]
+  /** Senders */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which senders: User ids */
+  senders?: string[]
+  /** Ignore the account's own: Skip what the account itself did */
+  ignoreMine?: boolean
+  /** Message types: Any when nothing is chosen */
+  contentTypes?: Array<'TEXT' | 'LINK' | 'MEDIA' | 'VIEW_ONCE_MEDIA' | 'VOICE' | 'GIF' | 'POST_SHARE' | 'REEL_SHARE' | 'STORY_SHARE' | 'STORY_REPLY' | 'PROFILE_SHARE' | 'LIKE' | 'SYSTEM' | 'PLACEHOLDER' | 'LOCATION' | 'VIDEO_CALL' | 'CARD' | 'UNKNOWN'>
+  /** Text match */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Text: What to match, per the text match */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Cooldown per thread (s): At most one event per thread in this many seconds; 0 for none */
+  cooldownSeconds?: number
+  /** Simplify: Emit only the essential fields */
+  simplify?: boolean
+  /** Events */
+  activityEvents?: Array<'NEW_FOLLOWER' | 'FOLLOW_REQUEST' | 'COMMENT' | 'MENTION' | 'LIKE'>
+  /** States: Fire only on these; any when nothing is chosen */
+  states?: Array<'CHALLENGE_REQUIRED' | 'LOGIN_REQUIRED' | 'RATE_LIMITED' | 'BANNED'>
+}
+
+/** Instagram Bot (`instagram.botAction@1`) */
+export interface InstagramBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PUBLISH'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_HEART' | 'SHARE_POST' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'SET_COMMENTS_ENABLED' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'PUBLISH_PHOTO' | 'PUBLISH_REEL' | 'PUBLISH_CAROUSEL' | 'PUBLISH_STORY' | 'GET_PUBLISHING_LIMIT'
+  /** To: The user's id (IGSID), e.g. {{ $json.userId }} of the trigger; only a user who wrote to the account can be messaged */
+  to?: string
+  /** Text: Up to 1000 bytes */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the user's message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Outside the 24 h window */
+    outsideWindow?: 'FAIL' | 'SEND_ANYWAY' | 'HUMAN_AGENT'
+  }
+  /** Kind */
+  mediaKind?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE'
+  /** File URLs: Public HTTPS addresses; images png or jpeg up to 8 MB, other files up to 25 MB */
+  urls?: string[] | Expression
+  /** Post ID: A post, reel or broadcast of the account, e.g. {{ $json.mediaId }} */
+  mediaId?: string
+  /** Quick replies: Up to 13 text chips under the message */
+  quickReplies?: Array<{
+    /** Title: Up to 20 characters */
+    title: string
+    /** Payload: Comes back with the press, e.g. YES */
+    payload: string
+  }>
+  /** Text: Up to 640 characters */
+  body?: string
+  /** Buttons: Up to 3 links or postbacks */
+  buttons?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Cards: Up to 10, each with a title, a picture and up to 3 buttons */
+  cards?: Array<{
+    /** Title */
+    title: string
+    /** Subtitle */
+    subtitle?: string
+    /** Image URL */
+    imageUrl?: string
+    /** Link: What tapping the card opens */
+    url?: string
+    /** Buttons */
+    buttons?: Array<{
+      /** Type */
+      type: 'URL' | 'POSTBACK'
+      /** Title: Up to 20 characters */
+      title: string
+      /** URL or payload: The link it opens, or what the press comes back with */
+      value: string
+    }>
+  }>
+  /** Message ID: e.g. {{ $json.messageId }} of the trigger */
+  messageId?: string
+  /** Take the reaction back */
+  remove?: boolean
+  /** Reaction: love is the heart Instagram shows */
+  reaction?: string
+  /** Action */
+  action?: 'TYPING_ON' | 'TYPING_OFF' | 'MARK_SEEN'
+  /** Comment ID: e.g. {{ $json.commentId }} of the trigger */
+  commentId?: string
+  /** Hidden */
+  hidden?: boolean
+  /** Limit */
+  limit?: number | Expression
+  /** Comments on */
+  enabled?: boolean
+  /** User: The user's id (IGSID), e.g. {{ $json.userId }} of the trigger; only a user who wrote to the account can be messaged */
+  userId?: string
+  /** With user: Only the conversation with this user; empty for all */
+  withUserId?: string
+  /** Conversation ID: e.g. the id from List conversations */
+  conversationId?: string
+  /** Limit */
+  count?: number | Expression
+  /** Image URL: A public JPEG, up to 8 MB */
+  imageUrl?: string
+  /** Caption: Up to 2200 characters, 30 hashtags and 20 mentions */
+  caption?: string
+  /** Video URL: A public MP4 or MOV, 3 s to 15 min */
+  videoUrl?: string
+  /** Cover URL: A public JPEG; empty for a frame of the video */
+  coverUrl?: string
+  /** Also in the feed */
+  shareToFeed?: boolean
+  /** Files: 2 to 10 images or videos */
+  items?: Array<{
+    /** Kind */
+    kind: 'IMAGE' | 'VIDEO'
+    /** URL */
+    url: string
+  }>
+  /** Kind */
+  kind?: 'IMAGE' | 'VIDEO'
+  /** URL */
+  url?: string
+}
+
+/** Instagram Bot Trigger (`instagram.botTrigger@1`) */
+export interface InstagramBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'DIRECT' | 'COMMENTS' | 'ACCOUNT'
+  /** Events */
+  directEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'REFERRAL' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'ACCOUNT_MESSAGE'>
+  /** Users */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** User IDs: From the users the account heard from, or their Instagram-scoped ids */
+  userIds?: string[] | Expression
+  /** Content types: New messages of these types only; empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE' | 'STORY_REPLY' | 'STORY_MENTION' | 'SHARE' | 'QUICK_REPLY' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a pressed button's title counts as text */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Button or quick reply payloads: Only presses of buttons or quick replies with these payloads; empty for any */
+  payloads?: string[]
+  /** Only replies: Messages that reply to a message or a story */
+  repliesOnly?: boolean
+  /** Only from ads or links: Users who came from a Click-to-Direct ad or an ig.me link */
+  fromReferralOnly?: boolean
+  /** Skip older than (s): Events Meta retried while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per user every (s): 0 runs for every event; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (user, text, ids) instead of every field Meta sent */
+  simplify?: boolean
+  /** Events */
+  commentEvents?: Array<'COMMENT' | 'LIVE_COMMENT' | 'MENTION'>
+  /** Posts: Ids of the posts, reels or broadcasts to listen to; empty for all */
+  mediaIds?: string[] | Expression
+  /** Include the account's own comments: Off, the replies the account posts do not start the workflow again */
+  includeOwn?: boolean
+  /** Statuses: Empty for any change */
+  statuses?: Array<'READY' | 'TOKEN_EXPIRING' | 'TOKEN_INVALID' | 'WEBHOOK_UNVERIFIED' | 'UNSUBSCRIBED' | 'UNREACHABLE'>
+}
+
 /** Telegram Account (`telegram.accountAction@2`) */
 export interface TelegramAccountActionV2Params {
   /** Resource */
@@ -1502,6 +1748,10 @@ export interface NodeParamsMap {
   'core.switch@1': CoreSwitchV1Params
   'core.webhook@1': CoreWebhookV1Params
   'http.request@1': HttpRequestV1Params
+  'instagram.accountAction@1': InstagramAccountActionV1Params
+  'instagram.accountTrigger@1': InstagramAccountTriggerV1Params
+  'instagram.botAction@1': InstagramBotActionV1Params
+  'instagram.botTrigger@1': InstagramBotTriggerV1Params
   'telegram.accountAction@2': TelegramAccountActionV2Params
   'telegram.accountTrigger@2': TelegramAccountTriggerV2Params
   'telegram.botAction@2': TelegramBotActionV2Params
