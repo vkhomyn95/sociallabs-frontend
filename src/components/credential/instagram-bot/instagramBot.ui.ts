@@ -1,72 +1,31 @@
-import type { BotStatusUi, CounterItem } from '../bot-common/botPanel'
-import { InstagramBotStatus, type InstagramBotCounters } from './instagramBot.types'
+import { metaBotStatus } from '../meta-bot/metaBot.service'
+import type { MetaBotPlatformUi } from '../meta-bot/metaBot.ui'
 
-// Presentation of the account's delivery. Records make a missing enum member a compile error.
-
-export const INSTAGRAM_STATUS_UI: Readonly<Record<InstagramBotStatus, BotStatusUi>> = {
-  [InstagramBotStatus.STARTING]: {
-    label: 'Starting',
-    color: 'sky',
-    hint: 'The account is checked and subscribed to the app’s webhooks',
-  },
-  [InstagramBotStatus.READY]: { label: 'Receiving', color: 'success', hint: 'Webhooks arrive' },
-  [InstagramBotStatus.NO_PUBLIC_URL]: {
-    label: 'No public address',
-    color: 'error',
-    hint: 'Meta delivers only by webhook, which needs the server’s public HTTPS address (app.public-url)',
-  },
-  [InstagramBotStatus.NO_APP_SECRET]: {
-    label: 'No app secret',
-    color: 'error',
-    hint: 'Add the app secret to the credential; webhook signatures cannot be checked without it',
-  },
-  [InstagramBotStatus.TOKEN_INVALID]: {
-    label: 'Token invalid',
-    color: 'error',
-    hint: 'Instagram refuses the token; generate a new one in the Meta app and paste it into the credential',
-  },
-  [InstagramBotStatus.TOKEN_EXPIRING]: {
-    label: 'Token expiring',
-    color: 'warning',
-    hint: 'The token could not be renewed and expires soon; once expired it is dead for good',
-  },
-  [InstagramBotStatus.WEBHOOK_UNVERIFIED]: {
-    label: 'Set the webhook',
-    color: 'warning',
-    hint: 'Set the callback URL and verify token below in the Meta App Dashboard',
-  },
-  [InstagramBotStatus.UNSUBSCRIBED]: {
-    label: 'Not subscribed',
-    color: 'warning',
-    hint: 'The account does not send its webhooks to the app; the server subscribes it again every few minutes',
-  },
-  [InstagramBotStatus.UNREACHABLE]: { label: 'Unreachable', color: 'warning', hint: 'Instagram cannot be reached' },
-  [InstagramBotStatus.CLOSED]: { label: 'Idle', color: 'gray', hint: 'No active trigger listens to this account' },
+/** The Instagram bot's panel: a professional account by its handle, on the customer's Meta app (ADR-0019, mode A). */
+export const INSTAGRAM_BOT_UI: MetaBotPlatformUi = {
+  title: 'Account delivery',
+  loadError: 'Could not load the account status',
+  icon: 'brand_instagram',
+  load: metaBotStatus('instagram-bot'),
+  accountLine: (account) => (account.name ? `@${account.username} · ${account.name}` : `@${account.username}`),
+  dashboardSteps: [
+    'In the Meta App Dashboard, open your app → Instagram → API setup with Instagram login.',
+    'Under “Configure webhooks”, paste the callback URL and verify token below and press “Verify and save”.',
+    'Subscribe the fields: messages, messaging_postbacks, messaging_seen, message_reactions, messaging_referral, comments.',
+    'Switch the app to Live: Meta delivers webhooks of users only to a live app.',
+  ],
+  notes: [
+    {
+      title: 'Users write first',
+      text:
+        'The account may answer a user within 24 hours of their last message; it cannot start a conversation. A ' +
+        'comment may get one private reply within 7 days.',
+    },
+    {
+      title: 'Token renewal',
+      text:
+        'The token lives 60 days; the server renews it on its own before it expires. A token left to expire cannot ' +
+        'be renewed: generate a new one in the Meta app.',
+    },
+  ],
 }
-
-/** Counters in the order shown. */
-export const INSTAGRAM_COUNTERS: readonly CounterItem<keyof InstagramBotCounters>[] = [
-  { key: 'received', label: 'Received' },
-  { key: 'handled', label: 'Handled' },
-  { key: 'pending', label: 'Queued' },
-  { key: 'duplicates', label: 'Duplicates' },
-  { key: 'dropped', label: 'Dropped' },
-  { key: 'foreign', label: 'Other accounts' },
-]
-
-/** A token with less than this left shows as expiring, whatever the status says. */
-const EXPIRING_SOON_MS = 7 * 24 * 60 * 60 * 1000
-
-/** @returns whether the token expires within a week of `now` */
-export function tokenExpiresSoon(expiresAt: string | null | undefined, now: number = Date.now()): boolean {
-  if (!expiresAt) return false
-  return new Date(expiresAt).getTime() - now < EXPIRING_SOON_MS
-}
-
-/** The steps in the Meta App Dashboard, mode A of ADR-0019: the customer's own app. */
-export const DASHBOARD_STEPS: readonly string[] = [
-  'In the Meta App Dashboard, open your app → Instagram → API setup with Instagram login.',
-  'Under “Configure webhooks”, paste the callback URL and verify token below and press “Verify and save”.',
-  'Subscribe the fields: messages, messaging_postbacks, messaging_seen, message_reactions, messaging_referral, comments.',
-  'Switch the app to Live: Meta delivers webhooks of users only to a live app.',
-]

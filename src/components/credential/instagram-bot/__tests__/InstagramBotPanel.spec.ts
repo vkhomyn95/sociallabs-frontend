@@ -4,11 +4,11 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { CredentialKind, CredentialPlatform, CredentialStatus, CredentialType, type Credential } from '@/stores/credential/types'
 import { CREDENTIAL_PANELS } from '../../credential-panels'
 import InstagramBotPanel from '../InstagramBotPanel.vue'
-import { InstagramBotService } from '../instagramBot.service'
-import { InstagramBotStatus, type InstagramBotStatusResponse } from '../instagramBot.types'
-import { tokenExpiresSoon } from '../instagramBot.ui'
+import { MetaBotStatus, type MetaBotStatusResponse } from '../../meta-bot/metaBot.types'
+import { tokenExpiresSoon } from '../../meta-bot/metaBot.ui'
 
-vi.mock('../instagramBot.service', () => ({ InstagramBotService: { status: vi.fn() } }))
+const { status } = vi.hoisted(() => ({ status: vi.fn() }))
+vi.mock('../../meta-bot/metaBot.service', () => ({ metaBotStatus: () => status }))
 
 const credential: Credential = {
   id: 12,
@@ -24,8 +24,8 @@ const credential: Credential = {
 
 const HOOK = 'https://srv.example/api/v1/public/instagram/bots/h1'
 
-const RUNNING: InstagramBotStatusResponse = {
-  status: InstagramBotStatus.READY,
+const RUNNING: MetaBotStatusResponse = {
+  status: MetaBotStatus.READY,
   statusChangedAt: '2026-11-11T10:00:00Z',
   counters: { received: 1500, handled: 1490, pending: 0, duplicates: 3, dropped: 0, foreign: 2 },
   contacts: { seen: 40, inWindow: 6 },
@@ -35,13 +35,12 @@ const RUNNING: InstagramBotStatusResponse = {
   verifyToken: 'verify-1',
   webhookVerified: true,
   token: { expiresAt: '2099-01-10T00:00:00Z', renewedAt: '2026-11-11T04:00:00Z' },
-  account: { userId: '178', username: 'shop', name: 'The Shop', accountType: 'BUSINESS' },
+  account: { id: '178', username: 'shop', name: 'The Shop', type: 'BUSINESS' },
   subscription: { subscribed: true, fields: ['messages', 'comments'] },
 }
 
-const status = vi.mocked(InstagramBotService.status)
 
-async function mountPanel(answer: InstagramBotStatusResponse) {
+async function mountPanel(answer: MetaBotStatusResponse) {
   status.mockResolvedValue(answer)
   const wrapper = mount(InstagramBotPanel, { props: { credential } })
   await flushPromises()
@@ -76,7 +75,7 @@ describe('InstagramBotPanel', () => {
     const text = (
       await mountPanel({
         ...RUNNING,
-        status: InstagramBotStatus.CLOSED,
+        status: MetaBotStatus.CLOSED,
         counters: null,
         webhookVerified: false,
         token: {},
@@ -94,7 +93,7 @@ describe('InstagramBotPanel', () => {
     const text = (
       await mountPanel({
         ...RUNNING,
-        status: InstagramBotStatus.TOKEN_INVALID,
+        status: MetaBotStatus.TOKEN_INVALID,
         statusMessage: 'Instagram refuses the token',
         publicAddress: false,
         appSecret: false,

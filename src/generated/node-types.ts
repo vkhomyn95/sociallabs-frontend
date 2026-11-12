@@ -584,6 +584,168 @@ export interface InstagramBotTriggerV1Params {
   statuses?: Array<'READY' | 'TOKEN_EXPIRING' | 'TOKEN_INVALID' | 'WEBHOOK_UNVERIFIED' | 'UNSUBSCRIBED' | 'UNREACHABLE'>
 }
 
+/** Messenger Bot (`messenger.botAction@1`) */
+export interface MessengerBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PAGE_PROFILE'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'SEND_MEDIA_TEMPLATE' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'SET_GET_STARTED' | 'SET_GREETING' | 'SET_ICE_BREAKERS' | 'SET_PERSISTENT_MENU' | 'GET_PAGE_PROFILE' | 'DELETE_PAGE_PROFILE'
+  /** To: The person's page-scoped id (PSID), e.g. {{ $json.userId }} of the trigger; only a person who wrote to the page can be messaged */
+  to?: string
+  /** Text: Up to 2000 characters */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the user's message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Outside the 24 h window */
+    outsideWindow?: 'FAIL' | 'SEND_ANYWAY' | 'HUMAN_AGENT'
+  }
+  /** Kind */
+  mediaKind?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE'
+  /** File URLs: Public HTTPS addresses; up to 30 images, or one other file */
+  urls?: string[] | Expression
+  /** Quick replies: Up to 13 text chips under the message */
+  quickReplies?: Array<{
+    /** Title: Up to 20 characters */
+    title: string
+    /** Payload: Comes back with the press, e.g. YES */
+    payload: string
+  }>
+  /** Text: Up to 640 characters */
+  body?: string
+  /** Buttons: Up to 3 links or postbacks */
+  buttons?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Cards: Up to 10, each with a title, a picture and up to 3 buttons */
+  cards?: Array<{
+    /** Title */
+    title: string
+    /** Subtitle */
+    subtitle?: string
+    /** Image URL */
+    imageUrl?: string
+    /** Link: What tapping the card opens */
+    url?: string
+    /** Buttons */
+    buttons?: Array<{
+      /** Type */
+      type: 'URL' | 'POSTBACK'
+      /** Title: Up to 20 characters */
+      title: string
+      /** URL or payload: The link it opens, or what the press comes back with */
+      value: string
+    }>
+  }>
+  /** Shows */
+  mediaType?: 'IMAGE' | 'VIDEO'
+  /** Media: A Facebook URL of the page's photo or video, or an attachment ID */
+  media?: string
+  /** Buttons: Up to 3 links or postbacks */
+  templateButtons?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Message ID: e.g. {{ $json.messageId }} of the trigger */
+  messageId?: string
+  /** Take the reaction back */
+  remove?: boolean
+  /** Reaction: love is the heart Messenger shows */
+  reaction?: string
+  /** Action */
+  action?: 'TYPING_ON' | 'TYPING_OFF' | 'MARK_SEEN'
+  /** Comment ID: e.g. {{ $json.commentId }} of the trigger */
+  commentId?: string
+  /** Hidden */
+  hidden?: boolean
+  /** Post ID: A post of the page, e.g. {{ $json.postId }} */
+  postId?: string
+  /** Limit */
+  limit?: number | Expression
+  /** Person: The person's page-scoped id (PSID), e.g. {{ $json.userId }} of the trigger; only a person who wrote to the page can be messaged */
+  userId?: string
+  /** With person: Only the conversation with this person; empty for all */
+  withUserId?: string
+  /** Conversation ID: e.g. the id from List conversations */
+  conversationId?: string
+  /** Limit */
+  count?: number | Expression
+  /** Payload: Comes back with the tap, e.g. START */
+  payload?: string
+  /** Greeting: Up to 160 characters; {{user_first_name}} is the person's name */
+  greeting?: string
+  /** Questions */
+  questions?: Array<{
+    /** Question */
+    question: string
+    /** Payload: Comes back with the tap, e.g. PRICES */
+    payload: string
+  }>
+  /** Items: Links or postbacks; a tap on a postback comes back to the trigger */
+  items?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Hide the composer: People can only tap the menu and buttons, not type */
+  composerDisabled?: boolean
+  /** Remove */
+  properties?: Array<'GET_STARTED' | 'GREETING' | 'ICE_BREAKERS' | 'PERSISTENT_MENU'>
+}
+
+/** Messenger Bot Trigger (`messenger.botTrigger@1`) */
+export interface MessengerBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'COMMENTS' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'DELIVERED' | 'REFERRAL' | 'OPTIN' | 'MESSAGE_EDITED' | 'ACCOUNT_MESSAGE'>
+  /** People */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Person IDs: From the people who wrote to the page, or their page-scoped ids (PSID) */
+  userIds?: string[] | Expression
+  /** Content types: New messages of these types only; empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE' | 'STICKER' | 'LOCATION' | 'SHARE' | 'QUICK_REPLY' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a pressed button's title counts as text */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Button or quick reply payloads: Only presses of buttons, Get Started or quick replies with these payloads; empty for any */
+  payloads?: string[]
+  /** Only replies: Messages that reply to another message */
+  repliesOnly?: boolean
+  /** Only from ads or links: People who came from a Click-to-Messenger ad or an m.me link */
+  fromReferralOnly?: boolean
+  /** Skip older than (s): Events Meta retried while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per person every (s): 0 runs for every event; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (person, text, ids) instead of every field Meta sent */
+  simplify?: boolean
+  /** Events */
+  commentEvents?: Array<'COMMENT' | 'COMMENT_EDITED' | 'COMMENT_REMOVED' | 'VISITOR_POST'>
+  /** Posts: Ids of the page's posts to listen to; empty for all */
+  postIds?: string[] | Expression
+  /** Include the page's own comments: Off, the replies the page posts do not start the workflow again */
+  includeOwn?: boolean
+  /** Statuses: Empty for any change */
+  statuses?: Array<'READY' | 'TOKEN_INVALID' | 'WEBHOOK_UNVERIFIED' | 'UNSUBSCRIBED' | 'UNREACHABLE'>
+}
+
 /** Telegram Account (`telegram.accountAction@2`) */
 export interface TelegramAccountActionV2Params {
   /** Resource */
@@ -1752,6 +1914,8 @@ export interface NodeParamsMap {
   'instagram.accountTrigger@1': InstagramAccountTriggerV1Params
   'instagram.botAction@1': InstagramBotActionV1Params
   'instagram.botTrigger@1': InstagramBotTriggerV1Params
+  'messenger.botAction@1': MessengerBotActionV1Params
+  'messenger.botTrigger@1': MessengerBotTriggerV1Params
   'telegram.accountAction@2': TelegramAccountActionV2Params
   'telegram.accountTrigger@2': TelegramAccountTriggerV2Params
   'telegram.botAction@2': TelegramBotActionV2Params

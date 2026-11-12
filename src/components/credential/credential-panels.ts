@@ -1,6 +1,7 @@
 import type { Component } from 'vue'
 import { CredentialType } from '@/stores/credential/types'
 import InstagramBotPanel from './instagram-bot/InstagramBotPanel.vue'
+import MessengerBotPanel from './messenger-bot/MessengerBotPanel.vue'
 import TelegramBotPanel from './telegram-bot/TelegramBotPanel.vue'
 import ViberBotPanel from './viber-bot/ViberBotPanel.vue'
 import WhatsAppAccountPanel from './whatsapp-account/WhatsAppAccountPanel.vue'
@@ -18,7 +19,7 @@ export const CREDENTIAL_PANELS: Readonly<Record<CredentialType, Component | null
   [CredentialType.TELEGRAM_BOT]: TelegramBotPanel,
   [CredentialType.VIBER_BOT]: ViberBotPanel,
   [CredentialType.WHATSAPP_BOT]: WhatsAppBotPanel,
-  [CredentialType.MESSENGER_BOT]: null,
+  [CredentialType.MESSENGER_BOT]: MessengerBotPanel,
   [CredentialType.INSTAGRAM_BOT]: InstagramBotPanel,
   [CredentialType.OPENAI]: null,
   [CredentialType.ANTHROPIC]: null,
