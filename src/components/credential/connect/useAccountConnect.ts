@@ -39,6 +39,15 @@ export function useAccountConnect(descriptor: CredentialTypeDescriptor, onConnec
           instructions: QR_INSTRUCTIONS[descriptor.platform] ?? [],
         }
         break
+      case ConnectEventType.OPEN_URL:
+        // The status shown before (e.g. the callback URL the app must list) stays as a note under the button.
+        state.value = {
+          view: ConnectView.AUTHORIZE,
+          url: event.payload.url,
+          message: event.message,
+          note: state.value.view === ConnectView.WAITING ? state.value.message : undefined,
+        }
+        break
       case ConnectEventType.INPUT_REQUIRED:
         state.value = {
           view: ConnectView.INPUT,

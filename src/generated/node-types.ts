@@ -338,6 +338,484 @@ export interface HttpRequestV1Params {
   continueOnFail?: boolean
 }
 
+/** Instagram Account (`instagram.accountAction@1`) */
+export interface InstagramAccountActionV1Params {
+  /** Resource */
+  resource: 'DIRECT' | 'THREAD' | 'USER' | 'MEDIA' | 'PUBLISH' | 'ACCOUNT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_PHOTO' | 'SEND_VIDEO' | 'SEND_VOICE' | 'SHARE_POST' | 'SHARE_PROFILE' | 'SHARE_STORY' | 'REACT' | 'UNSEND' | 'MARK_SEEN' | 'MARK_UNREAD' | 'GET_THREADS' | 'GET_MESSAGES' | 'GET_PENDING_REQUESTS' | 'APPROVE_REQUEST' | 'DECLINE_REQUEST' | 'DOWNLOAD_MEDIA' | 'CREATE_GROUP' | 'RENAME_GROUP' | 'ADD_MEMBERS' | 'REMOVE_MEMBERS' | 'LEAVE_THREAD' | 'MUTE_THREAD' | 'UNMUTE_THREAD' | 'HIDE_THREAD' | 'GET_PROFILE' | 'SEARCH_USERS' | 'FOLLOW' | 'UNFOLLOW' | 'BLOCK' | 'UNBLOCK' | 'REMOVE_FOLLOWER' | 'GET_FOLLOWERS' | 'GET_FOLLOWING' | 'GET_FOLLOW_REQUESTS' | 'APPROVE_FOLLOW_REQUEST' | 'IGNORE_FOLLOW_REQUEST' | 'GET_POST' | 'LIKE' | 'UNLIKE' | 'GET_LIKERS' | 'COMMENT' | 'GET_COMMENTS' | 'DELETE_COMMENT' | 'LIKE_COMMENT' | 'UNLIKE_COMMENT' | 'PUBLISH_PHOTO' | 'PUBLISH_VIDEO' | 'PUBLISH_STORY_PHOTO' | 'PUBLISH_STORY_VIDEO' | 'GET_MY_PROFILE' | 'UPDATE_PROFILE'
+  /** Thread: The thread's id, e.g. from the trigger */
+  thread?: string
+  /** Recipients: Usernames, profile links or user ids; used when no thread is given */
+  recipients?: string[] | Expression
+  /** Text */
+  text?: string
+  /** Reply to message ID: Quotes a message in the thread; empty for none */
+  replyToItemId?: string
+  /** Input file property: The property of the input item's file */
+  binaryProperty?: string
+  /** Width: In pixels */
+  width?: number | Expression
+  /** Height: In pixels */
+  height?: number | Expression
+  /** Duration (ms) */
+  durationMs?: number | Expression
+  /** Post: A post link, shortcode or media id */
+  post?: string
+  /** User: A username, profile link or user id */
+  user?: string
+  /** Story media ID */
+  storyMediaId?: string
+  /** Message ID: The message's id within the thread */
+  itemId?: string
+  /** Emoji: Empty takes the reaction back */
+  emoji?: string
+  /** Limit */
+  limit?: number | Expression
+  /** Media URL: The media's URL, e.g. from a received message */
+  url?: string
+  /** Output file property */
+  outputProperty?: string
+  /** Members: Usernames, profile links or user ids */
+  members?: string[] | Expression
+  /** Title */
+  title?: string
+  /** Query */
+  query?: string
+  /** Next-page cursor: From a previous page's nextCursor; empty for the first page */
+  cursor?: string
+  /** Reply to comment ID: The comment this one replies to; empty for a top-level comment */
+  replyToCommentId?: number | Expression
+  /** Comment ID */
+  commentId?: number | Expression
+  /** Caption */
+  caption?: string
+  /** Cover image property: A JPEG cover frame for the video; empty for none */
+  coverProperty?: string
+  /** Name: Empty keeps the current value */
+  fullName?: string
+  /** Bio: Empty keeps the current value */
+  biography?: string
+  /** Link: Empty keeps the current value */
+  externalUrl?: string
+}
+
+/** Instagram Account Trigger (`instagram.accountTrigger@1`) */
+export interface InstagramAccountTriggerV1Params {
+  /** Trigger on */
+  operation: 'DIRECT' | 'ACTIVITY' | 'ACCOUNT'
+  /** Events */
+  directEvents?: Array<'NEW_MESSAGE' | 'MESSAGE_REQUEST' | 'REACTION' | 'MESSAGE_UNSENT'>
+  /** Thread types: Any when nothing is chosen */
+  threadTypes?: Array<'PERSONAL' | 'GROUP'>
+  /** Threads */
+  threadScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which threads: Thread ids */
+  threads?: string[]
+  /** Senders */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which senders: User ids */
+  senders?: string[]
+  /** Ignore the account's own: Skip what the account itself did */
+  ignoreMine?: boolean
+  /** Message types: Any when nothing is chosen */
+  contentTypes?: Array<'TEXT' | 'LINK' | 'MEDIA' | 'VIEW_ONCE_MEDIA' | 'VOICE' | 'GIF' | 'POST_SHARE' | 'REEL_SHARE' | 'STORY_SHARE' | 'STORY_REPLY' | 'PROFILE_SHARE' | 'LIKE' | 'SYSTEM' | 'PLACEHOLDER' | 'LOCATION' | 'VIDEO_CALL' | 'CARD' | 'UNKNOWN'>
+  /** Text match */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Text: What to match, per the text match */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Cooldown per thread (s): At most one event per thread in this many seconds; 0 for none */
+  cooldownSeconds?: number
+  /** Simplify: Emit only the essential fields */
+  simplify?: boolean
+  /** Events */
+  activityEvents?: Array<'NEW_FOLLOWER' | 'FOLLOW_REQUEST' | 'COMMENT' | 'MENTION' | 'LIKE'>
+  /** States: Fire only on these; any when nothing is chosen */
+  states?: Array<'CHALLENGE_REQUIRED' | 'LOGIN_REQUIRED' | 'RATE_LIMITED' | 'BANNED'>
+}
+
+/** Instagram Bot (`instagram.botAction@1`) */
+export interface InstagramBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PUBLISH' | 'MEDIA' | 'PROFILE' | 'ROUTING' | 'INSIGHTS'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_HEART' | 'SHARE_POST' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'UPLOAD_ATTACHMENT' | 'SEND_ATTACHMENT' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'SET_COMMENTS_ENABLED' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'PUBLISH_PHOTO' | 'PUBLISH_REEL' | 'PUBLISH_CAROUSEL' | 'PUBLISH_STORY' | 'GET_PUBLISHING_LIMIT' | 'LIST_MEDIA' | 'GET_MEDIA' | 'SET_ICE_BREAKERS' | 'SET_PERSISTENT_MENU' | 'GET_MESSAGING_PROFILE' | 'DELETE_MESSAGING_PROFILE' | 'PASS_THREAD_CONTROL' | 'TAKE_THREAD_CONTROL' | 'REQUEST_THREAD_CONTROL' | 'RELEASE_THREAD_CONTROL' | 'GET_THREAD_OWNER' | 'GET_ACCOUNT_INSIGHTS' | 'GET_MEDIA_INSIGHTS'
+  /** To: The user's id (IGSID), e.g. {{ $json.userId }} of the trigger; only a user who wrote to the account can be messaged */
+  to?: string
+  /** Text: Up to 1000 bytes */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the user's message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Outside the 24 h window */
+    outsideWindow?: 'FAIL' | 'SEND_ANYWAY' | 'HUMAN_AGENT'
+  }
+  /** Kind */
+  mediaKind?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE'
+  /** File URLs: Public HTTPS addresses; images png or jpeg up to 8 MB, other files up to 25 MB */
+  urls?: string[] | Expression
+  /** Post ID: A post, reel or broadcast of the account, e.g. {{ $json.mediaId }} */
+  mediaId?: string
+  /** Quick replies: Up to 13 text chips under the message */
+  quickReplies?: Array<{
+    /** Title: Up to 20 characters */
+    title: string
+    /** Payload: Comes back with the press, e.g. YES */
+    payload: string
+  }>
+  /** Text: Up to 640 characters */
+  body?: string
+  /** Buttons: Up to 3 links or postbacks */
+  buttons?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Cards: Up to 10, each with a title, a picture and up to 3 buttons */
+  cards?: Array<{
+    /** Title */
+    title: string
+    /** Subtitle */
+    subtitle?: string
+    /** Image URL */
+    imageUrl?: string
+    /** Link: What tapping the card opens */
+    url?: string
+    /** Buttons */
+    buttons?: Array<{
+      /** Type */
+      type: 'URL' | 'POSTBACK'
+      /** Title: Up to 20 characters */
+      title: string
+      /** URL or payload: The link it opens, or what the press comes back with */
+      value: string
+    }>
+  }>
+  /** File URL: A public HTTPS address Instagram fetches the file from */
+  fileUrl?: string
+  /** Attachment ID: e.g. {{ $json.attachment_id }} of Upload a file */
+  attachmentId?: string
+  /** Message ID: e.g. {{ $json.messageId }} of the trigger */
+  messageId?: string
+  /** Take the reaction back */
+  remove?: boolean
+  /** Reaction: love is the heart Instagram shows */
+  reaction?: string
+  /** Action */
+  action?: 'TYPING_ON' | 'TYPING_OFF' | 'MARK_SEEN'
+  /** Comment ID: e.g. {{ $json.commentId }} of the trigger */
+  commentId?: string
+  /** Hidden */
+  hidden?: boolean
+  /** Limit */
+  limit?: number | Expression
+  /** Comments on */
+  enabled?: boolean
+  /** User: The user's id (IGSID), e.g. {{ $json.userId }} of the trigger; only a user who wrote to the account can be messaged */
+  userId?: string
+  /** With user: Only the conversation with this user; empty for all */
+  withUserId?: string
+  /** Conversation ID: e.g. the id from List conversations */
+  conversationId?: string
+  /** Limit */
+  count?: number | Expression
+  /** Image URL: A public JPEG, up to 8 MB */
+  imageUrl?: string
+  /** Caption: Up to 2200 characters, 30 hashtags and 20 mentions */
+  caption?: string
+  /** Video URL: A public MP4 or MOV, 3 s to 15 min */
+  videoUrl?: string
+  /** Cover URL: A public JPEG; empty for a frame of the video */
+  coverUrl?: string
+  /** Also in the feed */
+  shareToFeed?: boolean
+  /** Files: 2 to 10 images or videos */
+  items?: Array<{
+    /** Kind */
+    kind: 'IMAGE' | 'VIDEO'
+    /** URL */
+    url: string
+  }>
+  /** Kind */
+  kind?: 'IMAGE' | 'VIDEO'
+  /** URL */
+  url?: string
+  /** Questions */
+  questions?: Array<{
+    /** Question */
+    question: string
+    /** Payload: Comes back with the tap, e.g. PRICES */
+    payload: string
+  }>
+  /** Items: Links or postbacks, best 5 or fewer; a tap on a postback comes back to the trigger */
+  menuItems?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Remove */
+  properties?: Array<'ICE_BREAKERS' | 'PERSISTENT_MENU'>
+  /** To app: The app's id; 1217981644879628 is the Instagram Inbox */
+  targetAppId?: string
+  /** Note: Text the other app gets with the change, e.g. why it gets the conversation */
+  metadata?: string
+  /** Metrics */
+  metrics?: Array<'VIEWS' | 'REACH' | 'ACCOUNTS_ENGAGED' | 'TOTAL_INTERACTIONS' | 'LIKES' | 'COMMENTS' | 'SHARES' | 'SAVES' | 'REPLIES' | 'REPOSTS' | 'FOLLOWS_AND_UNFOLLOWS' | 'PROFILE_LINKS_TAPS' | 'FOLLOWER_DEMOGRAPHICS' | 'ENGAGED_AUDIENCE_DEMOGRAPHICS'>
+  /** Other metrics: Meta's names of metrics not in the list, e.g. ones Meta added */
+  otherMetrics?: string[] | Expression
+  /** Period */
+  period?: 'DAY' | 'WEEK' | 'DAYS_28' | 'MONTH' | 'LIFETIME' | 'TOTAL_OVER_RANGE'
+  /** Values */
+  metricType?: 'TOTAL_VALUE' | 'TIME_SERIES'
+  /** Breakdown: e.g. media_product_type, follow_type, age, country */
+  breakdown?: string
+  /** Timeframe: For demographics, e.g. this_month or this_week */
+  timeframe?: string
+  /** Since: A day as YYYY-MM-DD; empty for Meta's default */
+  since?: string
+  /** Until: A day as YYYY-MM-DD; empty for Meta's default */
+  until?: string
+  /** Metrics */
+  mediaMetrics?: Array<'VIEWS' | 'REACH' | 'TOTAL_INTERACTIONS' | 'LIKES' | 'COMMENTS' | 'SHARES' | 'SAVED' | 'REPOSTS' | 'PROFILE_VISITS' | 'FOLLOWS' | 'PROFILE_ACTIVITY' | 'REPLIES' | 'NAVIGATION' | 'IG_REELS_AVG_WATCH_TIME' | 'IG_REELS_VIDEO_VIEW_TOTAL_TIME'>
+}
+
+/** Instagram Bot Trigger (`instagram.botTrigger@1`) */
+export interface InstagramBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'DIRECT' | 'COMMENTS' | 'ACCOUNT'
+  /** Events */
+  directEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'REFERRAL' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'ACCOUNT_MESSAGE' | 'THREAD_CONTROL' | 'STANDBY_MESSAGE'>
+  /** Users */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** User IDs: From the users the account heard from, or their Instagram-scoped ids */
+  userIds?: string[] | Expression
+  /** Content types: New messages of these types only; empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE' | 'STORY_REPLY' | 'STORY_MENTION' | 'SHARE' | 'QUICK_REPLY' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a pressed button's title counts as text */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Button or quick reply payloads: Only presses of buttons or quick replies with these payloads; empty for any */
+  payloads?: string[]
+  /** Only replies: Messages that reply to a message or a story */
+  repliesOnly?: boolean
+  /** Only from ads or links: Users who came from a Click-to-Direct ad or an ig.me link */
+  fromReferralOnly?: boolean
+  /** Skip older than (s): Events Meta retried while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per user every (s): 0 runs for every event; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (user, text, ids) instead of every field Meta sent */
+  simplify?: boolean
+  /** Events */
+  commentEvents?: Array<'COMMENT' | 'LIVE_COMMENT' | 'MENTION'>
+  /** Posts: Ids of the posts, reels or broadcasts to listen to; empty for all */
+  mediaIds?: string[] | Expression
+  /** Include the account's own comments: Off, the replies the account posts do not start the workflow again */
+  includeOwn?: boolean
+  /** Statuses: Empty for any change */
+  statuses?: Array<'READY' | 'TOKEN_EXPIRING' | 'TOKEN_INVALID' | 'WEBHOOK_UNVERIFIED' | 'UNSUBSCRIBED' | 'UNREACHABLE'>
+}
+
+/** Messenger Bot (`messenger.botAction@1`) */
+export interface MessengerBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PAGE_PROFILE' | 'PERSONA' | 'ROUTING' | 'INSIGHTS'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'SEND_MEDIA_TEMPLATE' | 'UPLOAD_ATTACHMENT' | 'SEND_ATTACHMENT' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'SET_GET_STARTED' | 'SET_GREETING' | 'SET_ICE_BREAKERS' | 'SET_PERSISTENT_MENU' | 'GET_PAGE_PROFILE' | 'DELETE_PAGE_PROFILE' | 'CREATE_PERSONA' | 'LIST_PERSONAS' | 'DELETE_PERSONA' | 'PASS_THREAD_CONTROL' | 'TAKE_THREAD_CONTROL' | 'REQUEST_THREAD_CONTROL' | 'RELEASE_THREAD_CONTROL' | 'GET_THREAD_OWNER' | 'GET_PAGE_INSIGHTS'
+  /** To: The person's page-scoped id (PSID), e.g. {{ $json.userId }} of the trigger; only a person who wrote to the page can be messaged */
+  to?: string
+  /** Text: Up to 2000 characters */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the user's message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Outside the 24 h window */
+    outsideWindow?: 'FAIL' | 'SEND_ANYWAY' | 'HUMAN_AGENT'
+    /** Persona ID: Sent with the persona's name and picture, e.g. a support agent; the id from Create a persona or List personas */
+    personaId?: string
+  }
+  /** Kind */
+  mediaKind?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE'
+  /** File URLs: Public HTTPS addresses; up to 30 images, or one other file */
+  urls?: string[] | Expression
+  /** Quick replies: Up to 13 text chips under the message */
+  quickReplies?: Array<{
+    /** Title: Up to 20 characters */
+    title: string
+    /** Payload: Comes back with the press, e.g. YES */
+    payload: string
+  }>
+  /** Text: Up to 640 characters */
+  body?: string
+  /** Buttons: Up to 3 links or postbacks */
+  buttons?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Cards: Up to 10, each with a title, a picture and up to 3 buttons */
+  cards?: Array<{
+    /** Title */
+    title: string
+    /** Subtitle */
+    subtitle?: string
+    /** Image URL */
+    imageUrl?: string
+    /** Link: What tapping the card opens */
+    url?: string
+    /** Buttons */
+    buttons?: Array<{
+      /** Type */
+      type: 'URL' | 'POSTBACK'
+      /** Title: Up to 20 characters */
+      title: string
+      /** URL or payload: The link it opens, or what the press comes back with */
+      value: string
+    }>
+  }>
+  /** Shows */
+  mediaType?: 'IMAGE' | 'VIDEO'
+  /** Media: A Facebook URL of the page's photo or video, or an attachment ID */
+  media?: string
+  /** Buttons: Up to 3 links or postbacks */
+  templateButtons?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** File URL: A public HTTPS address Facebook fetches the file from */
+  fileUrl?: string
+  /** Attachment ID: e.g. {{ $json.attachment_id }} of Upload a file */
+  attachmentId?: string
+  /** Message ID: e.g. {{ $json.messageId }} of the trigger */
+  messageId?: string
+  /** Take the reaction back */
+  remove?: boolean
+  /** Reaction: love is the heart Messenger shows */
+  reaction?: string
+  /** Action */
+  action?: 'TYPING_ON' | 'TYPING_OFF' | 'MARK_SEEN'
+  /** Comment ID: e.g. {{ $json.commentId }} of the trigger */
+  commentId?: string
+  /** Hidden */
+  hidden?: boolean
+  /** Post ID: A post of the page, e.g. {{ $json.postId }} */
+  postId?: string
+  /** Limit */
+  limit?: number | Expression
+  /** Person: The person's page-scoped id (PSID), e.g. {{ $json.userId }} of the trigger; only a person who wrote to the page can be messaged */
+  userId?: string
+  /** With person: Only the conversation with this person; empty for all */
+  withUserId?: string
+  /** Conversation ID: e.g. the id from List conversations */
+  conversationId?: string
+  /** Limit */
+  count?: number | Expression
+  /** Payload: Comes back with the tap, e.g. START */
+  payload?: string
+  /** Greeting: Up to 160 characters; {{user_first_name}} is the person's name */
+  greeting?: string
+  /** Questions */
+  questions?: Array<{
+    /** Question */
+    question: string
+    /** Payload: Comes back with the tap, e.g. PRICES */
+    payload: string
+  }>
+  /** Items: Links or postbacks; a tap on a postback comes back to the trigger */
+  items?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Hide the composer: People can only tap the menu and buttons, not type */
+  composerDisabled?: boolean
+  /** Remove */
+  properties?: Array<'GET_STARTED' | 'GREETING' | 'ICE_BREAKERS' | 'PERSISTENT_MENU'>
+  /** Name: Shown above its messages, e.g. Anna from support */
+  name?: string
+  /** Picture URL: A public HTTPS address of its profile picture */
+  pictureUrl?: string
+  /** Persona ID: The id from Create a persona or List personas */
+  personaId?: string
+  /** To app: The app's id; 263902037430900 is the Page Inbox */
+  targetAppId?: string
+  /** Note: Text the other app gets with the change, e.g. why it gets the conversation */
+  metadata?: string
+  /** Metrics */
+  metrics?: Array<'PAGE_MEDIA_VIEW' | 'PAGE_TOTAL_MEDIA_VIEW_UNIQUE' | 'PAGE_POST_ENGAGEMENTS' | 'PAGE_ACTIONS_POST_REACTIONS_TOTAL' | 'PAGE_VIEWS_TOTAL' | 'PAGE_TOTAL_ACTIONS' | 'PAGE_VIDEO_VIEWS' | 'PAGE_FOLLOWS' | 'PAGE_DAILY_FOLLOWS_UNIQUE' | 'PAGE_DAILY_UNFOLLOWS_UNIQUE' | 'PAGE_MESSAGES_NEW_CONVERSATIONS_UNIQUE' | 'PAGE_MESSAGES_TOTAL_MESSAGING_CONNECTIONS' | 'PAGE_MESSAGES_BLOCKED_CONVERSATIONS_UNIQUE' | 'PAGE_MESSAGES_REPORTED_CONVERSATIONS_UNIQUE'>
+  /** Other metrics: Meta's names of metrics not in the list, e.g. ones Meta added */
+  otherMetrics?: string[] | Expression
+  /** Period */
+  period?: 'DAY' | 'WEEK' | 'DAYS_28' | 'MONTH' | 'LIFETIME' | 'TOTAL_OVER_RANGE'
+  /** Since: A day as YYYY-MM-DD; empty for Meta's default */
+  since?: string
+  /** Until: A day as YYYY-MM-DD; empty for Meta's default */
+  until?: string
+}
+
+/** Messenger Bot Trigger (`messenger.botTrigger@1`) */
+export interface MessengerBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'COMMENTS' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'DELIVERED' | 'REFERRAL' | 'OPTIN' | 'MESSAGE_EDITED' | 'ACCOUNT_MESSAGE' | 'THREAD_CONTROL' | 'STANDBY_MESSAGE'>
+  /** People */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Person IDs: From the people who wrote to the page, or their page-scoped ids (PSID) */
+  userIds?: string[] | Expression
+  /** Content types: New messages of these types only; empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE' | 'STICKER' | 'LOCATION' | 'SHARE' | 'QUICK_REPLY' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a pressed button's title counts as text */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Button or quick reply payloads: Only presses of buttons, Get Started or quick replies with these payloads; empty for any */
+  payloads?: string[]
+  /** Only replies: Messages that reply to another message */
+  repliesOnly?: boolean
+  /** Only from ads or links: People who came from a Click-to-Messenger ad or an m.me link */
+  fromReferralOnly?: boolean
+  /** Skip older than (s): Events Meta retried while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per person every (s): 0 runs for every event; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (person, text, ids) instead of every field Meta sent */
+  simplify?: boolean
+  /** Events */
+  commentEvents?: Array<'COMMENT' | 'COMMENT_EDITED' | 'COMMENT_REMOVED' | 'VISITOR_POST'>
+  /** Posts: Ids of the page's posts to listen to; empty for all */
+  postIds?: string[] | Expression
+  /** Include the page's own comments: Off, the replies the page posts do not start the workflow again */
+  includeOwn?: boolean
+  /** Statuses: Empty for any change */
+  statuses?: Array<'READY' | 'TOKEN_INVALID' | 'WEBHOOK_UNVERIFIED' | 'UNSUBSCRIBED' | 'UNREACHABLE'>
+}
+
 /** Telegram Account (`telegram.accountAction@2`) */
 export interface TelegramAccountActionV2Params {
   /** Resource */
@@ -1117,6 +1595,454 @@ export interface ViberBotTriggerV1Params {
   deliveryEvents?: Array<'DELIVERED' | 'SEEN' | 'FAILED'>
 }
 
+/** WhatsApp Account (`whatsapp.accountAction@1`) */
+export interface WhatsappAccountActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CHAT' | 'GROUP' | 'CONTACT' | 'CHANNEL' | 'ACCOUNT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_FILE' | 'SEND_LOCATION' | 'SEND_CONTACT' | 'SEND_POLL' | 'REACT' | 'EDIT' | 'DELETE' | 'FORWARD' | 'MARK_AS_READ' | 'SHOW_TYPING' | 'DOWNLOAD_FILE' | 'GET_CHATS' | 'GET_MESSAGES' | 'ARCHIVE' | 'UNARCHIVE' | 'MUTE' | 'UNMUTE' | 'PIN' | 'UNPIN' | 'CREATE' | 'GET' | 'ADD_MEMBERS' | 'REMOVE_MEMBERS' | 'PROMOTE' | 'DEMOTE' | 'GET_INVITE_LINK' | 'REVOKE_INVITE_LINK' | 'PREVIEW_INVITE' | 'JOIN' | 'LEAVE' | 'UPDATE' | 'GET_JOIN_REQUESTS' | 'APPROVE_JOIN_REQUESTS' | 'REJECT_JOIN_REQUESTS' | 'CHECK_NUMBERS' | 'GET_PROFILE' | 'BLOCK' | 'UNBLOCK' | 'GET_BUSINESS_PROFILE' | 'FOLLOW' | 'UNFOLLOW' | 'GET_POSTS' | 'GET_ME' | 'UPDATE_PROFILE'
+  /** Chat: A phone number in international form, a JID, or a group invite link */
+  chat?: string
+  /** Text */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Quoted message is mine */
+    replyToFromMe?: boolean | Expression
+    /** Quoted message's sender: In a group, who sent it; e.g. {{ $json.senderJid }} */
+    replyToSender?: string
+  }
+  /** Kind */
+  kind?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'VOICE' | 'DOCUMENT' | 'STICKER'
+  /** Input file property: The property of the input item's file */
+  binaryProperty?: string
+  /** Caption */
+  caption?: string
+  /** File name: Shown in the chat; the input file's name when empty */
+  fileName?: string
+  /** Latitude */
+  latitude?: number | Expression
+  /** Longitude */
+  longitude?: number | Expression
+  /** Place name */
+  placeName?: string
+  /** Address */
+  address?: string
+  /** Contact name */
+  contactName?: string
+  /** Phone numbers: In international form */
+  contactPhones?: string[] | Expression
+  /** Question */
+  question?: string
+  /** Answers: Two to twelve */
+  pollOptions?: string[] | Expression
+  /** Allow several answers */
+  multipleAnswers?: boolean | Expression
+  /** Message ID: The message's id, e.g. from the trigger */
+  messageId?: string
+  /** Sent by the account: Whether the account sent the message; WhatsApp addresses a message with it */
+  fromMe?: boolean | Expression
+  /** Sender: Who sent the message in a group; empty in a private chat or for the account's own */
+  sender?: string
+  /** Emoji: Empty takes the reaction back */
+  emoji?: string
+  /** For everyone: Deletes it for everyone; someone else's message only as a group admin */
+  forEveryone?: boolean | Expression
+  /** Forward to: The chat the message goes to */
+  to?: string
+  /** Typing: Shows "typing…" until the next message, or stops showing it */
+  typing?: boolean | Expression
+  /** Output file property */
+  outputProperty?: string
+  /** Limit */
+  limit?: number | Expression
+  /** Include archived chats */
+  includeArchived?: boolean | Expression
+  /** Hours */
+  hours?: number | Expression
+  /** Name */
+  subject?: string
+  /** Members: Phone numbers in international form or JIDs */
+  members?: string[] | Expression
+  /** Group: The group's JID (…@g.us) or its invite link */
+  group?: string
+  /** Invite link: chat.whatsapp.com/… or its code */
+  invite?: string
+  /** New name: Kept when empty */
+  newSubject?: string
+  /** New description: Kept when empty */
+  newDescription?: string
+  /** Remove the description */
+  clearDescription?: boolean | Expression
+  /** Applicants: Who asked to join: phone numbers or JIDs */
+  applicants?: string[] | Expression
+  /** Phone numbers: In international form; each check is paced, since mass checks get accounts banned */
+  numbers?: string[] | Expression
+  /** Contact: A phone number in international form or a JID */
+  contact?: string
+  /** Channel: The channel's JID (…@newsletter) */
+  channel?: string
+  /** Name: Kept when empty */
+  name?: string
+  /** About: Kept when empty */
+  about?: string
+}
+
+/** WhatsApp Account Trigger (`whatsapp.accountTrigger@1`) */
+export interface WhatsappAccountTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'RECEIPTS' | 'GROUPS' | 'CALLS' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'REACTION'>
+  /** Chat types: Empty for any */
+  chatTypes?: Array<'PRIVATE' | 'GROUP' | 'CHANNEL' | 'BROADCAST'>
+  /** Chats */
+  chatScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Chat list: JIDs from the picker, or phone numbers in international form */
+  chats?: string[]
+  /** Senders */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Sender list: JIDs or phone numbers in international form */
+  senders?: string[]
+  /** Ignore my own: What the account itself sent or did, from this or another of its devices; keeps a reply from starting the workflow again */
+  ignoreMine?: boolean
+  /** Content types: Empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'STICKER' | 'LOCATION' | 'CONTACTS' | 'INTERACTIVE_REPLY' | 'REACTION' | 'ORDER' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a caption counts */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Only mentioning me: Messages that @mention the account */
+  mentionsMeOnly?: boolean
+  /** Only replies to my messages */
+  repliesToMeOnly?: boolean
+  /** Skip forwarded */
+  skipForwarded?: boolean
+  /** Skip older than (s): Messages sent longer ago, e.g. the backlog after a long stop; 0 handles all */
+  maxAgeSeconds?: number
+  /** Skip the backlog: What arrived while the account was disconnected, delivered on reconnecting */
+  skipOffline?: boolean
+  /** One run per chat every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (chat, sender, message id, text) */
+  simplify?: boolean
+  /** Events */
+  receiptEvents?: Array<'DELIVERED' | 'READ' | 'PLAYED'>
+  /** Events */
+  groupEvents?: Array<'ADDED_TO_GROUP' | 'MEMBERS_CHANGED' | 'GROUP_INFO_CHANGED' | 'JOIN_REQUEST'>
+  /** Skip calls missed while away */
+  skipMissed?: boolean
+  /** Events */
+  statusEvents?: Array<'ACCOUNT_STATUS' | 'INTEGRITY_CHALLENGE'>
+}
+
+/** WhatsApp Business (`whatsapp.botAction@1`) */
+export interface WhatsappBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'TEMPLATE' | 'MEDIA' | 'BUSINESS' | 'CONTACT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_IMAGE' | 'SEND_VIDEO' | 'SEND_AUDIO' | 'SEND_DOCUMENT' | 'SEND_STICKER' | 'SEND_LOCATION' | 'SEND_CONTACTS' | 'SEND_REPLY_BUTTONS' | 'SEND_LIST' | 'SEND_CTA_LINK' | 'SEND_REACTION' | 'MARK_AS_READ' | 'SEND_TEMPLATE' | 'LIST_TEMPLATES' | 'GET_TEMPLATE' | 'CREATE_TEMPLATE' | 'DELETE_TEMPLATE' | 'UPLOAD' | 'GET_URL' | 'DOWNLOAD' | 'DELETE' | 'GET_PHONE_NUMBER' | 'GET_PROFILE' | 'UPDATE_PROFILE' | 'GET_WINDOW'
+  /** To: From the users the number heard from, or a phone number in international form */
+  to?: string
+  /** Text: Up to 4096 characters */
+  text?: string
+  /** Preview the first link */
+  previewUrl?: boolean
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the user's message; e.g. {{ $json.messageId }} of the trigger */
+    replyTo?: string
+    /** Outside the 24 h window */
+    outsideWindow?: 'FAIL' | 'SEND_ANYWAY'
+  }
+  /** File */
+  fileSource?: 'URL_OR_ID' | 'BINARY'
+  /** URL or media ID: A public HTTPS address, or the media ID of an uploaded file */
+  file?: string
+  /** Input file property: The property of the input item's file, uploaded first */
+  binaryProperty?: string
+  /** Caption */
+  caption?: string
+  /** File name: Shown to the user; its extension picks the icon */
+  fileName?: string
+  /** Latitude */
+  latitude?: number | Expression
+  /** Longitude */
+  longitude?: number | Expression
+  /** Place name */
+  name?: string
+  /** Address */
+  address?: string
+  /** Contacts */
+  contacts?: Array<{
+    /** Name */
+    name: string
+    /** Phone numbers */
+    phones: string[] | Expression
+  }>
+  /** Text: Up to 1024 characters */
+  body?: string
+  /** Footer */
+  footer?: string
+  /** Buttons: One to three; a press starts the trigger's Button or list reply with the ID */
+  buttons?: Array<{
+    /** ID: Comes back with the press, e.g. yes */
+    id: string
+    /** Title: Up to 20 characters */
+    title: string
+  }>
+  /** Header */
+  header?: string
+  /** List button text: Opens the list, up to 20 characters */
+  buttonText?: string
+  /** Sections: Up to ten rows in all */
+  sections?: Array<{
+    /** Title: Up to 24 characters; needed with several sections */
+    title?: string
+    /** Rows */
+    rows: Array<{
+      /** ID: Comes back with the pick */
+      id: string
+      /** Title: Up to 24 characters */
+      title: string
+      /** Description: Up to 72 characters */
+      description?: string
+    }>
+  }>
+  /** Button text */
+  displayText?: string
+  /** URL */
+  url?: string
+  /** Message ID: The wamid of the message */
+  messageId?: string
+  /** Emoji: Empty takes the reaction back */
+  emoji?: string
+  /** Show typing: The user sees the business typing until the next message or 25 seconds */
+  typing?: boolean
+  /** Template: The template's name; every language of it is listed once */
+  template?: string
+  /** Language: The code of the template's language, e.g. en_US or uk */
+  language?: string
+  /** Header: The kind of the template's header, when it has a variable */
+  headerType?: 'NONE' | 'TEXT' | 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'LOCATION'
+  /** Header text */
+  headerText?: string
+  /** Header variable name: Only for named variables */
+  headerVariable?: string
+  /** Header file */
+  headerFileSource?: 'URL_OR_ID' | 'BINARY'
+  /** Header URL or media ID: A public HTTPS address, or the media ID of an uploaded file */
+  headerFile?: string
+  /** Header file property: The property of the input item's file, uploaded first */
+  headerBinaryProperty?: string
+  /** Header file name: Shown to the user; its extension picks the icon */
+  headerFileName?: string
+  /** Header latitude */
+  headerLatitude?: number | Expression
+  /** Header longitude */
+  headerLongitude?: number | Expression
+  /** Header place name */
+  headerPlaceName?: string
+  /** Header address */
+  headerAddress?: string
+  /** Body variables: In order, {{1}} first; or by name */
+  bodyValues?: Array<{
+    /** Variable name: Only for named variables, e.g. first_name */
+    name?: string
+    /** Value */
+    value: string
+  }>
+  /** Button variables: For quick replies, dynamic URLs, codes and flows */
+  buttonValues?: Array<{
+    /** Button index: The first button is 0 */
+    index: number | Expression
+    /** Button type */
+    type: 'QUICK_REPLY' | 'URL' | 'COPY_CODE' | 'FLOW'
+    /** Value: A quick reply's payload comes back with the press */
+    value?: string
+  }>
+  /** Name contains */
+  nameContains?: string
+  /** Approved only */
+  approvedOnly?: boolean | Expression
+  /** Limit */
+  limit?: number | Expression
+  /** Template ID */
+  templateId?: string
+  /** Name: Lowercase letters, digits and underscores */
+  templateName?: string
+  /** Category */
+  category?: 'MARKETING' | 'UTILITY'
+  /** Variables */
+  variableFormat?: 'POSITIONAL' | 'NAMED'
+  /** Header */
+  headerFormat?: 'NONE' | 'TEXT' | 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'LOCATION'
+  /** Header content: Up to 60 characters, at most one variable; taken as written, so {{1}} is the template's */
+  headerContent?: string
+  /** Header example: An example of the header's variable */
+  headerExample?: string
+  /** Header example file property: The property of the input item's example file. Needs the App ID in the credential */
+  headerExampleProperty?: string
+  /** Body: Up to 1024 characters with variables {{1}}, {{2}} or {{first_name}}; taken as written, so they are the template's, not expressions */
+  bodyText?: string
+  /** Body examples: One per variable, in the order they appear */
+  bodyExamples?: string[] | Expression
+  /** Buttons: Up to ten; quick replies first */
+  templateButtons?: Array<{
+    /** Type */
+    type: 'QUICK_REPLY' | 'URL' | 'PHONE_NUMBER' | 'COPY_CODE'
+    /** Text: Up to 25 characters */
+    text?: string
+    /** URL: May end with {{1}}, filled when sending; taken as written */
+    url?: string
+    /** Example: A whole example address of a dynamic URL, or an example code */
+    example?: string
+    /** Phone number */
+    phoneNumber?: string
+  }>
+  /** Input file property */
+  uploadProperty?: string
+  /** Media ID */
+  mediaId?: string
+  /** Output file property */
+  outputProperty?: string
+  /** About: The line under the name, up to 139 characters */
+  about?: string
+  /** Description */
+  description?: string
+  /** Email */
+  email?: string
+  /** Websites: Up to two */
+  websites?: string[] | Expression
+  /** Industry */
+  vertical?: 'APPAREL' | 'AUTO' | 'BEAUTY' | 'EDU' | 'ENTERTAIN' | 'EVENT_PLAN' | 'FINANCE' | 'GOVT' | 'GROCERY' | 'HEALTH' | 'HOTEL' | 'NONPROFIT' | 'PROF_SERVICES' | 'RESTAURANT' | 'RETAIL' | 'TRAVEL' | 'OTHER' | 'NOT_A_BIZ'
+  /** Profile picture property: The property of the input item's new picture (JPEG or PNG, at least 192×192); empty keeps the picture. Needs the App ID in the credential */
+  pictureProperty?: string
+  /** User: From the users the number heard from, or a phone number in international form */
+  user?: string
+}
+
+/** WhatsApp Business Trigger (`whatsapp.botTrigger@1`) */
+export interface WhatsappBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'DELIVERY' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'INTERACTIVE_REPLY' | 'REACTION' | 'MARKETING_PREFERENCE'>
+  /** Users */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Phone numbers: From the users the number heard from, or numbers typed in international form */
+  userIds?: string[] | Expression
+  /** Content types: Empty for any */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'STICKER' | 'LOCATION' | 'CONTACTS' | 'INTERACTIVE_REPLY' | 'REACTION' | 'ORDER' | 'OTHER'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression; a caption or a pressed button's title counts as text */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Button or row IDs: Only presses of these reply buttons or list rows; empty for any */
+  replyIds?: string[]
+  /** Only replies to the number's messages: Messages that quote one of the number's messages, and button presses */
+  repliesOnly?: boolean
+  /** Only from ads: Messages of users who came from a Click-to-WhatsApp ad or post */
+  fromAdsOnly?: boolean
+  /** Skip older than (s): Messages Meta retried while the server was down; 0 handles all of them */
+  maxAgeSeconds?: number
+  /** One run per user every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (user, type, text) instead of every field Meta sent */
+  simplify?: boolean
+  /** Events */
+  deliveryEvents?: Array<'SENT' | 'DELIVERED' | 'READ' | 'FAILED'>
+  /** Events */
+  accountEvents?: Array<'TEMPLATE_STATUS' | 'TEMPLATE_QUALITY' | 'TEMPLATE_CATEGORY' | 'PHONE_QUALITY' | 'PHONE_NAME' | 'ACCOUNT_UPDATE'>
+  /** Template names: Template events of these templates only; empty for any */
+  templateNames?: string[]
+}
+
+/** XChat Bot (`xchat.botAction@1`) */
+export interface XchatBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CONVERSATION' | 'GROUP' | 'USER'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'REPLY' | 'REACT' | 'SEND_MEDIA' | 'DOWNLOAD_MEDIA' | 'START' | 'TYPING' | 'MARK_READ' | 'GET_HISTORY' | 'CREATE_GROUP' | 'ADD_MEMBERS' | 'REMOVE_MEMBERS' | 'GET_XCHAT_STATUS'
+  /** Conversation: The conversation id from the trigger, a group id (g…), or the user id of someone the bot already talks to */
+  conversation?: string
+  /** Text: Plain text: XChat shows no formatting */
+  text?: string
+  /** Quick replies: Choices shown under the message; the answer reaches the trigger as quickReplyOptionId */
+  quickReplies?: Array<{
+    /** Value: Reported back when picked, e.g. price */
+    id: string
+    /** Label: What the user sees */
+    label: string
+    /** Description */
+    description?: string
+  }>
+  /** Message: The message's encodedEvent from the XChat trigger */
+  message?: string
+  /** Emoji */
+  emoji?: string
+  /** Remove the reaction */
+  remove?: boolean
+  /** Input file field: The input item's file to send, e.g. data */
+  binaryProperty?: string
+  /** File name: Shown to the recipient; empty uses the file's own name */
+  fileName?: string
+  /** Caption */
+  caption?: string
+  /** Media key: The file's media_hash_key from the trigger's attachments */
+  mediaHashKey?: string
+  /** Output file field: Where the downloaded file goes in the output item */
+  outputProperty?: string
+  /** User ID: X user id (a number), e.g. the trigger's senderId */
+  userId?: string
+  /** Name */
+  title?: string
+  /** Members: X user ids; each needs XChat set up. The bot joins on its own */
+  memberIds?: string[] | Expression
+  /** Admins: Members who may manage the group; the bot always is one */
+  adminIds?: string[] | Expression
+  /** Group: The group's id (g…), e.g. the trigger's conversationId */
+  group?: string
+  /** User IDs: X user ids, separated by commas; new members need XChat set up */
+  userIds?: string[] | Expression
+}
+
+/** XChat Bot Trigger (`xchat.botTrigger@1`) */
+export interface XchatBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'CONVERSATIONS'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE'>
+  /** Conversations: Direct, group or both; empty for both */
+  conversationTypes?: Array<'DIRECT' | 'GROUP'>
+  /** Users */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** User IDs: X user ids (numbers), typed or returned by an expression */
+  userIds?: string[] | Expression
+  /** Contains: Empty for any message */
+  contents?: Array<'TEXT' | 'MEDIA' | 'QUICK_REPLY'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Verified senders only: Drop messages whose sender's signature did not check out */
+  verifiedOnly?: boolean
+  /** One run per user every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (conversation, sender, text) instead of the whole event */
+  simplify?: boolean
+  /** Events */
+  conversationEvents?: Array<'ADDED_TO_GROUP'>
+}
+
 /** Parameters of each schema-driven node type, by `name@version`. */
 export interface NodeParamsMap {
   'ai.agent@1': AiAgentV1Params
@@ -1133,6 +2059,12 @@ export interface NodeParamsMap {
   'core.switch@1': CoreSwitchV1Params
   'core.webhook@1': CoreWebhookV1Params
   'http.request@1': HttpRequestV1Params
+  'instagram.accountAction@1': InstagramAccountActionV1Params
+  'instagram.accountTrigger@1': InstagramAccountTriggerV1Params
+  'instagram.botAction@1': InstagramBotActionV1Params
+  'instagram.botTrigger@1': InstagramBotTriggerV1Params
+  'messenger.botAction@1': MessengerBotActionV1Params
+  'messenger.botTrigger@1': MessengerBotTriggerV1Params
   'telegram.accountAction@2': TelegramAccountActionV2Params
   'telegram.accountTrigger@2': TelegramAccountTriggerV2Params
   'telegram.botAction@2': TelegramBotActionV2Params
@@ -1141,6 +2073,12 @@ export interface NodeParamsMap {
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
   'viber.botAction@1': ViberBotActionV1Params
   'viber.botTrigger@1': ViberBotTriggerV1Params
+  'whatsapp.accountAction@1': WhatsappAccountActionV1Params
+  'whatsapp.accountTrigger@1': WhatsappAccountTriggerV1Params
+  'whatsapp.botAction@1': WhatsappBotActionV1Params
+  'whatsapp.botTrigger@1': WhatsappBotTriggerV1Params
+  'xchat.botAction@1': XchatBotActionV1Params
+  'xchat.botTrigger@1': XchatBotTriggerV1Params
 }
 
 export type SchemaNodeTypeKey = keyof NodeParamsMap
