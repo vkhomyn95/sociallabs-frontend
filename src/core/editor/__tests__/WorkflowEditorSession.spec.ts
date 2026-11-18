@@ -4,6 +4,7 @@ import type { DraftApi } from '@/core/sync/DraftApi'
 import type { DraftOp } from '@/core/sync/ops'
 import { ConnectionType, connectionKey } from '@/core/workflow/model'
 import { link, node } from '@/core/workflow/__tests__/fixtures'
+import { extractFragment, placeAt } from '@/core/workflow/clipboard'
 import { ConnectRejection, LinkDirection, WorkflowEditorSession } from '../WorkflowEditorSession'
 
 const httpType: NodeTypeDescriptor = {
@@ -115,5 +116,35 @@ describe('WorkflowEditorSession', () => {
     expect(saved).toEqual([])
     expect(session.history.canUndo).toBe(false)
     expect(session.sync.revision).toBe(9)
+  })
+
+  it('pastes a fragment as one undo step with fresh ids, unique names and inner connections', async () => {
+    const fragment = extractFragment(session.document, ['a', 'b'])!
+    const pasted = session.paste(fragment, placeAt({ x: 500, y: 0 }))
+    await session.sync.flush()
+
+    expect(pasted.map((n) => [n.id, n.name])).toEqual([['n1', 'a 2'], ['n2', 'b 2']])
+    expect(session.document.incoming('n2')).toEqual([{ ...link('n1', 'n2') }])
+    expect(saved[0]!.map((op) => op.op)).toEqual(['addNode', 'addNode', 'addConnection'])
+    expect(session.history.undoLabel).toBe('Paste 2 nodes')
+
+    session.undo()
+    expect(session.document.nodeCount).toBe(2)
+  })
+
+  it('duplicates nodes next to themselves', () => {
+    const [copy] = session.duplicate(['a'])
+    expect(copy).toMatchObject({ name: 'a 2', position: { x: 40, y: 40 } })
+    expect(session.duplicate(['missing'])).toEqual([])
+  })
+
+  it('disables several nodes as one undo step and skips nodes already in that state', () => {
+    session.setDisabled(['a', 'b'], true)
+    expect(session.document.nodes().every((n) => n.disabled)).toBe(true)
+    session.undo()
+    expect(session.document.nodes().some((n) => n.disabled)).toBe(false)
+
+    session.setDisabled(['a'], false)
+    expect(session.history.canUndo).toBe(false)
   })
 })

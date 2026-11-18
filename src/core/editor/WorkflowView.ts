@@ -2,7 +2,10 @@ import type { WorkflowDocument } from '@/core/workflow/WorkflowDocument'
 import type { WorkflowEditorSession } from './WorkflowEditorSession'
 
 /** The edits the canvas and the node details view make; the editor session implements them. */
-export type WorkflowCommands = Pick<WorkflowEditorSession, 'insertNode' | 'connect' | 'move' | 'remove' | 'update'>
+export type WorkflowCommands = Pick<
+  WorkflowEditorSession,
+  'insertNode' | 'connect' | 'move' | 'remove' | 'update' | 'paste' | 'duplicate' | 'setDisabled'
+>
 
 /**
  * A workflow as the canvas and the node details view show it. `commands` is null for a read-only view

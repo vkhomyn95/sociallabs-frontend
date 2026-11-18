@@ -27,6 +27,8 @@ useEditorShortcuts({
   save: () => void editor.save(),
   deleteSelection: () => canvas.value?.deleteSelection(),
   addNode: () => canvas.value?.requestFreeInsert(),
+  duplicateSelection: () => canvas.value?.duplicateSelection(),
+  selectAll: () => canvas.value?.selectAll(),
 })
 
 const creator = useNodeCreator(() => view.value, () => editor.catalog.value)

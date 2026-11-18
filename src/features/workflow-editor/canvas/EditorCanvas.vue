@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { ConnectionMode, VueFlow, useVueFlow, type Connection, type HandleType, type NodeDragEvent, type OnConnectStartParams } from '@vue-flow/core'
-import { SlbButton } from '@sociallabs/frontend-components'
+import { SlbButton, SlbContextMenu } from '@sociallabs/frontend-components'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
@@ -19,6 +19,10 @@ import WorkflowConnectionLine from './edges/WorkflowConnectionLine.vue'
 import { InsertMode, type InsertTarget } from '../creator/insertTarget'
 import { carriesNode, readNodeDrag } from '../creator/dragPayload'
 import { insertTargetFor } from './insertPlacement'
+import { useCanvasSelection } from './useCanvasSelection'
+import { useCanvasMenu, type ContextMenuHandle } from './menu/useCanvasMenu'
+import { useNodeClipboard } from '../clipboard/useNodeClipboard'
+import { useClipboardEvents } from '../clipboard/useClipboardEvents'
 
 /**
  * Vue Flow adapter: renders the view's document through a projection and turns gestures into commands.
@@ -48,6 +52,25 @@ const flow = useVueFlow(flowId)
 
 let projection: CanvasProjection | null = null
 
+const { selection, trackPointer, forgetPointer } = useCanvasSelection(flow)
+const clipboard = useNodeClipboard({ view: props.view, catalog: props.catalog, selection })
+useClipboardEvents({
+  copy: clipboard.copySelection,
+  cut: clipboard.cutSelection,
+  paste: (text) => clipboard.pasteText(text),
+})
+
+const contextMenu = ref<ContextMenuHandle>()
+const menu = useCanvasMenu({
+  view: props.view,
+  selection,
+  clipboard,
+  host: {
+    open: (nodeId) => emit('open', nodeId),
+    addNodeAt: (position) => requestFreeInsert(position),
+  },
+  menu: () => contextMenu.value,
+})
 
 const canvasPort: CanvasPort = {
   setNodes: (nodes) => flow.setNodes(nodes),
@@ -170,29 +193,34 @@ function onDragOver(event: DragEvent): void {
 
 /** Delete the selected nodes and connections as one undo step. */
 function deleteSelection(): void {
-  commands?.remove(
-    flow.getSelectedNodes.value.map((node) => node.id),
-    flow.getSelectedEdges.value.map((edge) => edge.id),
-  )
+  commands?.remove(selection.selectedNodeIds(), selection.selectedEdgeIds())
 }
 
-/** @returns centre of the visible area in flow coordinates, where nodes added without a port go */
-function viewportCentre(): Position {
-  const { x, y, zoom } = flow.viewport.value
-  const { width, height } = flow.dimensions.value
-  return { x: (width / 2 - x) / zoom - NODE_SIZE / 2, y: (height / 2 - y) / zoom - NODE_SIZE / 2 }
+/**
+ * Ask for a node that is not wired to anything, e.g. from the add button, the Tab key or the context menu.
+ *
+ * @param position where the node goes; the centre of the visible area by default
+ */
+function requestFreeInsert(position: Position = selection.viewportCentre()): void {
+  if (commands) emit('create', { mode: InsertMode.FREE, position })
 }
 
-/** Ask for a node that is not wired to anything, e.g. from the add button or the Tab key. */
-function requestFreeInsert(): void {
-  if (commands) emit('create', { mode: InsertMode.FREE, position: viewportCentre() })
-}
-
-defineExpose({ deleteSelection, requestFreeInsert })
+defineExpose({
+  deleteSelection,
+  requestFreeInsert: () => requestFreeInsert(),
+  duplicateSelection: clipboard.duplicateSelection,
+  selectAll: selection.selectAll,
+})
 </script>
 
 <template>
-  <div class="wf-canvas" @drop="onDrop" @dragover="onDragOver">
+  <div
+    class="wf-canvas"
+    @drop="onDrop"
+    @dragover="onDragOver"
+    @pointermove="trackPointer"
+    @pointerleave="forgetPointer"
+  >
     <VueFlow
       :id="flowId"
       :delete-key-code="null"
@@ -212,6 +240,9 @@ defineExpose({ deleteSelection, requestFreeInsert })
       @connect-end="onConnectEnd"
       @node-drag-stop="onDragStop"
       @pane-click="emit('paneClick')"
+      @node-context-menu="menu.onNodeContextMenu"
+      @selection-context-menu="menu.onSelectionContextMenu"
+      @pane-context-menu="menu.onPaneContextMenu"
     >
       <Background pattern-color="var(--slb-color-gray-300)" :gap="20" />
       <Controls :show-interactive="false" />
@@ -239,6 +270,8 @@ defineExpose({ deleteSelection, requestFreeInsert })
       </template>
     </VueFlow>
 
+    <SlbContextMenu ref="contextMenu" class="wf-canvas__menu" :items="menu.items.value" @select="menu.onSelect" />
+
     <SlbButton
       v-if="!readonly"
       class="wf-canvas__add"
@@ -247,7 +280,7 @@ defineExpose({ deleteSelection, requestFreeInsert })
       icon-left="action_plus"
       title="Add a node (Tab)"
       aria-label="Add a node"
-      @click="requestFreeInsert"
+      @click="requestFreeInsert()"
     />
   </div>
 </template>
@@ -264,6 +297,11 @@ defineExpose({ deleteSelection, requestFreeInsert })
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+// The menu opens at the pointer through openAt; its own target area is not used.
+.wf-canvas__menu {
+  display: none;
 }
 
 .wf-canvas__add {
