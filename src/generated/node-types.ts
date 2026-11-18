@@ -1399,6 +1399,87 @@ export interface TelegramBotTriggerV2Params {
   rejectMessage?: string
 }
 
+/** TikTok Account (`tiktok.accountAction@1`) */
+export interface TiktokAccountActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CONVERSATION' | 'USER' | 'CONTENT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SHARE_VIDEO' | 'REACT' | 'REMOVE_REACTION' | 'DELETE' | 'DOWNLOAD_MEDIA' | 'GET_CONVERSATIONS' | 'GET_MESSAGES' | 'GET_MESSAGE_REQUESTS' | 'ACCEPT_REQUEST' | 'GET_PROFILE' | 'BLOCK' | 'GET_VIDEO' | 'GET_MUSIC'
+  /** Conversation: A conversation id (0:1:… or a group's id), a user id, @username or a profile link; a user's is their direct chat with the account */
+  conversation?: string
+  /** Text */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message ID: Quotes the message; e.g. {{ $json.serverId }} of the trigger */
+    replyTo?: string
+    /** Quoted message's index: e.g. {{ $json.index }} of the trigger */
+    replyToIndex?: string
+    /** Quoted message's sender: e.g. {{ $json.senderId }} of the trigger */
+    replyToSender?: string
+    /** Quoted message's text: Shown in the quote of a group reply */
+    replyToText?: string
+  }
+  /** Video: A TikTok video link (tiktok.com/@…/video/…, vm.tiktok.com/…) or its id */
+  video?: string
+  /** Message ID: The message's server id, e.g. {{ $json.serverId }} of the trigger */
+  messageId?: string
+  /** Reaction: An emoji, or TikTok's own reaction key such as oe:heart01_red_heart; a new reaction replaces the account's earlier one */
+  emoji?: string
+  /** For everyone: Unsends the account's own message for both sides (TikTok allows it for about an hour); otherwise hides it for the account only */
+  forEveryone?: boolean | Expression
+  /** Kind */
+  kind?: 'VIDEO' | 'STICKER' | 'VOICE' | Expression
+  /** Media: From the message's attributes: sticker_url, voice_url, or for a video its video_id (or a video link) */
+  media?: string
+  /** Output file property */
+  outputProperty?: string
+  /** Conversations */
+  type?: 'ALL' | 'DIRECT' | 'GROUPS' | Expression
+  /** Limit */
+  limit?: number | Expression
+  /** Cursor: Empty for the newest messages; the nextCursor of a page to read older ones */
+  cursor?: string
+  /** User: A user id, @username or a profile link */
+  user?: string
+  /** Music ID: The sound's numeric id, e.g. the music_id of a shared sound */
+  musicId?: string
+}
+
+/** TikTok Account Trigger (`tiktok.accountTrigger@1`) */
+export interface TiktokAccountTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'REQUESTS' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'REACTION' | 'MESSAGE_DELETED'>
+  /** Conversation types: Any when nothing is chosen */
+  conversationTypes?: Array<'DIRECT' | 'GROUP'>
+  /** Conversations */
+  conversationScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which conversations: Conversation ids (0:1:… for a direct chat, a group's id) */
+  conversations?: string[]
+  /** Senders */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which senders: Numeric TikTok user ids */
+  senders?: string[]
+  /** Ignore the account's own: Skip what the account itself did, from this app or another device */
+  ignoreMine?: boolean
+  /** Message types: Any when nothing is chosen */
+  contentTypes?: Array<'TEXT' | 'VIDEO' | 'PHOTO' | 'MUSIC' | 'PROFILE' | 'VIDEO_COMMENT' | 'LIVE' | 'STORY' | 'STICKER' | 'VOICE' | 'GREETING_CARD' | 'CALL' | 'GROUP_EVENT' | 'OTHER'>
+  /** Text match */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Text: What to match, per the text match */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Cooldown per conversation (s): At most one event per conversation in this many seconds; 0 for none */
+  cooldownSeconds?: number
+  /** Simplify: Emit only the essential fields */
+  simplify?: boolean
+  /** States: Fire only on these; any when nothing is chosen */
+  states?: Array<'READY' | 'RECONNECTING' | 'RATE_LIMITED' | 'SIGNATURE_REJECTED' | 'SHIM_UNAVAILABLE' | 'LOGIN_REQUIRED' | 'CLOSED'>
+}
+
 /** Viber account (`viber.accountAction@1`) */
 export interface ViberAccountActionV1Params {
   /** Operation */
@@ -2069,6 +2150,8 @@ export interface NodeParamsMap {
   'telegram.accountTrigger@2': TelegramAccountTriggerV2Params
   'telegram.botAction@2': TelegramBotActionV2Params
   'telegram.botTrigger@2': TelegramBotTriggerV2Params
+  'tiktok.accountAction@1': TiktokAccountActionV1Params
+  'tiktok.accountTrigger@1': TiktokAccountTriggerV1Params
   'viber.accountAction@1': ViberAccountActionV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
   'viber.botAction@1': ViberBotActionV1Params
