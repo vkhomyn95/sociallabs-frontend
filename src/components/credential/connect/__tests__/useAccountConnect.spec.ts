@@ -4,11 +4,13 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h } from 'vue'
 import {
   ConnectEventType,
+  ConnectInput,
   CredentialKind,
   CredentialPlatform,
   CredentialService,
   CredentialType,
   SetupMode,
+  QrFormat,
   type ConnectEvent,
   type CredentialTypeDescriptor,
 } from '@/stores/credential'
@@ -24,6 +26,18 @@ const WHATSAPP: CredentialTypeDescriptor = {
   kind: CredentialKind.ACCOUNT,
   platform: CredentialPlatform.WHATSAPP,
   displayName: 'WhatsApp account',
+  description: '',
+  setupMode: SetupMode.INTERACTIVE,
+  available: true,
+  testable: true,
+  fields: [],
+}
+
+const TIKTOK: CredentialTypeDescriptor = {
+  type: CredentialType.TIKTOK_ACCOUNT,
+  kind: CredentialKind.ACCOUNT,
+  platform: CredentialPlatform.TIKTOK,
+  displayName: 'TikTok account',
   description: '',
   setupMode: SetupMode.INTERACTIVE,
   available: true,
@@ -80,6 +94,36 @@ describe('useAccountConnect', () => {
     expect(pairing.view === ConnectView.PAIRING_CODE && pairing.code).toBe('ABCDEFGH')
     expect(pairing.view === ConnectView.PAIRING_CODE && pairing.instructions.join(' ')).toContain('phone number instead')
     expect(flow.state.value.view).toBe(ConnectView.PAIRING_CODE)
+  })
+})
+
+describe('useAccountConnect, TikTok', () => {
+  it('shows the QR code with where to scan it in TikTok, then asks for the 2FA code TikTok sent', async () => {
+    const emit = connectEvents()
+    const flow = connectFlow(TIKTOK)
+
+    await flow.start('', { method: 'QR_CODE', proxy: 'http://u:p@proxy.ua:8080' })
+    await flushPromises()
+    emit({
+      type: ConnectEventType.QR_CODE,
+      message: 'Scan the QR code with the TikTok app',
+      payload: { value: 'https://www.tiktok.com/login/qr?token=t', format: QrFormat.LINK },
+    })
+    const qr = flow.state.value
+    emit({ type: ConnectEventType.STATUS, message: 'Scanned, confirm the login in the app', payload: {} })
+    emit({
+      type: ConnectEventType.INPUT_REQUIRED,
+      message: 'Enter the code TikTok sent to v***@gmail.com',
+      payload: { input: ConnectInput.CODE },
+    })
+
+    expect(qr.view).toBe(ConnectView.QR)
+    expect(qr.view === ConnectView.QR && qr.instructions.join(' ')).toContain('QR code scanner')
+    expect(flow.state.value).toMatchObject({
+      view: ConnectView.INPUT,
+      input: ConnectInput.CODE,
+      message: 'Enter the code TikTok sent to v***@gmail.com',
+    })
   })
 })
 

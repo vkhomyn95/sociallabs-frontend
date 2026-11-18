@@ -17,6 +17,11 @@ export const QR_INSTRUCTIONS: Partial<Record<CredentialPlatform, string[]>> = {
     'Go to Settings → Linked devices → Link a device',
     'Point your phone at this screen',
   ],
+  [CredentialPlatform.TIKTOK]: [
+    'Open TikTok on your phone',
+    'Go to Profile → ☰ → QR code scanner (or the scan icon in Search)',
+    'Point your phone at this screen and confirm the login',
+  ],
 }
 
 /** Where to enter a pairing code on each platform; platforms without code linking are omitted. */

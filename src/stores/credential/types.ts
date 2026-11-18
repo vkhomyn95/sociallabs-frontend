@@ -16,6 +16,7 @@ export enum CredentialType {
   VIBER_ACCOUNT = 'VIBER_ACCOUNT',
   WHATSAPP_ACCOUNT = 'WHATSAPP_ACCOUNT',
   INSTAGRAM_ACCOUNT = 'INSTAGRAM_ACCOUNT',
+  TIKTOK_ACCOUNT = 'TIKTOK_ACCOUNT',
 
   TELEGRAM_BOT = 'TELEGRAM_BOT',
   VIBER_BOT = 'VIBER_BOT',
@@ -42,6 +43,7 @@ export enum CredentialPlatform {
   INSTAGRAM = 'INSTAGRAM',
   /** X (formerly Twitter): XChat, its end-to-end encrypted messages. */
   X = 'X',
+  TIKTOK = 'TIKTOK',
   OPENAI = 'OPENAI',
   ANTHROPIC = 'ANTHROPIC',
   GEMINI = 'GEMINI',

@@ -6,6 +6,7 @@ export enum Service {
   MESSENGER = 'messenger',
   INSTAGRAM = 'instagram',
   XCHAT = 'xchat',
+  TIKTOK = 'tiktok',
 }
 
 export const SERVICE_LABELS: Readonly<Record<Service, string>> = {
@@ -15,6 +16,7 @@ export const SERVICE_LABELS: Readonly<Record<Service, string>> = {
   [Service.MESSENGER]: 'Messenger',
   [Service.INSTAGRAM]: 'Instagram',
   [Service.XCHAT]: 'XChat',
+  [Service.TIKTOK]: 'TikTok',
 }
 
 const SERVICES: ReadonlySet<string> = new Set(Object.values(Service))
