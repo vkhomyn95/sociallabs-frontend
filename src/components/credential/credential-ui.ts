@@ -26,6 +26,14 @@ export const PLATFORM_UI: Record<CredentialPlatform, PlatformUi> = {
   [CredentialPlatform.REDIS]: { label: 'Redis', icon: 'dev_database', tone: 'rose' },
 }
 
+/** How a platform this frontend does not know yet shows (a newer backend), instead of breaking the page. */
+const UNKNOWN_PLATFORM_UI: PlatformUi = { label: 'Other', icon: 'action_key', tone: 'gray-600' }
+
+/** @returns how the platform shows; a generic look for one the frontend does not know yet */
+export function platformUi(platform: CredentialPlatform | string): PlatformUi {
+  return PLATFORM_UI[platform as CredentialPlatform] ?? { ...UNKNOWN_PLATFORM_UI, label: String(platform) }
+}
+
 export interface StatusUi {
   label: string
   color: BadgeColor

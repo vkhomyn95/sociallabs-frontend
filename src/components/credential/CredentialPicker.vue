@@ -5,7 +5,7 @@ import type { SelectOption } from '@sociallabs/frontend-components'
 import { CredentialService, CredentialStatus } from '@/stores/credential'
 import type { Credential, CredentialType } from '@/stores/credential'
 import CredentialCreateModal from './CredentialCreateModal.vue'
-import { PLATFORM_UI, STATUS_UI, credentialHints } from './credential-ui'
+import { STATUS_UI, credentialHints, platformUi } from './credential-ui'
 
 /**
  * Select a credential compatible with a node. Options are loaded page by page from
@@ -32,7 +32,7 @@ const selectKey = ref(0)
 const toOption = (credential: Credential): SelectOption => ({
   value: credential.id,
   label: [credential.name, ...credentialHints(credential, 1)].join(' · '),
-  icon: PLATFORM_UI[credential.platform].icon,
+  icon: platformUi(credential.platform).icon,
 })
 
 const optionLabel = (credential: Credential): string => toOption(credential).label

@@ -6,7 +6,7 @@ import {
   CredentialType,
 } from '@/stores/credential/types'
 import type { Credential } from '@/stores/credential/types'
-import { credentialHints, formatPhone, toApiError } from '../credential-ui'
+import { credentialHints, formatPhone, platformUi, toApiError } from '../credential-ui'
 
 function credential(metadata: Record<string, string>, name = 'My bot'): Credential {
   return {
@@ -57,5 +57,12 @@ describe('toApiError', () => {
   it('falls back to the Error message, then to the fallback text', () => {
     expect(toApiError(new Error('Network Error')).message).toBe('Network Error')
     expect(toApiError(42, 'Failed').message).toBe('Failed')
+  })
+})
+
+describe('platformUi', () => {
+  it('shows a known platform as configured and one the frontend does not know yet by its name', () => {
+    expect(platformUi(CredentialPlatform.TIKTOK)).toMatchObject({ label: 'TikTok', icon: 'brand_tiktok' })
+    expect(platformUi('LINE')).toEqual({ label: 'LINE', icon: 'action_key', tone: 'gray-600' })
   })
 })

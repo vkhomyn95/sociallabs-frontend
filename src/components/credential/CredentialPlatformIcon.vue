@@ -2,11 +2,11 @@
 import { computed } from 'vue'
 import { SlbIcon } from '@sociallabs/frontend-components'
 import type { CredentialPlatform } from '@/stores/credential/types'
-import { PLATFORM_UI } from './credential-ui'
+import { platformUi } from './credential-ui'
 
 const props = withDefaults(defineProps<{ platform: CredentialPlatform; size?: number }>(), { size: 36 })
 
-const ui = computed(() => PLATFORM_UI[props.platform])
+const ui = computed(() => platformUi(props.platform))
 </script>
 
 <template>
