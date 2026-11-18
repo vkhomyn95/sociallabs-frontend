@@ -439,9 +439,9 @@ export interface InstagramAccountTriggerV1Params {
 /** Instagram Bot (`instagram.botAction@1`) */
 export interface InstagramBotActionV1Params {
   /** Resource */
-  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PUBLISH'
+  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PUBLISH' | 'MEDIA' | 'PROFILE' | 'ROUTING' | 'INSIGHTS'
   /** Operation */
-  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_HEART' | 'SHARE_POST' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'SET_COMMENTS_ENABLED' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'PUBLISH_PHOTO' | 'PUBLISH_REEL' | 'PUBLISH_CAROUSEL' | 'PUBLISH_STORY' | 'GET_PUBLISHING_LIMIT'
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_HEART' | 'SHARE_POST' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'UPLOAD_ATTACHMENT' | 'SEND_ATTACHMENT' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'SET_COMMENTS_ENABLED' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'PUBLISH_PHOTO' | 'PUBLISH_REEL' | 'PUBLISH_CAROUSEL' | 'PUBLISH_STORY' | 'GET_PUBLISHING_LIMIT' | 'LIST_MEDIA' | 'GET_MEDIA' | 'SET_ICE_BREAKERS' | 'SET_PERSISTENT_MENU' | 'GET_MESSAGING_PROFILE' | 'DELETE_MESSAGING_PROFILE' | 'PASS_THREAD_CONTROL' | 'TAKE_THREAD_CONTROL' | 'REQUEST_THREAD_CONTROL' | 'RELEASE_THREAD_CONTROL' | 'GET_THREAD_OWNER' | 'GET_ACCOUNT_INSIGHTS' | 'GET_MEDIA_INSIGHTS'
   /** To: The user's id (IGSID), e.g. {{ $json.userId }} of the trigger; only a user who wrote to the account can be messaged */
   to?: string
   /** Text: Up to 1000 bytes */
@@ -497,6 +497,10 @@ export interface InstagramBotActionV1Params {
       value: string
     }>
   }>
+  /** File URL: A public HTTPS address Instagram fetches the file from */
+  fileUrl?: string
+  /** Attachment ID: e.g. {{ $json.attachment_id }} of Upload a file */
+  attachmentId?: string
   /** Message ID: e.g. {{ $json.messageId }} of the trigger */
   messageId?: string
   /** Take the reaction back */
@@ -542,6 +546,46 @@ export interface InstagramBotActionV1Params {
   kind?: 'IMAGE' | 'VIDEO'
   /** URL */
   url?: string
+  /** Questions */
+  questions?: Array<{
+    /** Question */
+    question: string
+    /** Payload: Comes back with the tap, e.g. PRICES */
+    payload: string
+  }>
+  /** Items: Links or postbacks, best 5 or fewer; a tap on a postback comes back to the trigger */
+  menuItems?: Array<{
+    /** Type */
+    type: 'URL' | 'POSTBACK'
+    /** Title: Up to 20 characters */
+    title: string
+    /** URL or payload: The link it opens, or what the press comes back with */
+    value: string
+  }>
+  /** Remove */
+  properties?: Array<'ICE_BREAKERS' | 'PERSISTENT_MENU'>
+  /** To app: The app's id; 1217981644879628 is the Instagram Inbox */
+  targetAppId?: string
+  /** Note: Text the other app gets with the change, e.g. why it gets the conversation */
+  metadata?: string
+  /** Metrics */
+  metrics?: Array<'VIEWS' | 'REACH' | 'ACCOUNTS_ENGAGED' | 'TOTAL_INTERACTIONS' | 'LIKES' | 'COMMENTS' | 'SHARES' | 'SAVES' | 'REPLIES' | 'REPOSTS' | 'FOLLOWS_AND_UNFOLLOWS' | 'PROFILE_LINKS_TAPS' | 'FOLLOWER_DEMOGRAPHICS' | 'ENGAGED_AUDIENCE_DEMOGRAPHICS'>
+  /** Other metrics: Meta's names of metrics not in the list, e.g. ones Meta added */
+  otherMetrics?: string[] | Expression
+  /** Period */
+  period?: 'DAY' | 'WEEK' | 'DAYS_28' | 'MONTH' | 'LIFETIME' | 'TOTAL_OVER_RANGE'
+  /** Values */
+  metricType?: 'TOTAL_VALUE' | 'TIME_SERIES'
+  /** Breakdown: e.g. media_product_type, follow_type, age, country */
+  breakdown?: string
+  /** Timeframe: For demographics, e.g. this_month or this_week */
+  timeframe?: string
+  /** Since: A day as YYYY-MM-DD; empty for Meta's default */
+  since?: string
+  /** Until: A day as YYYY-MM-DD; empty for Meta's default */
+  until?: string
+  /** Metrics */
+  mediaMetrics?: Array<'VIEWS' | 'REACH' | 'TOTAL_INTERACTIONS' | 'LIKES' | 'COMMENTS' | 'SHARES' | 'SAVED' | 'REPOSTS' | 'PROFILE_VISITS' | 'FOLLOWS' | 'PROFILE_ACTIVITY' | 'REPLIES' | 'NAVIGATION' | 'IG_REELS_AVG_WATCH_TIME' | 'IG_REELS_VIDEO_VIEW_TOTAL_TIME'>
 }
 
 /** Instagram Bot Trigger (`instagram.botTrigger@1`) */
@@ -549,7 +593,7 @@ export interface InstagramBotTriggerV1Params {
   /** Trigger on */
   operation: 'DIRECT' | 'COMMENTS' | 'ACCOUNT'
   /** Events */
-  directEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'REFERRAL' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'ACCOUNT_MESSAGE'>
+  directEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'REFERRAL' | 'MESSAGE_EDITED' | 'MESSAGE_DELETED' | 'ACCOUNT_MESSAGE' | 'THREAD_CONTROL' | 'STANDBY_MESSAGE'>
   /** Users */
   userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
   /** User IDs: From the users the account heard from, or their Instagram-scoped ids */
@@ -587,9 +631,9 @@ export interface InstagramBotTriggerV1Params {
 /** Messenger Bot (`messenger.botAction@1`) */
 export interface MessengerBotActionV1Params {
   /** Resource */
-  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PAGE_PROFILE'
+  resource: 'MESSAGE' | 'COMMENT' | 'USER' | 'CONVERSATION' | 'PAGE_PROFILE' | 'PERSONA' | 'ROUTING' | 'INSIGHTS'
   /** Operation */
-  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'SEND_MEDIA_TEMPLATE' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'SET_GET_STARTED' | 'SET_GREETING' | 'SET_ICE_BREAKERS' | 'SET_PERSISTENT_MENU' | 'GET_PAGE_PROFILE' | 'DELETE_PAGE_PROFILE'
+  operation: 'SEND_TEXT' | 'SEND_MEDIA' | 'SEND_QUICK_REPLIES' | 'SEND_BUTTONS' | 'SEND_CARDS' | 'SEND_MEDIA_TEMPLATE' | 'UPLOAD_ATTACHMENT' | 'SEND_ATTACHMENT' | 'REACT' | 'SEND_ACTION' | 'PRIVATE_REPLY' | 'REPLY' | 'HIDE' | 'DELETE' | 'GET_COMMENTS' | 'GET_PROFILE' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'SET_GET_STARTED' | 'SET_GREETING' | 'SET_ICE_BREAKERS' | 'SET_PERSISTENT_MENU' | 'GET_PAGE_PROFILE' | 'DELETE_PAGE_PROFILE' | 'CREATE_PERSONA' | 'LIST_PERSONAS' | 'DELETE_PERSONA' | 'PASS_THREAD_CONTROL' | 'TAKE_THREAD_CONTROL' | 'REQUEST_THREAD_CONTROL' | 'RELEASE_THREAD_CONTROL' | 'GET_THREAD_OWNER' | 'GET_PAGE_INSIGHTS'
   /** To: The person's page-scoped id (PSID), e.g. {{ $json.userId }} of the trigger; only a person who wrote to the page can be messaged */
   to?: string
   /** Text: Up to 2000 characters */
@@ -600,6 +644,8 @@ export interface MessengerBotActionV1Params {
     replyTo?: string
     /** Outside the 24 h window */
     outsideWindow?: 'FAIL' | 'SEND_ANYWAY' | 'HUMAN_AGENT'
+    /** Persona ID: Sent with the persona's name and picture, e.g. a support agent; the id from Create a persona or List personas */
+    personaId?: string
   }
   /** Kind */
   mediaKind?: 'IMAGE' | 'VIDEO' | 'AUDIO' | 'FILE'
@@ -656,6 +702,10 @@ export interface MessengerBotActionV1Params {
     /** URL or payload: The link it opens, or what the press comes back with */
     value: string
   }>
+  /** File URL: A public HTTPS address Facebook fetches the file from */
+  fileUrl?: string
+  /** Attachment ID: e.g. {{ $json.attachment_id }} of Upload a file */
+  attachmentId?: string
   /** Message ID: e.g. {{ $json.messageId }} of the trigger */
   messageId?: string
   /** Take the reaction back */
@@ -704,6 +754,26 @@ export interface MessengerBotActionV1Params {
   composerDisabled?: boolean
   /** Remove */
   properties?: Array<'GET_STARTED' | 'GREETING' | 'ICE_BREAKERS' | 'PERSISTENT_MENU'>
+  /** Name: Shown above its messages, e.g. Anna from support */
+  name?: string
+  /** Picture URL: A public HTTPS address of its profile picture */
+  pictureUrl?: string
+  /** Persona ID: The id from Create a persona or List personas */
+  personaId?: string
+  /** To app: The app's id; 263902037430900 is the Page Inbox */
+  targetAppId?: string
+  /** Note: Text the other app gets with the change, e.g. why it gets the conversation */
+  metadata?: string
+  /** Metrics */
+  metrics?: Array<'PAGE_MEDIA_VIEW' | 'PAGE_TOTAL_MEDIA_VIEW_UNIQUE' | 'PAGE_POST_ENGAGEMENTS' | 'PAGE_ACTIONS_POST_REACTIONS_TOTAL' | 'PAGE_VIEWS_TOTAL' | 'PAGE_TOTAL_ACTIONS' | 'PAGE_VIDEO_VIEWS' | 'PAGE_FOLLOWS' | 'PAGE_DAILY_FOLLOWS_UNIQUE' | 'PAGE_DAILY_UNFOLLOWS_UNIQUE' | 'PAGE_MESSAGES_NEW_CONVERSATIONS_UNIQUE' | 'PAGE_MESSAGES_TOTAL_MESSAGING_CONNECTIONS' | 'PAGE_MESSAGES_BLOCKED_CONVERSATIONS_UNIQUE' | 'PAGE_MESSAGES_REPORTED_CONVERSATIONS_UNIQUE'>
+  /** Other metrics: Meta's names of metrics not in the list, e.g. ones Meta added */
+  otherMetrics?: string[] | Expression
+  /** Period */
+  period?: 'DAY' | 'WEEK' | 'DAYS_28' | 'MONTH' | 'LIFETIME' | 'TOTAL_OVER_RANGE'
+  /** Since: A day as YYYY-MM-DD; empty for Meta's default */
+  since?: string
+  /** Until: A day as YYYY-MM-DD; empty for Meta's default */
+  until?: string
 }
 
 /** Messenger Bot Trigger (`messenger.botTrigger@1`) */
@@ -711,7 +781,7 @@ export interface MessengerBotTriggerV1Params {
   /** Trigger on */
   operation: 'MESSAGES' | 'COMMENTS' | 'ACCOUNT'
   /** Events */
-  messageEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'DELIVERED' | 'REFERRAL' | 'OPTIN' | 'MESSAGE_EDITED' | 'ACCOUNT_MESSAGE'>
+  messageEvents?: Array<'NEW_MESSAGE' | 'POSTBACK' | 'REACTION' | 'READ' | 'DELIVERED' | 'REFERRAL' | 'OPTIN' | 'MESSAGE_EDITED' | 'ACCOUNT_MESSAGE' | 'THREAD_CONTROL' | 'STANDBY_MESSAGE'>
   /** People */
   userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
   /** Person IDs: From the people who wrote to the page, or their page-scoped ids (PSID) */
@@ -1894,6 +1964,85 @@ export interface WhatsappBotTriggerV1Params {
   templateNames?: string[]
 }
 
+/** XChat Bot (`xchat.botAction@1`) */
+export interface XchatBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CONVERSATION' | 'GROUP' | 'USER'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'REPLY' | 'REACT' | 'SEND_MEDIA' | 'DOWNLOAD_MEDIA' | 'START' | 'TYPING' | 'MARK_READ' | 'GET_HISTORY' | 'CREATE_GROUP' | 'ADD_MEMBERS' | 'REMOVE_MEMBERS' | 'GET_XCHAT_STATUS'
+  /** Conversation: The conversation id from the trigger, a group id (g…), or the user id of someone the bot already talks to */
+  conversation?: string
+  /** Text: Plain text: XChat shows no formatting */
+  text?: string
+  /** Quick replies: Choices shown under the message; the answer reaches the trigger as quickReplyOptionId */
+  quickReplies?: Array<{
+    /** Value: Reported back when picked, e.g. price */
+    id: string
+    /** Label: What the user sees */
+    label: string
+    /** Description */
+    description?: string
+  }>
+  /** Message: The message's encodedEvent from the XChat trigger */
+  message?: string
+  /** Emoji */
+  emoji?: string
+  /** Remove the reaction */
+  remove?: boolean
+  /** Input file field: The input item's file to send, e.g. data */
+  binaryProperty?: string
+  /** File name: Shown to the recipient; empty uses the file's own name */
+  fileName?: string
+  /** Caption */
+  caption?: string
+  /** Media key: The file's media_hash_key from the trigger's attachments */
+  mediaHashKey?: string
+  /** Output file field: Where the downloaded file goes in the output item */
+  outputProperty?: string
+  /** User ID: X user id (a number), e.g. the trigger's senderId */
+  userId?: string
+  /** Name */
+  title?: string
+  /** Members: X user ids; each needs XChat set up. The bot joins on its own */
+  memberIds?: string[] | Expression
+  /** Admins: Members who may manage the group; the bot always is one */
+  adminIds?: string[] | Expression
+  /** Group: The group's id (g…), e.g. the trigger's conversationId */
+  group?: string
+  /** User IDs: X user ids, separated by commas; new members need XChat set up */
+  userIds?: string[] | Expression
+}
+
+/** XChat Bot Trigger (`xchat.botTrigger@1`) */
+export interface XchatBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'CONVERSATIONS'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE'>
+  /** Conversations: Direct, group or both; empty for both */
+  conversationTypes?: Array<'DIRECT' | 'GROUP'>
+  /** Users */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** User IDs: X user ids (numbers), typed or returned by an expression */
+  userIds?: string[] | Expression
+  /** Contains: Empty for any message */
+  contents?: Array<'TEXT' | 'MEDIA' | 'QUICK_REPLY'>
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Verified senders only: Drop messages whose sender's signature did not check out */
+  verifiedOnly?: boolean
+  /** One run per user every (s): 0 runs for every message; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials (conversation, sender, text) instead of the whole event */
+  simplify?: boolean
+  /** Events */
+  conversationEvents?: Array<'ADDED_TO_GROUP'>
+}
+
 /** Parameters of each schema-driven node type, by `name@version`. */
 export interface NodeParamsMap {
   'ai.agent@1': AiAgentV1Params
@@ -1928,6 +2077,8 @@ export interface NodeParamsMap {
   'whatsapp.accountTrigger@1': WhatsappAccountTriggerV1Params
   'whatsapp.botAction@1': WhatsappBotActionV1Params
   'whatsapp.botTrigger@1': WhatsappBotTriggerV1Params
+  'xchat.botAction@1': XchatBotActionV1Params
+  'xchat.botTrigger@1': XchatBotTriggerV1Params
 }
 
 export type SchemaNodeTypeKey = keyof NodeParamsMap

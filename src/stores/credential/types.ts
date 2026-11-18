@@ -22,6 +22,7 @@ export enum CredentialType {
   WHATSAPP_BOT = 'WHATSAPP_BOT',
   MESSENGER_BOT = 'MESSENGER_BOT',
   INSTAGRAM_BOT = 'INSTAGRAM_BOT',
+  XCHAT_BOT = 'XCHAT_BOT',
 
   OPENAI = 'OPENAI',
   ANTHROPIC = 'ANTHROPIC',
@@ -39,6 +40,8 @@ export enum CredentialPlatform {
   WHATSAPP = 'WHATSAPP',
   MESSENGER = 'MESSENGER',
   INSTAGRAM = 'INSTAGRAM',
+  /** X (formerly Twitter): XChat, its end-to-end encrypted messages. */
+  X = 'X',
   OPENAI = 'OPENAI',
   ANTHROPIC = 'ANTHROPIC',
   GEMINI = 'GEMINI',
@@ -181,6 +184,8 @@ export enum ConnectEventType {
   QR_CODE = 'QR_CODE',
   /** A code the user enters on their phone (WhatsApp's "Link with phone number instead"). */
   PAIRING_CODE = 'PAIRING_CODE',
+  /** A page the user opens to authorize the app (OAuth, e.g. an XChat bot). */
+  OPEN_URL = 'OPEN_URL',
   INPUT_REQUIRED = 'INPUT_REQUIRED',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
@@ -209,6 +214,7 @@ export type ConnectEvent =
   | ConnectEventBase<ConnectEventType.STATUS, Record<string, never>>
   | ConnectEventBase<ConnectEventType.QR_CODE, { value: string; format: QrFormat }>
   | ConnectEventBase<ConnectEventType.PAIRING_CODE, { code: string }>
+  | ConnectEventBase<ConnectEventType.OPEN_URL, { url: string }>
   | ConnectEventBase<ConnectEventType.INPUT_REQUIRED, { input: ConnectInput; hint?: string; timeout?: number; error?: string }>
   | ConnectEventBase<ConnectEventType.SUCCESS, { credential: Credential }>
   | ConnectEventBase<ConnectEventType.ERROR, Record<string, never>>

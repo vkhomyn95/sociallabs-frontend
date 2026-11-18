@@ -17,6 +17,7 @@ export const PLATFORM_UI: Record<CredentialPlatform, PlatformUi> = {
   [CredentialPlatform.WHATSAPP]: { label: 'WhatsApp', icon: 'brand_whatsapp', tone: 'success' },
   [CredentialPlatform.MESSENGER]: { label: 'Messenger', icon: 'brand_messenger', tone: 'blue' },
   [CredentialPlatform.INSTAGRAM]: { label: 'Instagram', icon: 'brand_instagram', tone: 'pink' },
+  [CredentialPlatform.X]: { label: 'X', icon: 'brand_x', tone: 'gray-900' },
   [CredentialPlatform.OPENAI]: { label: 'OpenAI', icon: 'ai_sparkles', tone: 'gray-900' },
   [CredentialPlatform.ANTHROPIC]: { label: 'Anthropic', icon: 'ai_sparkle', tone: 'orange' },
   [CredentialPlatform.GEMINI]: { label: 'Google Gemini', icon: 'brand_google', tone: 'blue' },

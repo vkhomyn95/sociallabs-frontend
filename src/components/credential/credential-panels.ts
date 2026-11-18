@@ -6,6 +6,7 @@ import TelegramBotPanel from './telegram-bot/TelegramBotPanel.vue'
 import ViberBotPanel from './viber-bot/ViberBotPanel.vue'
 import WhatsAppAccountPanel from './whatsapp-account/WhatsAppAccountPanel.vue'
 import WhatsAppBotPanel from './whatsapp-bot/WhatsAppBotPanel.vue'
+import XChatBotPanel from './xchat-bot/XChatBotPanel.vue'
 
 /**
  * A live panel shown under the form of an existing credential, for types with state beyond their data (a bot's
@@ -21,6 +22,7 @@ export const CREDENTIAL_PANELS: Readonly<Record<CredentialType, Component | null
   [CredentialType.WHATSAPP_BOT]: WhatsAppBotPanel,
   [CredentialType.MESSENGER_BOT]: MessengerBotPanel,
   [CredentialType.INSTAGRAM_BOT]: InstagramBotPanel,
+  [CredentialType.XCHAT_BOT]: XChatBotPanel,
   [CredentialType.OPENAI]: null,
   [CredentialType.ANTHROPIC]: null,
   [CredentialType.GEMINI]: null,
