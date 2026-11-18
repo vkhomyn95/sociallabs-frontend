@@ -34,9 +34,9 @@ export class NodeCreatorModel {
   open(item: OpeningItem): CreatorView {
     switch (item.kind) {
       case CreatorItemKind.APP:
-        return this.views.app(item.service)
+        return this.views.app(item.service, item.scope)
       case CreatorItemKind.VARIANT:
-        return this.views.variant(item.service, item.variant)
+        return this.views.variant(item.service, item.variant, item.scope)
       case CreatorItemKind.CATEGORY:
         return this.views.category(item.category)
     }

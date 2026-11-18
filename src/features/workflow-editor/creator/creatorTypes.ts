@@ -1,4 +1,4 @@
-import { NodeGroup, type NodeTypeDescriptor } from '@/core/node-types/descriptor'
+import { NodeGroup, NodeKind, type NodeTypeDescriptor } from '@/core/node-types/descriptor'
 import type { Parameters } from '@/core/workflow/model'
 import type { Service } from './services'
 import type { AppVariant } from './variants'
@@ -39,6 +39,21 @@ export const CATEGORY_OF_GROUP: Readonly<Record<NodeGroup, CreatorCategory>> = {
   [NodeGroup.CORE]: CreatorCategory.CORE,
 }
 
+/** What an app's view lists: the events that start a workflow, or what its nodes do once it runs. */
+export enum EntryScope {
+  TRIGGERS = 'TRIGGERS',
+  ACTIONS = 'ACTIONS',
+}
+
+export const SCOPE_NOUNS: Readonly<Record<EntryScope, { one: string; many: string }>> = {
+  [EntryScope.TRIGGERS]: { one: 'trigger', many: 'triggers' },
+  [EntryScope.ACTIONS]: { one: 'action', many: 'actions' },
+}
+
+/** @returns the scope a node type's entries belong to */
+export const scopeOf = (type: NodeTypeDescriptor): EntryScope =>
+  type.kind === NodeKind.TRIGGER ? EntryScope.TRIGGERS : EntryScope.ACTIONS
+
 export enum CreatorItemKind {
   /** Adds a node, possibly preset to one operation or event. */
   NODE = 'NODE',
@@ -64,6 +79,8 @@ export interface AppItem {
   readonly kind: CreatorItemKind.APP
   readonly key: string
   readonly service: Service
+  /** Only the app's triggers or only its actions, as where it was opened from. */
+  readonly scope: EntryScope
   readonly title: string
   readonly description: string
 }
@@ -73,6 +90,7 @@ export interface VariantItem {
   readonly key: string
   readonly service: Service
   readonly variant: AppVariant
+  readonly scope: EntryScope
   readonly title: string
   readonly description: string
 }

@@ -120,7 +120,10 @@ onMounted(() => (search.value?.$el as HTMLElement | undefined)?.querySelector('i
 
     <div ref="list" class="wf-creator__list" role="listbox">
       <section v-for="section in sections" :key="section.key" class="wf-creator__section">
-        <h3 v-if="section.title" class="wf-creator__section-title">{{ section.title }}</h3>
+        <h3 v-if="section.title" class="wf-creator__section-title">
+          <span>{{ section.title }}</span>
+          <span class="wf-creator__section-count">{{ section.items.length }}</span>
+        </h3>
         <CreatorItemRow
           v-for="item in section.items"
           :key="item.key"
@@ -191,6 +194,10 @@ onMounted(() => (search.value?.$el as HTMLElement | undefined)?.querySelector('i
 }
 
 .wf-creator__section-title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
   margin: 0;
   padding: 4px 10px;
   font-size: 11px;
@@ -198,6 +205,11 @@ onMounted(() => (search.value?.$el as HTMLElement | undefined)?.querySelector('i
   color: var(--slb-color-gray-500);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.wf-creator__section-count {
+  font-weight: var(--slb-fw-regular, 400);
+  color: var(--slb-color-gray-400);
 }
 
 .wf-creator__empty {

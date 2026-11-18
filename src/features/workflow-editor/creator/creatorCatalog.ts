@@ -1,5 +1,5 @@
 import { NodeKind, NodeTypeStatus, type NodeTypeDescriptor } from '@/core/node-types/descriptor'
-import { CATEGORY_OF_GROUP, CreatorCategory, type CreatorOptions } from './creatorTypes'
+import { CATEGORY_OF_GROUP, CreatorCategory, scopeOf, type CreatorOptions, type EntryScope } from './creatorTypes'
 import { serviceOf, type Service } from './services'
 import { variantOf, VARIANT_ORDER, type AppVariant } from './variants'
 
@@ -24,16 +24,16 @@ export class CreatorCatalog {
     return this.types.filter((type) => type.kind !== NodeKind.TRIGGER && CATEGORY_OF_GROUP[type.group] === category)
   }
 
-  /** @returns the app's node types, by name */
-  typesOfService(service: Service): NodeTypeDescriptor[] {
+  /** @returns the app's triggers or its actions, by name */
+  typesOfService(service: Service, scope: EntryScope): NodeTypeDescriptor[] {
     return this.types
-      .filter((type) => serviceOf(type.name) === service)
+      .filter((type) => serviceOf(type.name) === service && scopeOf(type) === scope)
       .sort((a, b) => a.displayName.localeCompare(b.displayName))
   }
 
-  /** @returns the ways the app's nodes are used, in display order; one or none means the app is not split */
-  variantsOf(service: Service): AppVariant[] {
-    const present = new Set(this.typesOfService(service).map(variantOf))
+  /** @returns the ways the app's nodes of the scope are used, in display order; one or none means no split */
+  variantsOf(service: Service, scope: EntryScope): AppVariant[] {
+    const present = new Set(this.typesOfService(service, scope).map(variantOf))
     return VARIANT_ORDER.filter((variant) => present.has(variant))
   }
 

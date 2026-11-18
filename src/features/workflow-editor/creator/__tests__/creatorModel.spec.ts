@@ -60,6 +60,14 @@ const model = (target: InsertTarget, hasTrigger = false) =>
 
 const titles = (view: CreatorView) => view.sections.map((section) => [section.title, section.items.map((item) => item.title)])
 
+/** The first app (or its variant) under "Action in an app" of a workflow that has a trigger. */
+const actionsView = (types: NodeTypeDescriptor[], variant?: number): CreatorView => {
+  const creator = new NodeCreatorModel(types, { fits: () => true, allowTriggers: true, hasTrigger: true })
+  const apps = creator.open(creator.root().sections[0]!.items[0] as CategoryItem)
+  const app = creator.open(apps.sections[0]!.items[0] as never)
+  return variant === undefined ? app : creator.open(app.sections[0]!.items[variant] as never)
+}
+
 describe('NodeCreatorModel', () => {
   it('asks for a trigger first in a workflow without one: core triggers, then apps', () => {
     expect(titles(model({ mode: InsertMode.FREE, position: at }).root())).toEqual([
@@ -79,17 +87,28 @@ describe('NodeCreatorModel', () => {
     ])
   })
 
-  it('opens an app with its triggers as events and its actions by resource, preset', () => {
+  it('opens an app under "Action in an app" with only its actions, by resource, preset', () => {
     const creator = model({ mode: InsertMode.FREE, position: at }, true)
-    const app = creator.open(creator.open(creator.root().sections[0]!.items[0] as CategoryItem).sections[0]!.items[0] as never)
+    const apps = creator.open(creator.root().sections[0]!.items[0] as CategoryItem)
+    expect(apps.sections[0]!.items.map((item) => item.description)).toEqual(['4 actions'])
+    const app = creator.open(apps.sections[0]!.items[0] as never)
+    expect(app.subtitle).toBe('4 actions')
     expect(titles(app)).toEqual([
-      ['Triggers', ['On new message', 'On reaction']],
       ['MESSAGE', ['SEND_TEXT']],
       ['CHAT', ['LEAVE_CHAT']],
       ['Telegram bot action', ['Send message', 'Edit message']],
     ])
-    const send = app.sections[3]!.items[0]!
+    const send = app.sections[2]!.items[0]!
     expect(send.kind === CreatorItemKind.NODE && send.parameters).toEqual({ operation: 'Send message' })
+  })
+
+  it('opens an app under the triggers with only its trigger events', () => {
+    const creator = model({ mode: InsertMode.FREE, position: at })
+    const apps = creator.root().sections[1]!
+    expect(apps.items.map((item) => item.description)).toEqual(['2 triggers'])
+    const app = creator.open(apps.items[0] as never)
+    expect(app.subtitle).toBe('2 triggers')
+    expect(titles(app)).toEqual([['Triggers', ['On new message', 'On reaction']]])
   })
 
   it('presets the resource of an operation that belongs to one', () => {
@@ -233,18 +252,19 @@ describe('NodeCreatorModel with an app used as an account and as a bot', () => {
   const creator = new NodeCreatorModel(ACCOUNT_AND_BOT, { fits: () => true, allowTriggers: true, hasTrigger: false })
   const telegram = () => creator.open(creator.root().sections[0]!.items[0] as never)
 
-  it('offers the account and the bot first', () => {
+  it('offers the account and the bot first, each with its own count', () => {
+    expect(creator.root().sections[0]!.items[0]!.description).toBe('Account and Bot · 6 triggers')
     expect(titles(telegram())).toEqual([['', ['Telegram Account', 'Telegram Bot']]])
     expect(telegram().sections[0]!.items.map((item) => item.kind)).toEqual([CreatorItemKind.VARIANT, CreatorItemKind.VARIANT])
+    expect(telegram().sections[0]!.items.map((item) => item.description)).toEqual(['3 triggers', '3 triggers'])
+    expect(actionsView(ACCOUNT_AND_BOT).sections[0]!.items.map((item) => item.description)).toEqual(['2 actions', '2 actions'])
   })
 
-  it('lists the account\'s trigger events by group, then its actions by resource', () => {
+  it('lists the account\'s trigger events by group', () => {
     const account = creator.open(telegram().sections[0]!.items[0] as never)
     expect(titles(account)).toEqual([
-      ['Triggers · Messages', ['On new message']],
-      ['Triggers · Posts & comments', ['On new post', 'On new comment']],
-      ['Message', ['SEND_TEXT']],
-      ['Search', ['SEARCH_CHATS']],
+      ['Messages', ['On new message']],
+      ['Posts & comments', ['On new post', 'On new comment']],
     ])
     const comment = account.sections[1]!.items[1]!
     expect(comment.kind === CreatorItemKind.NODE && comment.parameters).toEqual({ operation: 'POSTS', postEvents: ['NEW_COMMENT'] })
@@ -254,16 +274,26 @@ describe('NodeCreatorModel with an app used as an account and as a bot', () => {
     expect(creator.search('new comment').map((item) => item.key)).toContain('telegram.accountTrigger@2:POSTS:NEW_COMMENT')
   })
 
-  it('lists the bot\'s trigger events by group, then its actions by resource, preset', () => {
+  it('lists the account\'s actions by resource', () => {
+    expect(titles(actionsView(ACCOUNT_AND_BOT, 0))).toEqual([
+      ['Message', ['SEND_TEXT']],
+      ['Search', ['SEARCH_CHATS']],
+    ])
+  })
+
+  it('lists the bot\'s trigger events by group, and its actions by resource, preset', () => {
     const bot = creator.open(telegram().sections[0]!.items[1] as never)
     expect(titles(bot)).toEqual([
-      ['Triggers · Messages', ['On command']],
-      ['Triggers · Interactions', ['On button pressed']],
-      ['Triggers · Payments', ['On pre-checkout query']],
+      ['Messages', ['On command']],
+      ['Interactions', ['On button pressed']],
+      ['Payments', ['On pre-checkout query']],
+    ])
+    const actions = actionsView(ACCOUNT_AND_BOT, 1)
+    expect(titles(actions)).toEqual([
       ['Message', ['Send a text message']],
       ['Payment', ['Send an invoice']],
     ])
-    const invoice = bot.sections[4]!.items[0]!
+    const invoice = actions.sections[1]!.items[0]!
     expect(invoice.kind === CreatorItemKind.NODE && invoice.parameters).toEqual({ resource: 'PAYMENT', operation: 'SEND_INVOICE' })
   })
 })
@@ -341,16 +371,21 @@ describe('NodeCreatorModel with the Viber bot', () => {
   const creator = new NodeCreatorModel(VIBER, { fits: () => true, allowTriggers: true, hasTrigger: false })
   const viber = () => creator.open(creator.root().sections[0]!.items[0] as never)
 
-  it('offers the account and the bot', () => {
-    expect(titles(viber())).toEqual([['', ['Viber Account', 'Viber Bot']]])
+  it('offers the account and the bot among the actions; only the bot has triggers', () => {
+    expect(titles(actionsView(VIBER))).toEqual([['', ['Viber Account', 'Viber Bot']]])
+    expect(viber().title).toBe('Viber')
+    expect(viber().subtitle).toBe('4 triggers')
   })
 
-  it('lists the bot\'s trigger events by group, then its actions by resource, preset', () => {
-    const bot = creator.open(viber().sections[0]!.items[1] as never)
+  it('lists the bot\'s trigger events by group, and its actions by resource, preset', () => {
+    const bot = viber()
     expect(titles(bot)).toEqual([
-      ['Triggers · Messages', ['On new message']],
-      ['Triggers · Subscriptions', ['On conversation started', 'On subscribed']],
-      ['Triggers · Delivery', ['On seen']],
+      ['Messages', ['On new message']],
+      ['Subscriptions', ['On conversation started', 'On subscribed']],
+      ['Delivery', ['On seen']],
+    ])
+    const actions = actionsView(VIBER, 1)
+    expect(titles(actions)).toEqual([
       ['Message', ['Send a rich media carousel']],
       ['Broadcast', ['Broadcast a text message']],
     ])
@@ -359,7 +394,7 @@ describe('NodeCreatorModel with the Viber bot', () => {
       operation: 'SUBSCRIPTIONS',
       subscriptionEvents: ['CONVERSATION_STARTED'],
     })
-    const broadcast = bot.sections[4]!.items[0]!
+    const broadcast = actions.sections[1]!.items[0]!
     expect(broadcast.kind === CreatorItemKind.NODE && broadcast.parameters).toEqual({ resource: 'BROADCAST', operation: 'BROADCAST_TEXT' })
   })
 })
@@ -428,12 +463,15 @@ const WHATSAPP: NodeTypeDescriptor[] = [
 describe('NodeCreatorModel with the WhatsApp Business number', () => {
   const creator = new NodeCreatorModel(WHATSAPP, { fits: () => true, allowTriggers: true, hasTrigger: false })
 
-  it('lists the number\'s trigger events by group, then its actions by resource, preset', () => {
+  it('lists the number\'s trigger events by group, and its actions by resource, preset', () => {
     const whatsapp = creator.open(creator.root().sections[0]!.items[0] as never)
     expect(titles(whatsapp)).toEqual([
-      ['Triggers · Messages', ['On new message', 'On button or list reply']],
-      ['Triggers · Delivery', ['On failed']],
-      ['Triggers · Templates & account', ['On template status']],
+      ['Messages', ['On new message', 'On button or list reply']],
+      ['Delivery', ['On failed']],
+      ['Templates & account', ['On template status']],
+    ])
+    const actions = actionsView(WHATSAPP)
+    expect(titles(actions)).toEqual([
       ['Message', ['Send reply buttons']],
       ['Template', ['Send a template']],
     ])
@@ -442,7 +480,7 @@ describe('NodeCreatorModel with the WhatsApp Business number', () => {
       operation: 'MESSAGES',
       messageEvents: ['INTERACTIVE_REPLY'],
     })
-    const template = whatsapp.sections[4]!.items[0]!
+    const template = actions.sections[1]!.items[0]!
     expect(template.kind === CreatorItemKind.NODE && template.parameters).toEqual({ resource: 'TEMPLATE', operation: 'SEND_TEMPLATE' })
   })
 })
@@ -505,11 +543,14 @@ const WHATSAPP_ACCOUNT: NodeTypeDescriptor[] = [
 describe('NodeCreatorModel with a linked WhatsApp account', () => {
   const creator = new NodeCreatorModel(WHATSAPP_ACCOUNT, { fits: () => true, allowTriggers: true, hasTrigger: false })
 
-  it('lists the account\'s trigger events by group, then its actions by resource, preset', () => {
+  it('lists the account\'s trigger events by group, and its actions by resource, preset', () => {
     const account = creator.open(creator.root().sections[0]!.items[0] as never)
     expect(titles(account)).toEqual([
-      ['Triggers · Messages', ['On new message', 'On reaction']],
-      ['Triggers · Groups', ['On added to a group']],
+      ['Messages', ['On new message', 'On reaction']],
+      ['Groups', ['On added to a group']],
+    ])
+    const actions = actionsView(WHATSAPP_ACCOUNT)
+    expect(titles(actions)).toEqual([
       ['Message', ['Send a text message']],
       ['Group', ['Add members']],
     ])
@@ -518,7 +559,34 @@ describe('NodeCreatorModel with a linked WhatsApp account', () => {
       operation: 'GROUPS',
       groupEvents: ['ADDED_TO_GROUP'],
     })
-    const add = account.sections[3]!.items[0]!
+    const add = actions.sections[1]!.items[0]!
     expect(add.kind === CreatorItemKind.NODE && add.parameters).toEqual({ resource: 'GROUP', operation: 'ADD_MEMBERS' })
+  })
+})
+
+describe('NodeCreatorModel with the Instagram account and bot', () => {
+  const instagram = (name: string, kind: NodeKind, credential: string): NodeTypeDescriptor =>
+    nodeType({
+      key: `instagram.${name}@1`,
+      name: `instagram.${name}`,
+      displayName: name,
+      group: NodeGroup.COMMUNICATION,
+      kind,
+      ...(kind === NodeKind.TRIGGER ? { inputs: [] } : {}),
+      credentials: { types: [credential], required: true },
+      properties: [property('operation', { type: PropertyType.OPTIONS, options: [option('ONE'), option('TWO')] })],
+    })
+  const TYPES = [
+    instagram('accountTrigger', NodeKind.TRIGGER, 'INSTAGRAM_ACCOUNT'),
+    instagram('accountAction', NodeKind.ACTION, 'INSTAGRAM_ACCOUNT'),
+    instagram('botTrigger', NodeKind.TRIGGER, 'INSTAGRAM_BOT'),
+    instagram('botAction', NodeKind.ACTION, 'INSTAGRAM_BOT'),
+  ]
+
+  it('splits into the account and the bot, among the triggers and among the actions', () => {
+    const creator = new NodeCreatorModel(TYPES, { fits: () => true, allowTriggers: true, hasTrigger: false })
+    const triggers = creator.open(creator.root().sections[0]!.items[0] as never)
+    expect(titles(triggers)).toEqual([['', ['Instagram Account', 'Instagram Bot']]])
+    expect(titles(actionsView(TYPES))).toEqual([['', ['Instagram Account', 'Instagram Bot']]])
   })
 })
