@@ -14,6 +14,14 @@ import {
   type Command,
 } from '@/core/workflow/commands'
 import type { HistoryOptions } from '@/core/workflow/commands/CommandHistory'
+import {
+  extractFragment,
+  FragmentInstantiator,
+  shiftBy,
+  type PasteRule,
+  type Placement,
+  type WorkflowFragment,
+} from '@/core/workflow/clipboard'
 import { uniqueNodeName, wouldCreateCycle } from '@/core/workflow/graph'
 import {
   ConnectionType,
@@ -30,6 +38,8 @@ export interface SessionOptions {
   history?: HistoryOptions
   sync?: DraftSyncOptions
   newId?: () => NodeId
+  /** Adjustments of pasted nodes; defaults to the standard rules (e.g. a fresh webhook path). */
+  pasteRules?: readonly PasteRule[]
 }
 
 /** Which way a new node is wired to the node it was added from. */
@@ -76,6 +86,7 @@ export class WorkflowEditorSession {
   readonly history: CommandHistory
   readonly sync: DraftSync
   private readonly newId: () => NodeId
+  private readonly instantiator: FragmentInstantiator
   private readonly unsubscribe: () => void
 
   constructor(api: DraftApi, readonly workflowId: number, revision: number, snapshot: WorkflowSnapshot, options: SessionOptions = {}) {
@@ -83,6 +94,7 @@ export class WorkflowEditorSession {
     this.history = new CommandHistory(this.document, options.history)
     this.sync = new DraftSync(api, workflowId, revision, options.sync)
     this.newId = options.newId ?? (() => crypto.randomUUID())
+    this.instantiator = new FragmentInstantiator({ newId: this.newId, rules: options.pasteRules })
     this.unsubscribe = this.history.events.on('applied', (ops) => this.sync.enqueue(ops))
   }
 
@@ -159,6 +171,43 @@ export class WorkflowEditorSession {
     else if (commands.length) this.execute(new CompositeCommand('Delete selection', commands))
   }
 
+  /**
+   * Add copies of copied nodes with the connections among them as one undo step.
+   *
+   * @param fragment  what was copied, from this or another workflow
+   * @param placement where the copies go
+   * @returns the new nodes, empty when the fragment had none
+   */
+  paste(fragment: WorkflowFragment, placement: Placement): NodeModel[] {
+    const graph = this.instantiator.instantiate(fragment, this.document, placement)
+    if (!graph.nodes.length) return []
+    this.execute(new AddNodesCommand(graph.nodes, graph.connections, pasteLabel(graph.nodes)))
+    return [...graph.nodes]
+  }
+
+  /**
+   * Copy nodes next to themselves without going through the clipboard, like Ctrl+D in n8n.
+   *
+   * @returns the copies, empty when none of the ids is a node
+   */
+  duplicate(nodeIds: readonly NodeId[]): NodeModel[] {
+    const fragment = extractFragment(this.document, nodeIds)
+    return fragment ? this.paste(fragment, shiftBy()) : []
+  }
+
+  /** Enable or disable several nodes as one undo step; nodes already in that state are left alone. */
+  setDisabled(nodeIds: readonly NodeId[], disabled: boolean): void {
+    const commands = nodeIds
+      .filter((id) => this.document.requireNode(id).disabled !== disabled)
+      .map((id) => new UpdateNodeCommand(id, 'disabled', disabled))
+    if (commands.length === 1) {
+      this.execute(commands[0]!)
+    } else if (commands.length) {
+      const label = disabled ? 'Disable nodes' : 'Enable nodes'
+      this.execute(new CompositeCommand(label, commands))
+    }
+  }
+
   /** Record where nodes were dropped after a drag; unchanged positions are ignored. */
   move(positions: ReadonlyMap<NodeId, Position>): void {
     const moved = new Map(
@@ -213,4 +262,9 @@ function sameValue(a: unknown, b: unknown): boolean {
     keysA.length === keysB.length &&
     keysA.every((key) => sameValue((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key]))
   )
+}
+
+/** @returns undo label of a paste, e.g. `Paste HTTP Request` or `Paste 3 nodes` */
+function pasteLabel(nodes: readonly NodeModel[]): string {
+  return nodes.length === 1 ? `Paste ${nodes[0]!.name}` : `Paste ${nodes.length} nodes`
 }

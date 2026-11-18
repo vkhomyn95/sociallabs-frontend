@@ -10,8 +10,13 @@ export class AddNodesCommand implements Command {
   constructor(
     private readonly nodes: readonly NodeModel[],
     private readonly connections: readonly ConnectionModel[] = [],
+    label?: string,
   ) {
-    this.label = nodes.length === 1 ? `Add ${nodes[0]!.name}` : `Add ${nodes.length} nodes`
+    this.label = label ?? AddNodesCommand.defaultLabel(nodes)
+  }
+
+  private static defaultLabel(nodes: readonly NodeModel[]): string {
+    return nodes.length === 1 ? `Add ${nodes[0]!.name}` : `Add ${nodes.length} nodes`
   }
 
   apply(doc: WorkflowDocument): void {

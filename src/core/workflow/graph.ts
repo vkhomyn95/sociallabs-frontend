@@ -46,9 +46,28 @@ export function upstreamOf(doc: WorkflowDocument, id: NodeId): NodeId[] {
  * @returns the name, or the name with the lowest free numeric suffix (`HTTP Request 2`)
  */
 export function uniqueNodeName(doc: WorkflowDocument, base: string): string {
-  const taken = new Set(doc.nodes().map((node) => node.name))
+  return uniqueName(takenNodeNames(doc), base)
+}
+
+/** @returns names of all nodes of the document */
+export function takenNodeNames(doc: WorkflowDocument): Set<string> {
+  return new Set(doc.nodes().map((node) => node.name))
+}
+
+/** Numeric suffix a generated name ends with, e.g. the ` 2` of `HTTP Request 2`. */
+const NUMBER_SUFFIX = / \d+$/
+
+/**
+ * A copy of `HTTP Request 2` becomes `HTTP Request 3`, not `HTTP Request 2 2`: an existing suffix is replaced.
+ *
+ * @param taken names already in use
+ * @param base  preferred name
+ * @returns the name, or the name with the lowest free numeric suffix (`HTTP Request 2`)
+ */
+export function uniqueName(taken: ReadonlySet<string>, base: string): string {
   if (!taken.has(base)) return base
+  const stem = base.replace(NUMBER_SUFFIX, '') || base
   let n = 2
-  while (taken.has(`${base} ${n}`)) n++
-  return `${base} ${n}`
+  while (taken.has(`${stem} ${n}`)) n++
+  return `${stem} ${n}`
 }
