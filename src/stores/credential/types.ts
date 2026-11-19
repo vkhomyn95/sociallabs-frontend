@@ -17,6 +17,8 @@ export enum CredentialType {
   WHATSAPP_ACCOUNT = 'WHATSAPP_ACCOUNT',
   INSTAGRAM_ACCOUNT = 'INSTAGRAM_ACCOUNT',
   TIKTOK_ACCOUNT = 'TIKTOK_ACCOUNT',
+  /** A personal X account for XChat, through the XChat shim (ADR-0025). */
+  XCHAT_ACCOUNT = 'XCHAT_ACCOUNT',
 
   TELEGRAM_BOT = 'TELEGRAM_BOT',
   VIBER_BOT = 'VIBER_BOT',
@@ -198,6 +200,14 @@ export enum ConnectInput {
   PASSWORD = 'PASSWORD',
 }
 
+/** Which XChat PIN a PASSWORD input asks for (`payload.pin`); absent for other passwords. */
+export enum ConnectPin {
+  /** The PIN the account already has: its XChat keys are recovered with it. */
+  UNLOCK = 'UNLOCK',
+  /** A new PIN: the account's first XChat keys are backed up under it. */
+  SET_UP = 'SET_UP',
+}
+
 export enum QrFormat {
   /** Raw link to encode client-side. */
   LINK = 'LINK',
@@ -217,7 +227,10 @@ export type ConnectEvent =
   | ConnectEventBase<ConnectEventType.QR_CODE, { value: string; format: QrFormat }>
   | ConnectEventBase<ConnectEventType.PAIRING_CODE, { code: string }>
   | ConnectEventBase<ConnectEventType.OPEN_URL, { url: string }>
-  | ConnectEventBase<ConnectEventType.INPUT_REQUIRED, { input: ConnectInput; hint?: string; timeout?: number; error?: string }>
+  | ConnectEventBase<
+      ConnectEventType.INPUT_REQUIRED,
+      { input: ConnectInput; hint?: string; timeout?: number; error?: string; pin?: ConnectPin }
+    >
   | ConnectEventBase<ConnectEventType.SUCCESS, { credential: Credential }>
   | ConnectEventBase<ConnectEventType.ERROR, Record<string, never>>
 

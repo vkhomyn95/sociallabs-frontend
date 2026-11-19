@@ -21,6 +21,7 @@ const VARIANT_OF_CREDENTIAL: Readonly<Record<CredentialType, AppVariant | null>>
   [CredentialType.WHATSAPP_ACCOUNT]: AppVariant.ACCOUNT,
   [CredentialType.INSTAGRAM_ACCOUNT]: AppVariant.ACCOUNT,
   [CredentialType.TIKTOK_ACCOUNT]: AppVariant.ACCOUNT,
+  [CredentialType.XCHAT_ACCOUNT]: AppVariant.ACCOUNT,
   [CredentialType.TELEGRAM_BOT]: AppVariant.BOT,
   [CredentialType.VIBER_BOT]: AppVariant.BOT,
   [CredentialType.WHATSAPP_BOT]: AppVariant.BOT,

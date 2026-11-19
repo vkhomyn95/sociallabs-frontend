@@ -5,6 +5,7 @@ import { defineComponent, h } from 'vue'
 import {
   ConnectEventType,
   ConnectInput,
+  ConnectPin,
   CredentialKind,
   CredentialPlatform,
   CredentialService,
@@ -50,6 +51,18 @@ const XCHAT: CredentialTypeDescriptor = {
   kind: CredentialKind.BOT,
   platform: CredentialPlatform.X,
   displayName: 'XChat bot',
+  description: '',
+  setupMode: SetupMode.INTERACTIVE,
+  available: true,
+  testable: true,
+  fields: [],
+}
+
+const XCHAT_ACCOUNT: CredentialTypeDescriptor = {
+  type: CredentialType.XCHAT_ACCOUNT,
+  kind: CredentialKind.ACCOUNT,
+  platform: CredentialPlatform.X,
+  displayName: 'X account (XChat)',
   description: '',
   setupMode: SetupMode.INTERACTIVE,
   available: true,
@@ -149,5 +162,35 @@ describe('useAccountConnect, OAuth', () => {
 
     send({ type: ConnectEventType.ERROR, message: 'X did not authorize the bot (access_denied)', payload: {} })
     expect(flow.state.value).toEqual({ view: ConnectView.ERROR, message: 'X did not authorize the bot (access_denied)' })
+  })
+})
+
+describe('useAccountConnect, XChat account', () => {
+  it('asks for the XChat PIN, and again with the reason after a wrong one', async () => {
+    const send = connectEvents()
+    const flow = connectFlow(XCHAT_ACCOUNT)
+
+    await flow.start('', { session: 'auth_token=abc', proxy: '' })
+    await flushPromises()
+    send({ type: ConnectEventType.STATUS, message: 'Checking the session with X…', payload: {} })
+    send({
+      type: ConnectEventType.INPUT_REQUIRED,
+      message: 'Signed in as @shop_ua. Enter the account’s XChat PIN',
+      payload: { input: ConnectInput.PASSWORD, pin: ConnectPin.UNLOCK },
+    })
+
+    expect(flow.state.value).toMatchObject({
+      view: ConnectView.INPUT,
+      input: ConnectInput.PASSWORD,
+      pin: ConnectPin.UNLOCK,
+    })
+
+    send({
+      type: ConnectEventType.INPUT_REQUIRED,
+      message: 'Signed in as @shop_ua. Enter the account’s XChat PIN',
+      payload: { input: ConnectInput.PASSWORD, pin: ConnectPin.UNLOCK, error: 'Wrong PIN, 9 attempts left' },
+    })
+
+    expect(flow.state.value).toMatchObject({ pin: ConnectPin.UNLOCK, error: 'Wrong PIN, 9 attempts left' })
   })
 })
