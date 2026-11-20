@@ -1464,8 +1464,12 @@ export interface TiktokAccountTriggerV1Params {
   senders?: string[]
   /** Ignore the account's own: Skip what the account itself did, from this app or another device */
   ignoreMine?: boolean
+  /** Include message requests: Also fire on a stranger's first message, which waits in Message requests; off, the Message requests trigger handles it */
+  includeRequests?: boolean
   /** Message types: Any when nothing is chosen */
   contentTypes?: Array<'TEXT' | 'VIDEO' | 'PHOTO' | 'MUSIC' | 'PROFILE' | 'VIDEO_COMMENT' | 'LIVE' | 'STORY' | 'STICKER' | 'VOICE' | 'GREETING_CARD' | 'CALL' | 'GROUP_EVENT' | 'OTHER'>
+  /** Answering: What the message is sent from: a story, a video, or nothing; any when nothing is chosen */
+  references?: Array<'STORY_REPLY' | 'STORY_REACTION' | 'VIDEO_REPLY' | 'NONE'>
   /** Text match */
   textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
   /** Text: What to match, per the text match */
