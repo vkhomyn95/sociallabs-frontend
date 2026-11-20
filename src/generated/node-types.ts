@@ -1424,8 +1424,8 @@ export interface TiktokAccountActionV1Params {
   video?: string
   /** Message ID: The message's server id, e.g. {{ $json.serverId }} of the trigger */
   messageId?: string
-  /** Reaction: An emoji, or TikTok's own reaction key such as oe:heart01_red_heart; a new reaction replaces the account's earlier one */
-  emoji?: string
+  /** Reaction: One of TikTok's reactions (it takes no other emoji); a new reaction replaces the account's earlier one */
+  emoji?: 'LIKE' | 'HEART' | 'LAUGH' | 'CRY' | 'ANGRY' | 'THINKING' | 'FLUSHED' | 'SCREAM' | 'HUG' | 'SEE_NO_EVIL' | 'ZANY' | 'PARTY' | Expression
   /** For everyone: Unsends the account's own message for both sides (TikTok allows it for about an hour); otherwise hides it for the account only */
   forEveryone?: boolean | Expression
   /** Kind */
