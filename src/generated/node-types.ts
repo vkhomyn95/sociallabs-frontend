@@ -2045,6 +2045,105 @@ export interface WhatsappBotTriggerV1Params {
   templateNames?: string[]
 }
 
+/** X Account (XChat) (`xchat.accountAction@1`) */
+export interface XchatAccountActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CONVERSATION' | 'USER'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_FILE' | 'REACT' | 'REMOVE_REACTION' | 'EDIT' | 'DELETE' | 'DOWNLOAD_MEDIA' | 'GET_CONVERSATIONS' | 'GET_MESSAGES' | 'MARK_READ' | 'MARK_UNREAD' | 'SEND_TYPING' | 'PIN' | 'GET_MESSAGE_REQUESTS' | 'ACCEPT_REQUEST' | 'DECLINE_REQUEST' | 'GET_PROFILE' | 'CHECK_XCHAT'
+  /** Conversation: A conversation id (<id>:<id> or g…), a user id, @username or a profile link; a user's is their direct chat with the account */
+  conversation?: string
+  /** Text */
+  text?: string
+  /** Options */
+  options?: {
+    /** Reply to message: Quotes the message by its sequence id, e.g. {{ $json.sequenceId }} of the trigger */
+    replyTo?: string
+    /** Quoted message's ID: e.g. {{ $json.messageId }} of the trigger */
+    replyToMessageId?: string
+    /** Quoted message's sender: e.g. {{ $json.senderId }} of the trigger */
+    replyToSender?: string
+    /** Quoted message's text: e.g. {{ $json.text }} of the trigger */
+    replyToText?: string
+  }
+  /** Input file field: The input item's file to send, e.g. data */
+  binaryProperty?: string
+  /** File name: The name the other side sees; the input file's own name when empty */
+  fileName?: string
+  /** Caption */
+  caption?: string
+  /** Message sequence ID: The id X gave the message, e.g. {{ $json.sequenceId }} of the trigger */
+  sequenceId?: string
+  /** Reaction: The emoji itself, e.g. 👍 */
+  emoji?: string
+  /** Message sequence IDs: The ids X gave the messages; at most 100 */
+  sequenceIds?: string[] | Expression
+  /** For everyone: Unsends the messages for all participants; otherwise hides them for the account only */
+  forEveryone?: boolean | Expression
+  /** Media key: The attachment's mediaHashKey, e.g. {{ $json.attachments[0].mediaHashKey }} */
+  mediaKey?: string
+  /** Key version: The attachment's keyVersion; X tries the conversation's keys when empty */
+  keyVersion?: string
+  /** Legacy URL: The attachment's legacyUrl, for media sent before XChat */
+  legacyUrl?: string
+  /** Save as: The name the downloaded file gets; the sender's file name when empty */
+  outputFileName?: string
+  /** Output file field */
+  outputProperty?: string
+  /** Conversations */
+  type?: 'ALL' | 'DIRECT' | 'GROUPS' | 'UNREAD' | Expression
+  /** Cursor: Empty for the first page; the nextCursor of a page to read the next one */
+  cursor?: string
+  /** Before: Empty for the newest messages; the nextBefore of a page to read older ones */
+  before?: string
+  /** Pinned: Off unpins the conversation */
+  pinned?: boolean | Expression
+  /** Added by: For a group request: who added the account (a user reference); empty otherwise */
+  addedBy?: string
+  /** User: A user id, @username or a profile link (x.com/…) */
+  user?: string
+  /** Users: User ids, @usernames or profile links; at most 100 */
+  users?: string[] | Expression
+}
+
+/** X Account (XChat) Trigger (`xchat.accountTrigger@1`) */
+export interface XchatAccountTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'REQUESTS' | 'CONVERSATIONS' | 'ACCOUNT'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'MESSAGE_EDITED' | 'REACTION' | 'MESSAGE_DELETED'>
+  /** Conversation types: Any when nothing is chosen */
+  conversationTypes?: Array<'DIRECT' | 'GROUP'>
+  /** Conversations */
+  conversationScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which conversations: Conversation ids (<id>:<id> for a direct chat, g… for a group) */
+  conversations?: string[]
+  /** Senders */
+  senderScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which senders: Numeric X user ids */
+  senders?: string[]
+  /** Ignore the account's own: Skip what the account itself did, from this app or another device */
+  ignoreMine?: boolean
+  /** Message types: Any when nothing is chosen */
+  contentTypes?: Array<'TEXT' | 'IMAGE' | 'GIF' | 'VIDEO' | 'AUDIO' | 'FILE' | 'POST' | 'LINK' | 'OTHER' | 'ENCRYPTED'>
+  /** Text match */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Text: What to match, per the text match; an edit is matched by its new text */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** Cooldown per conversation (s): At most one event per conversation in this many seconds; 0 for none */
+  cooldownSeconds?: number
+  /** Simplify: Emit only the essential fields */
+  simplify?: boolean
+  /** Events */
+  conversationEvents?: Array<'GROUP_CHANGED' | 'CONVERSATION_READ'>
+  /** Group changes: Any when nothing is chosen */
+  groupChanges?: Array<'CREATED' | 'RENAMED' | 'MEMBERS_ADDED' | 'MEMBERS_REMOVED' | 'ADMINS_ADDED' | 'ADMINS_REMOVED' | 'AVATAR_CHANGED' | 'DESCRIPTION_CHANGED' | 'OTHER'>
+  /** States: Fire only on these; any when nothing is chosen */
+  states?: Array<'READY' | 'RECONNECTING' | 'RATE_LIMITED' | 'SHIM_UNAVAILABLE' | 'XCHAT_LOCKED' | 'LOGIN_REQUIRED' | 'SUSPENDED' | 'CLOSED'>
+}
+
 /** XChat Bot (`xchat.botAction@1`) */
 export interface XchatBotActionV1Params {
   /** Resource */
@@ -2160,6 +2259,8 @@ export interface NodeParamsMap {
   'whatsapp.accountTrigger@1': WhatsappAccountTriggerV1Params
   'whatsapp.botAction@1': WhatsappBotActionV1Params
   'whatsapp.botTrigger@1': WhatsappBotTriggerV1Params
+  'xchat.accountAction@1': XchatAccountActionV1Params
+  'xchat.accountTrigger@1': XchatAccountTriggerV1Params
   'xchat.botAction@1': XchatBotActionV1Params
   'xchat.botTrigger@1': XchatBotTriggerV1Params
 }

@@ -63,6 +63,7 @@ export function useAccountConnect(descriptor: CredentialTypeDescriptor, onConnec
           message: event.message,
           hint: event.payload.hint || undefined,
           error: event.payload.error || undefined,
+          pin: event.payload.pin || undefined,
         }
         break
       case ConnectEventType.SUCCESS:
