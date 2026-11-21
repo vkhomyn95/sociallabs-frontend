@@ -1449,7 +1449,7 @@ export interface TiktokAccountActionV1Params {
 /** TikTok Account Trigger (`tiktok.accountTrigger@1`) */
 export interface TiktokAccountTriggerV1Params {
   /** Trigger on */
-  operation: 'MESSAGES' | 'REQUESTS' | 'ACCOUNT'
+  operation: 'MESSAGES' | 'REQUESTS' | 'ACTIVITY' | 'ACCOUNT'
   /** Events */
   messageEvents?: Array<'NEW_MESSAGE' | 'REACTION' | 'MESSAGE_DELETED'>
   /** Conversation types: Any when nothing is chosen */
@@ -1480,6 +1480,12 @@ export interface TiktokAccountTriggerV1Params {
   cooldownSeconds?: number
   /** Simplify: Emit only the essential fields */
   simplify?: boolean
+  /** Events */
+  activityEvents?: Array<'NEW_COMMENT' | 'COMMENT_REPLY' | 'VIDEO_LIKE' | 'COMMENT_LIKE' | 'NEW_FOLLOWER'>
+  /** Videos: The account's videos, photo posts or stories the activity is about; a follow is about none */
+  videoScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which videos: Numeric video ids, as in a video's link */
+  videos?: string[]
   /** States: Fire only on these; any when nothing is chosen */
   states?: Array<'READY' | 'RECONNECTING' | 'RATE_LIMITED' | 'SIGNATURE_REJECTED' | 'SHIM_UNAVAILABLE' | 'LOGIN_REQUIRED' | 'CLOSED'>
 }
