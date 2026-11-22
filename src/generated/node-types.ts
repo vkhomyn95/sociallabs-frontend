@@ -1424,8 +1424,8 @@ export interface TiktokAccountActionV1Params {
   video?: string
   /** Message ID: The message's server id, e.g. {{ $json.serverId }} of the trigger */
   messageId?: string
-  /** Reaction: An emoji, or TikTok's own reaction key such as oe:heart01_red_heart; a new reaction replaces the account's earlier one */
-  emoji?: string
+  /** Reaction: One of TikTok's reactions (it takes no other emoji); a new reaction replaces the account's earlier one */
+  emoji?: 'LIKE' | 'HEART' | 'LAUGH' | 'CRY' | 'ANGRY' | 'THINKING' | 'FLUSHED' | 'SCREAM' | 'HUG' | 'SEE_NO_EVIL' | 'ZANY' | 'PARTY' | Expression
   /** For everyone: Unsends the account's own message for both sides (TikTok allows it for about an hour); otherwise hides it for the account only */
   forEveryone?: boolean | Expression
   /** Kind */
@@ -1449,7 +1449,7 @@ export interface TiktokAccountActionV1Params {
 /** TikTok Account Trigger (`tiktok.accountTrigger@1`) */
 export interface TiktokAccountTriggerV1Params {
   /** Trigger on */
-  operation: 'MESSAGES' | 'REQUESTS' | 'ACCOUNT'
+  operation: 'MESSAGES' | 'REQUESTS' | 'ACTIVITY' | 'ACCOUNT'
   /** Events */
   messageEvents?: Array<'NEW_MESSAGE' | 'REACTION' | 'MESSAGE_DELETED'>
   /** Conversation types: Any when nothing is chosen */
@@ -1464,8 +1464,12 @@ export interface TiktokAccountTriggerV1Params {
   senders?: string[]
   /** Ignore the account's own: Skip what the account itself did, from this app or another device */
   ignoreMine?: boolean
+  /** Include message requests: Also fire on a stranger's first message, which waits in Message requests; off, the Message requests trigger handles it */
+  includeRequests?: boolean
   /** Message types: Any when nothing is chosen */
   contentTypes?: Array<'TEXT' | 'VIDEO' | 'PHOTO' | 'MUSIC' | 'PROFILE' | 'VIDEO_COMMENT' | 'LIVE' | 'STORY' | 'STICKER' | 'VOICE' | 'GREETING_CARD' | 'CALL' | 'GROUP_EVENT' | 'OTHER'>
+  /** Answering: What the message is sent from: a story, a video, or nothing; any when nothing is chosen */
+  references?: Array<'STORY_REPLY' | 'STORY_REACTION' | 'VIDEO_REPLY' | 'NONE'>
   /** Text match */
   textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
   /** Text: What to match, per the text match */
@@ -1476,6 +1480,12 @@ export interface TiktokAccountTriggerV1Params {
   cooldownSeconds?: number
   /** Simplify: Emit only the essential fields */
   simplify?: boolean
+  /** Events */
+  activityEvents?: Array<'NEW_COMMENT' | 'COMMENT_REPLY' | 'VIDEO_LIKE' | 'COMMENT_LIKE' | 'NEW_FOLLOWER'>
+  /** Videos: The account's videos, photo posts or stories the activity is about; a follow is about none */
+  videoScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Which videos: Numeric video ids, as in a video's link */
+  videos?: string[]
   /** States: Fire only on these; any when nothing is chosen */
   states?: Array<'READY' | 'RECONNECTING' | 'RATE_LIMITED' | 'SIGNATURE_REJECTED' | 'SHIM_UNAVAILABLE' | 'LOGIN_REQUIRED' | 'CLOSED'>
 }
