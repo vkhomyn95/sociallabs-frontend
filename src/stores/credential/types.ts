@@ -26,6 +26,8 @@ export enum CredentialType {
   MESSENGER_BOT = 'MESSENGER_BOT',
   INSTAGRAM_BOT = 'INSTAGRAM_BOT',
   XCHAT_BOT = 'XCHAT_BOT',
+  /** A TikTok business account through the customer's TikTok API for Business app (ADR-0026). */
+  TIKTOK_BOT = 'TIKTOK_BOT',
 
   OPENAI = 'OPENAI',
   ANTHROPIC = 'ANTHROPIC',

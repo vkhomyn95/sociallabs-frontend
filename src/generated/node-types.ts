@@ -1424,8 +1424,8 @@ export interface TiktokAccountActionV1Params {
   video?: string
   /** Message ID: The message's server id, e.g. {{ $json.serverId }} of the trigger */
   messageId?: string
-  /** Reaction: One of TikTok's reactions (it takes no other emoji); a new reaction replaces the account's earlier one */
-  emoji?: 'LIKE' | 'HEART' | 'LAUGH' | 'CRY' | 'ANGRY' | 'THINKING' | 'FLUSHED' | 'SCREAM' | 'HUG' | 'SEE_NO_EVIL' | 'ZANY' | 'PARTY' | Expression
+  /** Reaction: An emoji, or TikTok's own reaction key such as oe:heart01_red_heart; a new reaction replaces the account's earlier one */
+  emoji?: string
   /** For everyone: Unsends the account's own message for both sides (TikTok allows it for about an hour); otherwise hides it for the account only */
   forEveryone?: boolean | Expression
   /** Kind */
@@ -1449,7 +1449,7 @@ export interface TiktokAccountActionV1Params {
 /** TikTok Account Trigger (`tiktok.accountTrigger@1`) */
 export interface TiktokAccountTriggerV1Params {
   /** Trigger on */
-  operation: 'MESSAGES' | 'REQUESTS' | 'ACTIVITY' | 'ACCOUNT'
+  operation: 'MESSAGES' | 'REQUESTS' | 'ACCOUNT'
   /** Events */
   messageEvents?: Array<'NEW_MESSAGE' | 'REACTION' | 'MESSAGE_DELETED'>
   /** Conversation types: Any when nothing is chosen */
@@ -1464,12 +1464,8 @@ export interface TiktokAccountTriggerV1Params {
   senders?: string[]
   /** Ignore the account's own: Skip what the account itself did, from this app or another device */
   ignoreMine?: boolean
-  /** Include message requests: Also fire on a stranger's first message, which waits in Message requests; off, the Message requests trigger handles it */
-  includeRequests?: boolean
   /** Message types: Any when nothing is chosen */
   contentTypes?: Array<'TEXT' | 'VIDEO' | 'PHOTO' | 'MUSIC' | 'PROFILE' | 'VIDEO_COMMENT' | 'LIVE' | 'STORY' | 'STICKER' | 'VOICE' | 'GREETING_CARD' | 'CALL' | 'GROUP_EVENT' | 'OTHER'>
-  /** Answering: What the message is sent from: a story, a video, or nothing; any when nothing is chosen */
-  references?: Array<'STORY_REPLY' | 'STORY_REACTION' | 'VIDEO_REPLY' | 'NONE'>
   /** Text match */
   textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
   /** Text: What to match, per the text match */
@@ -1480,14 +1476,213 @@ export interface TiktokAccountTriggerV1Params {
   cooldownSeconds?: number
   /** Simplify: Emit only the essential fields */
   simplify?: boolean
-  /** Events */
-  activityEvents?: Array<'NEW_COMMENT' | 'COMMENT_REPLY' | 'VIDEO_LIKE' | 'COMMENT_LIKE' | 'NEW_FOLLOWER'>
-  /** Videos: The account's videos, photo posts or stories the activity is about; a follow is about none */
-  videoScope?: 'ALL' | 'ONLY' | 'EXCEPT'
-  /** Which videos: Numeric video ids, as in a video's link */
-  videos?: string[]
   /** States: Fire only on these; any when nothing is chosen */
   states?: Array<'READY' | 'RECONNECTING' | 'RATE_LIMITED' | 'SIGNATURE_REJECTED' | 'SHIM_UNAVAILABLE' | 'LOGIN_REQUIRED' | 'CLOSED'>
+}
+
+/** TikTok Bot (`tiktok.botAction@1`) */
+export interface TiktokBotActionV1Params {
+  /** Resource */
+  resource: 'MESSAGE' | 'CONVERSATION' | 'COMMENT' | 'COMMENT_TO_MESSAGE' | 'AUTO_MESSAGE' | 'POST' | 'INSIGHTS' | 'MENTION' | 'ACCOUNT'
+  /** Operation */
+  operation: 'SEND_TEXT' | 'SEND_IMAGE' | 'SHARE_POST' | 'SEND_CARD' | 'SEND_ACTION' | 'UPLOAD_IMAGE' | 'REPLY_PRIVATELY' | 'LIST_CONVERSATIONS' | 'GET_MESSAGES' | 'DOWNLOAD_MEDIA' | 'GET_CAPABILITIES' | 'LIST_COMMENTS' | 'LIST_REPLIES' | 'CREATE' | 'REPLY' | 'LIKE' | 'HIDE' | 'DELETE' | 'GET' | 'SET' | 'CREATE_AUTO_MESSAGE' | 'UPDATE_AUTO_MESSAGE' | 'SET_ENABLED' | 'LIST_AUTO_MESSAGES' | 'DELETE_AUTO_MESSAGE' | 'SORT_PROMPTS' | 'PUBLISH_VIDEO' | 'PUBLISH_PHOTO' | 'GET_STATUS' | 'LIST_POSTS' | 'GET_SETTINGS' | 'SEARCH_LOCATIONS' | 'SUGGEST_HASHTAGS' | 'PROFILE' | 'POSTS' | 'BENCHMARK' | 'LIST_MENTIONED_POSTS' | 'LIST_MENTIONING_COMMENTS' | 'HASHTAG_POSTS' | 'GET_MENTIONED_POST' | 'GET_MENTIONING_COMMENT' | 'TOP_KEYWORDS' | 'TOP_HASHTAGS' | 'LIST_HASHTAGS' | 'VALID_HASHTAGS' | 'ADD_HASHTAGS' | 'REMOVE_HASHTAG' | 'REPLY_TO_MENTION' | 'GET_PROFILE' | 'GET_SCOPES'
+  /** Conversation: The conversation's id, e.g. the trigger's conversationId */
+  conversationId?: string
+  /** Text: Plain text, up to 6,000 characters */
+  text?: string
+  /** Reply to message: Quotes a text, image or post message of the conversation; empty for none */
+  replyToMessageId?: string
+  /** When the window looks closed: The person last wrote more than 48 h ago: TikTok allows only three more messages until they write again */
+  whenWindowClosed?: 'FAIL' | 'SKIP' | 'SEND_ANYWAY'
+  /** Input file field: The input item's file to upload, e.g. data */
+  binaryProperty?: string
+  /** Uploaded media ID: An image uploaded within 30 days (Upload an image); empty uploads the input file */
+  uploadedMediaId?: string
+  /** Post: The id of one of the account's posts, e.g. the trigger's videoId */
+  videoId?: string
+  /** Style */
+  style?: 'BUTTONS' | 'LINKS'
+  /** Question: Up to 40 characters */
+  question?: string
+  /** Answers: One to three */
+  answers?: Array<{
+    /** Answer: Up to 20 characters on a button, 40 on a text link */
+    title: string
+    /** ID: Up to 40 characters, e.g. SIZE_M; optional */
+    id?: string
+  }>
+  /** Action */
+  action?: 'TYPING' | 'MARK_READ'
+  /** Comment: The comment's id, e.g. the trigger's commentId */
+  commentId?: string
+  /** Conversations */
+  conversationType?: 'ANSWERED' | 'REQUESTS'
+  /** Limit: How many at most */
+  limit?: number | Expression
+  /** Message: The message's id, e.g. the trigger's messageId */
+  messageId?: string
+  /** Media ID: The media's id, e.g. the trigger's mediaId */
+  mediaId?: string
+  /** Media type */
+  mediaType?: 'IMAGE' | 'VIDEO'
+  /** Output file field: Where the file goes in the output item */
+  outputProperty?: string
+  /** Images in conversation: The conversation to ask about images; empty to ask about the new follower message only */
+  imageConversationId?: string
+  /** Only comments: Up to 30 comment or reply ids; empty for all */
+  commentIds?: string[] | Expression
+  /** With replies: Each comment comes with up to three of its replies (replyList) */
+  includeReplies?: boolean | Expression
+  /** Visibility */
+  visibility?: 'ALL' | 'PUBLIC'
+  /** Order */
+  order?: 'TIKTOK' | 'NEWEST' | 'OLDEST' | 'MOST_LIKED' | 'MOST_REPLIED'
+  /** Text: Up to 1,200 characters; leave empty to post an image instead */
+  commentText?: string
+  /** Image file field: The input item's image to post instead of a text: JPG, WebP or PNG up to 5 MB, 360×360 to 1080×1920 pixels */
+  imageProperty?: string
+  /** Liked */
+  liked?: boolean
+  /** Hidden */
+  hidden?: boolean
+  /** Enabled */
+  enabled?: boolean
+  /** Kind */
+  kind?: 'WELCOME' | 'SUGGESTED_QUESTION' | 'CHAT_PROMPT' | 'NEW_FOLLOWER'
+  /** Welcome text: Up to 250 characters */
+  welcomeText?: string
+  /** Question: Up to 80 characters */
+  suggestedQuestion?: string
+  /** Answer: Sent when the person taps the question; up to 200 characters */
+  suggestedAnswer?: string
+  /** Button: Shown above the input box; up to 18 characters */
+  promptButton?: string
+  /** Question asked: Sent for the person when they tap; up to 150 characters */
+  promptQuestion?: string
+  /** Message: Up to 500 characters; {s_nickname} becomes the follower's name */
+  followerText?: string
+  /** Button */
+  followerButton?: 'NONE' | 'QUICK_REPLY' | 'SHOP' | 'JOIN_GROUP'
+  /** Quick reply: The button's text, sent as the follower's message; up to 20 characters */
+  quickReplyText?: string
+  /** Automatic message: The message's autoMessageId, from List automatic messages */
+  autoMessageId?: string
+  /** Chat prompts: Every chat prompt's autoMessageId, in the new order */
+  autoMessageIds?: string[] | Expression
+  /** Video URL: A public URL of a URL property verified in your TikTok app; empty publishes the input file */
+  videoUrl?: string
+  /** Caption: Hashtags and up to 30 mentions; up to 2,200 characters for a video, 4,000 for photos */
+  caption?: string
+  /** Promotional content: Labels the post as promoting the account's own business */
+  brandOrganic?: boolean | Expression
+  /** Paid partnership: Labels the post as a paid partnership with a brand */
+  brandedContent?: boolean | Expression
+  /** AI-generated: Labels the post as AI-generated; the label cannot be removed */
+  aiGenerated?: boolean | Expression
+  /** Turn comments off */
+  disableComment?: boolean | Expression
+  /** Turn Duet off */
+  disableDuet?: boolean | Expression
+  /** Turn Stitch off */
+  disableStitch?: boolean | Expression
+  /** Cover frame (ms): The frame shown as cover; empty for the first */
+  coverFrameMs?: number | Expression
+  /** Only show in ads: Not shown on the profile */
+  adsOnly?: boolean | Expression
+  /** Location ID: A location tag's locationId, from Search locations; empty for none */
+  locationId?: string
+  /** Location name: The tag's locationName, needed with its ID */
+  locationName?: string
+  /** As a draft: Sends the post to the account's drafts in the TikTok app instead (needs video.upload) */
+  draft?: boolean | Expression
+  /** Wait until published: Asks TikTok every few seconds until it published, failed or put the draft in the inbox, within the node's time */
+  waitUntilPublished?: boolean | Expression
+  /** Photo URLs: Public URLs of a URL property verified in your TikTok app */
+  photoUrls?: string[] | Expression
+  /** Photo file fields: The input item's files, e.g. data; used after the URLs */
+  photoFields?: string[] | Expression
+  /** Cover: Which photo is the cover, from 0 */
+  coverIndex?: number | Expression
+  /** Who can see it */
+  privacy?: 'EVERYONE' | 'FRIENDS' | 'FOLLOWERS' | 'ONLY_ME'
+  /** Title: Up to 90 characters */
+  title?: string
+  /** Add music: TikTok adds recommended music; change it later in the app */
+  autoAddMusic?: boolean | Expression
+  /** Publish ID: The publishId of Publish a video or photos */
+  publishId?: string
+  /** Only posts: Up to 20 post ids; empty for the latest posts */
+  videoIds?: string[] | Expression
+  /** Search: A place's name, up to 100 characters */
+  locationQuery?: string
+  /** Keyword */
+  keyword?: string
+  /** Language: The keyword's language, e.g. en, de-DE; empty for English */
+  language?: string
+  /** From: The first day, YYYY-MM-DD (UTC); empty for 7 days ago; TikTok keeps 60 days */
+  fromDate?: string
+  /** Until: The last day, YYYY-MM-DD (UTC); empty for yesterday */
+  untilDate?: string
+  /** Category */
+  category?: 'ART_AND_CRAFTS' | 'AUTOMOTIVE_AND_TRANSPORTATION' | 'BABY' | 'BEAUTY' | 'CLOTHING_AND_ACCESSORIES' | 'EDUCATION_AND_TRAINING' | 'ELECTRONICS' | 'FINANCE_AND_INVESTING' | 'FOOD_AND_BEVERAGE' | 'GAMING' | 'HEALTH_AND_WELLNESS' | 'HOME_FURNITURE_AND_APPLIANCES' | 'MACHINERY_AND_EQUIPMENT' | 'MEDIA_AND_ENTERTAINMENT' | 'OTHERS' | 'PERSONAL_BLOG' | 'PETS' | 'PROFESSIONAL_SERVICES' | 'PUBLIC_ADMINISTRATION' | 'REAL_ESTATE' | 'RESTAURANTS_AND_BARS' | 'SHOPPING_AND_RETAIL' | 'SOFTWARE_AND_APPS' | 'SPORTS_FITNESS_AND_OUTDOORS' | 'TRAVEL_AND_TOURISM'
+  /** Days back: 1 to 90 */
+  days?: number | Expression
+  /** Regions: Only people registered there, as codes (UA, PL …); empty for all */
+  regions?: string[] | Expression
+  /** Order */
+  postOrder?: 'NEWEST' | 'OLDEST' | 'MOST_LIKED' | 'MOST_COMMENTED' | 'MOST_SHARED'
+  /** Order */
+  commentOrder?: 'NEWEST' | 'OLDEST' | 'MOST_LIKED' | 'POST_MOST_LIKED'
+  /** Brand hashtag: One enabled brand hashtag, case-sensitive; empty for all of them */
+  brandHashtag?: string
+  /** Post: The mentioning post's id, e.g. the trigger's videoId */
+  mentionVideoId?: string
+  /** Hashtags: e.g. #drinkshop */
+  hashtags?: string[] | Expression
+  /** Hashtag: As List brand hashtags shows it */
+  hashtag?: string
+  /** Reply: Up to 1,200 characters */
+  replyText?: string
+}
+
+/** TikTok Bot Trigger (`tiktok.botTrigger@1`) */
+export interface TiktokBotTriggerV1Params {
+  /** Trigger on */
+  operation: 'MESSAGES' | 'COMMENTS' | 'POSTS' | 'MENTIONS' | 'AUTO_MESSAGES'
+  /** Events */
+  messageEvents?: Array<'NEW_MESSAGE' | 'HIDDEN_MESSAGE' | 'SENT_BY_ACCOUNT' | 'CONVERSATION_OPENED' | 'CONVERSATION_READ'>
+  /** People */
+  userScope?: 'ALL' | 'ONLY' | 'EXCEPT'
+  /** Person IDs: People who wrote to the bot, or their unique identifiers (the senderId of earlier items) */
+  userIds?: string[] | Expression
+  /** Contains: Empty for any message */
+  contents?: Array<'TEXT' | 'IMAGE' | 'VIDEO' | 'SHARE_POST' | 'EMOJI' | 'STICKER' | 'REACTION' | 'TEMPLATE' | 'OTHER'>
+  /** Sent from: For messages the account sent: empty for anywhere; the bot's own API messages never start the workflow */
+  sentFrom?: Array<'APP' | 'WEB' | 'OTHERS'>
+  /** Followers only: Only people who follow the business account */
+  followersOnly?: boolean
+  /** Text */
+  textMatch?: 'ANY' | 'CONTAINS' | 'NOT_CONTAINS' | 'STARTS_WITH' | 'ANY_KEYWORD' | 'REGEX'
+  /** Match: Text, keywords separated by commas, or a regular expression */
+  match?: string
+  /** Case sensitive */
+  caseSensitive?: boolean
+  /** One run per person every (s): 0 runs for every event; more suits auto-replies to bursts of messages */
+  cooldownSeconds?: number
+  /** Simplify: Only the essentials instead of the whole event */
+  simplify?: boolean
+  /** Events */
+  commentEvents?: Array<'NEW_COMMENT' | 'NEW_REPLY' | 'DELETED' | 'HIDDEN' | 'HIGH_INTENT'>
+  /** Posts: The account's posts; empty for every post */
+  videoIds?: string[] | Expression
+  /** Events */
+  postEvents?: Array<'PUBLISHED' | 'PUBLICLY_AVAILABLE' | 'NO_LONGER_AVAILABLE' | 'FAILED'>
+  /** Events */
+  mentionEvents?: Array<'IN_CAPTION' | 'IN_COMMENT'>
+  /** Posts: Ids of the posts that mention the account; empty for every post */
+  mentionVideoIds?: string[] | Expression
+  /** Events */
+  autoMessageEvents?: Array<'CHANGED' | 'APPROVED' | 'REJECTED'>
 }
 
 /** Viber account (`viber.accountAction@1`) */
@@ -2261,6 +2456,8 @@ export interface NodeParamsMap {
   'telegram.botTrigger@2': TelegramBotTriggerV2Params
   'tiktok.accountAction@1': TiktokAccountActionV1Params
   'tiktok.accountTrigger@1': TiktokAccountTriggerV1Params
+  'tiktok.botAction@1': TiktokBotActionV1Params
+  'tiktok.botTrigger@1': TiktokBotTriggerV1Params
   'viber.accountAction@1': ViberAccountActionV1Params
   'viber.accountTrigger@1': ViberAccountTriggerV1Params
   'viber.botAction@1': ViberBotActionV1Params

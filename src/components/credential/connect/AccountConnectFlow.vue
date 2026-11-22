@@ -7,6 +7,7 @@ import CredentialPlatformIcon from '../CredentialPlatformIcon.vue'
 import CredentialFields from '../CredentialFields.vue'
 import { useCredentialForm } from '../useCredentialForm'
 import { useAccountConnect } from './useAccountConnect'
+import { CONNECT_GUIDES } from './connect-guides'
 import { CONNECT_STEP_REGISTRY } from './connect-step-registry'
 import { ConnectView } from './connect.types'
 
@@ -22,6 +23,7 @@ const form = useCredentialForm(computed(() => props.descriptor.fields))
 const { state, busy, finished, start, submit, retry } = useAccountConnect(props.descriptor, (c) => emit('connected', c))
 
 const isParams = computed(() => state.value.view === ConnectView.PARAMS)
+const guide = computed(() => CONNECT_GUIDES[props.descriptor.type] ?? null)
 const canStart = computed(() => isParams.value && form.isComplete.value && !busy.value)
 
 interface ActiveStep {
@@ -54,6 +56,8 @@ defineExpose({ connect, retry, canStart, busy, finished, view: computed(() => st
         <div class="slb-cred-form__type-desc">{{ descriptor.description }}</div>
       </div>
     </div>
+
+    <component :is="guide" v-if="guide" />
 
     <SlbInput v-model="name" label="Name" placeholder="Generated from the account if empty" />
     <CredentialFields :form="form" />

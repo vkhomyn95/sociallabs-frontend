@@ -4,6 +4,7 @@ import InstagramBotPanel from './instagram-bot/InstagramBotPanel.vue'
 import MessengerBotPanel from './messenger-bot/MessengerBotPanel.vue'
 import TelegramBotPanel from './telegram-bot/TelegramBotPanel.vue'
 import TikTokAccountPanel from './tiktok-account/TikTokAccountPanel.vue'
+import TikTokBotPanel from './tiktok-bot/TikTokBotPanel.vue'
 import ViberBotPanel from './viber-bot/ViberBotPanel.vue'
 import WhatsAppAccountPanel from './whatsapp-account/WhatsAppAccountPanel.vue'
 import WhatsAppBotPanel from './whatsapp-bot/WhatsAppBotPanel.vue'
@@ -27,6 +28,7 @@ export const CREDENTIAL_PANELS: Readonly<Record<CredentialType, Component | null
   [CredentialType.MESSENGER_BOT]: MessengerBotPanel,
   [CredentialType.INSTAGRAM_BOT]: InstagramBotPanel,
   [CredentialType.XCHAT_BOT]: XChatBotPanel,
+  [CredentialType.TIKTOK_BOT]: TikTokBotPanel,
   [CredentialType.OPENAI]: null,
   [CredentialType.ANTHROPIC]: null,
   [CredentialType.GEMINI]: null,

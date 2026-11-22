@@ -28,6 +28,7 @@ const VARIANT_OF_CREDENTIAL: Readonly<Record<CredentialType, AppVariant | null>>
   [CredentialType.MESSENGER_BOT]: AppVariant.BOT,
   [CredentialType.INSTAGRAM_BOT]: AppVariant.BOT,
   [CredentialType.XCHAT_BOT]: AppVariant.BOT,
+  [CredentialType.TIKTOK_BOT]: AppVariant.BOT,
   [CredentialType.OPENAI]: null,
   [CredentialType.ANTHROPIC]: null,
   [CredentialType.GEMINI]: null,
