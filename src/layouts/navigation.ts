@@ -9,7 +9,13 @@ export enum NavSection {
   AGENTS = 'agents',
   EXECUTIONS = 'executions',
   DIALOGS = 'dialogs',
-  MONITORING = 'monitoring',
+  MARKETING_CAMPAIGNS = 'marketing-campaigns',
+  MARKETING_SCRAPER = 'marketing-scraper',
+  MARKETING_TARGETS = 'marketing-targets',
+  MARKETING_LINKS = 'marketing-links',
+  STATS_MARKETING = 'stats-marketing',
+  STATS_CONVERSATIONS = 'stats-conversations',
+  STATS_AUTOMATION = 'stats-automation',
   ACCOUNTS = 'accounts',
   BOTS = 'bots',
   AI_PROVIDERS = 'ai-providers',
@@ -33,7 +39,13 @@ export enum RouteName {
   AGENTS = 'Agents',
   EXECUTION_LIST = 'ExecutionList',
   DIALOGS = 'Dialogs',
-  MONITORING = 'Monitoring',
+  MARKETING_CAMPAIGNS = 'MarketingCampaigns',
+  MARKETING_SCRAPER = 'MarketingScraper',
+  MARKETING_TARGETS = 'MarketingTargets',
+  MARKETING_LINKS = 'MarketingLinks',
+  STATS_MARKETING = 'StatsMarketing',
+  STATS_CONVERSATIONS = 'StatsConversations',
+  STATS_AUTOMATION = 'StatsAutomation',
   ACCOUNTS = 'Accounts',
   BOTS = 'Bots',
   AI_PROVIDERS = 'AiProviders',
@@ -55,7 +67,13 @@ export const NAV: Record<NavSection, NavEntry> = {
   [NavSection.AGENTS]: { label: 'Agents', icon: 'ai_agent', route: RouteName.AGENTS },
   [NavSection.EXECUTIONS]: { label: 'Executions', icon: 'action_history', route: RouteName.EXECUTION_LIST },
   [NavSection.DIALOGS]: { label: 'Dialogs', icon: 'object_comments', route: RouteName.DIALOGS },
-  [NavSection.MONITORING]: { label: 'Monitoring', icon: 'object_chart', route: RouteName.MONITORING },
+  [NavSection.MARKETING_CAMPAIGNS]: { label: 'Campaigns', icon: 'chat_broadcast', route: RouteName.MARKETING_CAMPAIGNS },
+  [NavSection.MARKETING_SCRAPER]: { label: 'Scraper', icon: 'action_search', route: RouteName.MARKETING_SCRAPER },
+  [NavSection.MARKETING_TARGETS]: { label: 'Targets', icon: 'dev_database', route: RouteName.MARKETING_TARGETS },
+  [NavSection.MARKETING_LINKS]: { label: 'Tracking links', icon: 'action_link', route: RouteName.MARKETING_LINKS },
+  [NavSection.STATS_MARKETING]: { label: 'Marketing', icon: 'object_chart', route: RouteName.STATS_MARKETING },
+  [NavSection.STATS_CONVERSATIONS]: { label: 'Conversations', icon: 'chat_bubble', route: RouteName.STATS_CONVERSATIONS },
+  [NavSection.STATS_AUTOMATION]: { label: 'Automation', icon: 'action_bolt', route: RouteName.STATS_AUTOMATION },
   [NavSection.ACCOUNTS]: { label: 'Accounts', icon: 'object_user', route: RouteName.ACCOUNTS },
   [NavSection.BOTS]: { label: 'Bots', icon: 'object_robot', route: RouteName.BOTS },
   [NavSection.AI_PROVIDERS]: { label: 'AI providers', icon: 'ai_sparkles', route: RouteName.AI_PROVIDERS },
@@ -73,7 +91,9 @@ const item = (section: NavSection): SidebarItem => ({ key: section, label: NAV[s
 /**
  * Групи основного меню — вони ж перший рівень breadcrumb у хедері:
  *  - Configure — що налаштовуємо: воркфлоу і AI-агенти;
- *  - Monitor — що відбувається: живі діалоги, запуски, статистика;
+ *  - Marketing — автоматизоване просування (макет): scraper → база цілей → кампанії → трекінгові посилання;
+ *  - Monitor — що відбувається зараз: живі діалоги і запуски;
+ *  - Statistics — цифри за період (макет): маркетинг, діалоги, воркфлоу й агенти;
  *  - Connections — через що воркфлоу говорять із зовнішнім світом: особисті акаунти
  *    месенджерів (вхід по QR / коду), боти, AI-провайдери і технічні credentials для нод.
  */
@@ -84,7 +104,20 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   { label: 'Configure', sections: [NavSection.WORKFLOWS, NavSection.AGENTS] },
-  { label: 'Monitor', sections: [NavSection.DIALOGS, NavSection.EXECUTIONS, NavSection.MONITORING] },
+  {
+    label: 'Marketing',
+    sections: [
+      NavSection.MARKETING_CAMPAIGNS,
+      NavSection.MARKETING_SCRAPER,
+      NavSection.MARKETING_TARGETS,
+      NavSection.MARKETING_LINKS,
+    ],
+  },
+  { label: 'Monitor', sections: [NavSection.DIALOGS, NavSection.EXECUTIONS] },
+  {
+    label: 'Statistics',
+    sections: [NavSection.STATS_MARKETING, NavSection.STATS_CONVERSATIONS, NavSection.STATS_AUTOMATION],
+  },
   {
     label: 'Connections',
     sections: [NavSection.ACCOUNTS, NavSection.BOTS, NavSection.AI_PROVIDERS, NavSection.CREDENTIALS],

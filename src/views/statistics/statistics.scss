@@ -1,0 +1,7 @@
+// Statistics pages reuse the marketing page layout and add only the period switch.
+@use '../marketing/marketing.scss';
+
+.st-period {
+  flex-shrink: 0;
+  .slb-tab__panel { display: none; }
+}

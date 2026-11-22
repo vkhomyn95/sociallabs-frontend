@@ -97,11 +97,52 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/features/executions/ExecutionListPage.vue'),
             meta: { title: 'Executions', nav: NavSection.EXECUTIONS },
           },
+          // Marketing і Statistics — поки макети на моках (src/views/marketing, src/views/statistics).
+          { path: 'marketing', redirect: { name: RouteName.MARKETING_CAMPAIGNS } },
           {
-            path: 'monitoring',
-            name: RouteName.MONITORING,
-            component: ComingSoon,
-            meta: { title: 'Monitoring', nav: NavSection.MONITORING },
+            path: 'marketing/campaigns',
+            name: RouteName.MARKETING_CAMPAIGNS,
+            component: () => import('@/views/marketing/CampaignsView.vue'),
+            meta: { title: 'Campaigns', nav: NavSection.MARKETING_CAMPAIGNS },
+          },
+          {
+            path: 'marketing/scraper',
+            name: RouteName.MARKETING_SCRAPER,
+            component: () => import('@/views/marketing/ScraperView.vue'),
+            meta: { title: 'Scraper', nav: NavSection.MARKETING_SCRAPER },
+          },
+          {
+            path: 'marketing/targets',
+            name: RouteName.MARKETING_TARGETS,
+            component: () => import('@/views/marketing/TargetsView.vue'),
+            meta: { title: 'Targets', nav: NavSection.MARKETING_TARGETS },
+          },
+          {
+            path: 'marketing/links',
+            name: RouteName.MARKETING_LINKS,
+            component: () => import('@/views/marketing/LinksView.vue'),
+            meta: { title: 'Tracking links', nav: NavSection.MARKETING_LINKS },
+          },
+          // Старий пункт Monitor → Monitoring (заглушка) замінила група Statistics.
+          { path: 'monitoring', redirect: { name: RouteName.STATS_MARKETING } },
+          { path: 'statistics', redirect: { name: RouteName.STATS_MARKETING } },
+          {
+            path: 'statistics/marketing',
+            name: RouteName.STATS_MARKETING,
+            component: () => import('@/views/statistics/MarketingStatsView.vue'),
+            meta: { title: 'Marketing', nav: NavSection.STATS_MARKETING },
+          },
+          {
+            path: 'statistics/conversations',
+            name: RouteName.STATS_CONVERSATIONS,
+            component: () => import('@/views/statistics/ConversationsStatsView.vue'),
+            meta: { title: 'Conversations', nav: NavSection.STATS_CONVERSATIONS },
+          },
+          {
+            path: 'statistics/automation',
+            name: RouteName.STATS_AUTOMATION,
+            component: () => import('@/views/statistics/AutomationStatsView.vue'),
+            meta: { title: 'Automation', nav: NavSection.STATS_AUTOMATION },
           },
           {
             path: 'connections/accounts',
